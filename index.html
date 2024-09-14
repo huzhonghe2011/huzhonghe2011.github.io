@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>机房必备</title>
+    <title>工具箱</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -26,28 +26,32 @@
             justify-content: center;
         }
         .box {
-            width: 200px;
-            height: 100px;
-            padding: 20px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border: 2px solid #333;
-            background-color: #fff;
-            text-align: center;
-            cursor: pointer;
-            transition: background-color 0.3s, transform 0.1s;
-        }
-        .box:hover {
-            background-color: #e0e0e0;
-        }
-        .box:active {
-            transform: scale(0.98);
-        }
-        .box.red {
-            color: red;
-            border-color: red;
-        }
+  	  width: 200px;
+    	height: 100px;
+   	 padding: 20px;
+   	 display: flex;
+  	  align-items: center;
+ 	   justify-content: center;
+  	  border: 2px solid #333;
+	    background-color: #fff;
+	    text-align: center;
+	    cursor: pointer;
+	    transition: background-color 0.3s, transform 0.1s, box-shadow 0.3s;
+  	  border-radius: 8px;
+ 	   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  	  font-size: 16px;
+ 	   margin: 10px 0; /* 添加上下外边距以分隔按钮 */
+	}
+
+	.box:hover {
+	    background-color: #e0e0e0;
+	    box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
+	}
+
+	.box:active {
+ 	    transform: scale(0.98);
+	}
+
         @media (max-width: 600px) {
             .box {
                 width: 150px;
@@ -62,19 +66,43 @@
         <button class="box" onclick="window.location.href='https://wwyp.lanzoul.com/b052mnpha'" aria-label="JiYuTrainer, 提取码jiyu">JiYuTrainer,提取码jiyu</button>
         <button class="box" onclick="window.location.href='https://dzjszjz.nkxingxh.top/'" aria-label="电子教室终结者">电子教室终结者</button>
         <button class="box" onclick="window.location.href='https://www.firefox.com.cn/'" aria-label="Firefox">Firefox</button>
+        <button class="box" onclick="window.location.href='https://browser.360.cn/'" aria-label="360游览器">360游览器</button>
     </div>
     <h1>小游戏</h1>
     <div class="button-container">
         <button class="box" onclick="window.location.href='https://ak-ioi.com/apps/oi-2048/'" aria-label="2048 IOI 版">2048 IOI 版</button>
         <button class="box" onclick="window.location.href='https://cheeaun.github.io/chengyu-wordle/'" aria-label="猜成语">猜成语</button>
         <button class="box" onclick="window.location.href='https://slay.one/'" aria-label="slay.one">slay.one</button>
-        <button class="box red" onclick="window.location.href='https://www.bilibili.com/video/BV1GJ411x7h7/?spm_id_from=333.337.search-card.all.click'" aria-label="不要点开">不要点开</button>
+        <button class="box" onclick="window.location.href='https://www.luogu.com.cn/paste/orbphckl'" aria-label="洛谷工具箱(含游戏)">洛谷工具箱(含游戏)</button>
     </div>
-    <h5> </h5>
     <div class="button-container">
         <button class="box" onclick="window.location.href='https://xingye.me/game/index.php'" aria-label="星夜游戏集合">星夜游戏集合</button>
         <button class="box" onclick="window.location.href='https://iogames.space/'" aria-label="io游戏集合">io游戏集合</button>
-        <button class="box" onclick="window.location.href='https://www.luogu.com.cn/paste/orbphckl'" aria-label="洛谷工具箱(含游戏)">洛谷工具箱(含游戏)</button>
+    </div>
+    <h1>实用工具</h1>
+    <div class="button-container">
+        <button class="box" onclick="window.location.href='https://nav.qinight.com/'" aria-label="柒夜网站导航">柒夜网站导航</button>
+        <button class="box" onclick="window.location.href='https://chat18.aichatos8.com'" aria-label="ChatGpt免费">ChatGpt免费</button>
+        <button class="box" onclick="window.location.href='https://mathsolver.microsoft.com/zh'" aria-label="数学求解器">数学求解器</button>
+        <button class="box" onclick="window.location.href='https://temp-mail.org/'" aria-label="临时邮箱">临时邮箱</button>
+    </div>
+    <div class="button-container">
+        <button class="box" onclick="window.location.href='https://playcode.io/'" aria-label="在线代码编辑器">在线代码编辑器</button>
+        <button class="box" onclick="window.location.href='https://greasyfork.org/zh-CN/'" aria-label="用户脚本网站">用户脚本网站</button>
+        <button class="box" onclick="window.location.href='http://www.bzgxdj.cn/'" aria-label="摩斯电码翻译器">摩斯电码翻译器</button>
+        <button class="box" onclick="window.location.href='https://base64.us/'" aria-label="base64编码解码">base64编码解码</button>
+    </div>
+    <h1>后室相关</h1>
+    <div class="button-container">
+        <button class="box" onclick="window.location.href='https://backrooms-wiki-cn.wikidot.com/'" aria-label="Wiki版">Wiki版</button>
+        <button class="box" onclick="window.location.href='https://backrooms.fandom.com/zh/wiki/'" aria-label="Fandom版">Fandom版</button>
+    </div>
+    <h1>floor.io相关</h1>
+    <div class="button-container">
+        <button class="box" onclick="window.location.href='http://flowr.fun/'" aria-label="二创flowr.fun">二创flowr.fun</button>
+        <button class="box" onclick="window.location.href='https://florrio.fandom.com/zh/wiki/Florr.io_%E4%B8%AD%E6%96%87%E7%BB%B4%E5%9F%BA'" aria-label="中文版Wiki">中文版Wiki</button>
+        <button class="box" onclick="window.location.href='https://imgse.com/i/pkxjoon'" aria-label="florr世界地图">florr世界地图</button>
+        <button class="box" onclick="window.location.href='https://official-florrio.fandom.com/wiki/Official_Florr.io_Wiki'" aria-label="英文版Wiki">英文版Wiki</button>
     </div>
 </body>
 </html>
