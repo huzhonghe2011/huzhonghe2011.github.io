@@ -108,5 +108,20 @@
         <button class="box" onclick="window.location.href='https://imgse.com/i/pkxjoon'" aria-label="florr世界地图">florr世界地图</button>
         <button class="box" onclick="window.location.href='https://official-florrio.fandom.com/wiki/Official_Florr.io_Wiki'" aria-label="英文版Wiki">英文版Wiki</button>
     </div>
+    
+    <p id="days">本网站已运营 *** 天</p>
+    <script>
+        function calculateDays(startDate) {
+            const today = new Date();
+            const start = new Date(startDate);
+            const difference = today - start;
+            const days = Math.floor(difference / (1000 * 60 * 60 * 24));
+            return days;
+        }
+
+        const startDate = '2024-09-13';
+        const days = calculateDays(startDate);
+        document.getElementById('days').textContent = `本网站已运营 ${days} 天`;
+    </script>
 </body>
 </html>
