@@ -63,7 +63,8 @@
 <body>
     <h1>欢迎来到本网站</h1>
 	
-    <h2 id="author">作者：<span id="randomAuthor"></span></h2>
+    <p id="author">作者：<span id="randomAuthor"></span></p>
+    <h6 id="easterEgg" style="display: none;">作者到底是谁呢？</h6>
 
     <script>
     function generateRandomString(minLength, maxLength) {
@@ -76,8 +77,18 @@
         return result;
     }
 
+    // 随机生成作者字符串
     document.getElementById('randomAuthor').textContent = generateRandomString(5, 15);
-</script>
+
+    // 记录刷新次数
+    let refreshCount = sessionStorage.getItem('refreshCount') ? parseInt(sessionStorage.getItem('refreshCount')) : 0;
+    refreshCount++;
+    sessionStorage.setItem('refreshCount', refreshCount);
+    // 显示彩蛋
+    if (refreshCount >= 3) {
+        document.getElementById('easterEgg').style.display = 'block';
+    }
+    </script>
     
     <a href="https://huzhonghe2011.github.io/download/jiyutrainer.exe">jiyutrainer下载>>></a>
     <div class="button-container">
