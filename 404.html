@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>404 页面</title>
+    <style>
+        body { text-align: center; padding: 150px; font-family: Arial, sans-serif; }
+        h1 { font-size: 30px; }
+        h2 { font-size: 50px; }
+    </style>
+</head>
+<body>
+    <h1>正在抽取随机三位数...</h1>
+    <h2 id="random-number">114</h2> <!-- 初始显示为114 -->
+    <h2 id="message" style="display: none;">哎呀，404了!正在跳转至主页</h2>
+
+    <script>
+        let count = 0;
+        const displayElement = document.getElementById('random-number');
+        const messageElement = document.getElementById('message');
+
+        function generateRandomNumber() {
+            return Math.floor(Math.random() * 900) + 100; // 生成三位数
+        }
+
+        const interval = setInterval(() => {
+            if (count < 5) {
+                displayElement.innerText = generateRandomNumber(); // 每次生成新数覆盖旧数
+                count++;
+            } else {
+                clearInterval(interval);
+                setTimeout(() => {
+                    displayElement.innerText = '404'; // 延迟500ms后显示404
+                    messageElement.style.display = 'block'; // 显示“404了！”
+                    setTimeout(() => {
+                        window.location.href = 'https://huzhonghe2011.github.io';
+                    }, 2000); // 2000ms延迟跳转
+                }, 500); // 500ms延迟
+            }
+        }, 500);
+    </script>
+</body>
+</html>
