@@ -1,28 +1,28 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>模拟</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 20px;
-        }
-    </style>
 </head>
 <body>
     <p>此过程为模拟完成，并非纯计算，可能会与实际略有误差</p>
-    <label for="numberInput">输入个数:</label>
-    <input type="number" id="numberInput" min="1" max="100000"><br><br>
     
-    <label for="levelInput">输入初始等级 (1=C, 2=Un, ... , 7=Ul):</label>
-    <input type="number" id="levelInput" min="1" max="7"><br><br>
-    
-    <button onclick="runSimulation()">开始模拟</button>
-    
+    <label for="n">输入个数:</label>
+    <input type="number" id="n" value="100000">
+    <br>
+
+    <label for="lv">输入初始等级 (1=C, 2=Un, 以此类推, 7=Ul):</label>
+    <input type="number" id="lv" min="1" max="7" value="1">
+    <br>
+
+    <label for="a">输入模拟次数倍率 (1约为2秒,2约为4秒,3约为6秒,以此类推):</label>
+    <input type="number" id="a" value="1">
+    <br>
+
+    <button onclick="startSimulation()">开始模拟</button>
     <h2 id="progress"></h2>
-    <pre id="output"></pre>
+    <div id="results"></div>
 
     <script>
         const per = [0, 64, 32, 16, 8, 4, 2, 1];
@@ -31,7 +31,7 @@
         function pd(a, b) {
             let cnt = 0;
             while (a >= 5) {
-                const t = Math.floor(Math.random() * 100);
+                let t = Math.floor(Math.random() * 100);
                 if (t < per[b]) {
                     cnt++;
                     a -= 5;
@@ -43,34 +43,40 @@
             return cnt;
         }
 
-        function runSimulation() {
-            const n = parseInt(document.getElementById("numberInput").value);
-            const lv = parseInt(document.getElementById("levelInput").value);
+        function startSimulation() {
+            const n = parseInt(document.getElementById("n").value);
+            const lv = parseInt(document.getElementById("lv").value);
+            const a = parseInt(document.getElementById("a").value);
 
             if (n > 100000) {
                 alert("数据过大,误差可能略大");
                 return;
             }
-            
             if (lv < 1 || lv > 7) {
                 alert("输入不合法");
                 return;
             }
 
-            const cs = Math.floor(20000000 / (n / 5)); // 预计2秒
-            const ans = new Array(Math.floor(n / 5) + 10).fill(0);
-
-            document.getElementById("output").textContent = '';
-            document.getElementById("progress").textContent = '';
+            let cs = Math.floor(10000000 / (n / 5) * a);
+            let ans = new Array(Math.floor(n / 5) + 10).fill(0);
 
             for (let i = 1; i <= cs; i++) {
                 ans[pd(n, lv)]++;
+                if (i % Math.floor(cs / 20) === 0) {
+                    document.getElementById("progress").innerText = `模拟进度: ${Math.floor(i * 100 / cs)}%`;
+                }
             }
 
-            document.getElementById("progress").textContent = '模拟完成';
+            displayResults(ans, cs);
+        }
+
+        function displayResults(ans, cs) {
+            let resultsDiv = document.getElementById("results");
+            resultsDiv.innerHTML = ""; // 清空之前的结果
+
             for (let i = 0; i <= maxx + 1; i++) {
-                const t = (ans[i] / cs * 100).toFixed(2);
-                document.getElementById("output").textContent += `${i} : ${t} %\n`;
+                let t = (ans[i] / cs * 100).toFixed(7);
+                resultsDiv.innerHTML += `${i} : ${t} %<br>`;
             }
         }
     </script>
