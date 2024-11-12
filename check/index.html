@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>1000个复选框</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+
+        #status {
+            margin-bottom: 20px;
+            font-size: 18px;
+        }
+
+        #checkbox-container {
+            display: grid;
+            gap: 20px;
+            grid-template-columns: repeat(20, 1fr); /* 每行20个复选框 */
+        }
+
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+        }
+
+        input[type="checkbox"] {
+            width: 30px; /* 增大复选框宽度 */
+            height: 30px; /* 增大复选框高度 */
+        }
+
+    </style>
+</head>
+<body>
+    <h1>1000个复选框</h1>
+    <div id="status">已勾选的个数: <span id="checkedCount">0</span></div>
+    
+    <div id="checkbox-container"></div>
+
+    <script>
+        const totalCheckboxes = 1000;  // 总共1000个复选框
+        const checkedCountElem = document.getElementById('checkedCount');
+        const checkboxContainer = document.getElementById('checkbox-container');
+
+        // 初始化复选框并加载存储的状态
+        function initCheckboxes() {
+            let checkedCount = 0;
+
+            // 清空容器
+            checkboxContainer.innerHTML = '';
+
+            // 创建1000个复选框
+            for (let i = 0; i < totalCheckboxes; i++) {
+                const checkboxId = 'checkbox_' + i;
+                const checkbox = document.createElement('input');
+                checkbox.type = 'checkbox';
+                checkbox.id = checkboxId;
+                
+                // 加载已存储的状态
+                const storedStatus = localStorage.getItem(checkboxId);
+                if (storedStatus === 'true') {
+                    checkbox.checked = true;
+                    checkedCount++;
+                }
+
+                // 监听勾选变化
+                checkbox.addEventListener('change', function() {
+                    if (checkbox.checked) {
+                        checkedCount++;
+                    } else {
+                        checkedCount--;
+                    }
+                    // 更新已勾选的个数
+                    checkedCountElem.textContent = checkedCount;
+                    // 保存勾选状态到localStorage
+                    localStorage.setItem(checkboxId, checkbox.checked);
+                });
+
+                // 创建复选框包装容器
+                const wrapper = document.createElement('div');
+                wrapper.className = 'checkbox-item';
+                wrapper.appendChild(checkbox);
+
+                checkboxContainer.appendChild(wrapper);
+            }
+
+            // 初始化已勾选的数量
+            checkedCountElem.textContent = checkedCount;
+        }
+
+        // 页面加载时初始化复选框
+        window.onload = initCheckboxes;
+    </script>
+</body>
+</html>
