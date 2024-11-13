@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>1000个复选框</title>
+    <title>10000个复选框</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -34,13 +34,13 @@
     </style>
 </head>
 <body>
-    <h1>1000个复选框</h1>
+    <h1>10000个复选框</h1>
     <div id="status">已勾选的个数: <span id="checkedCount">0</span></div>
     
     <div id="checkbox-container"></div>
 
     <script>
-        const totalCheckboxes = 1000;  // 总共1000个复选框
+        const totalCheckboxes = 10000;  // 总共10000个复选框
         const checkedCountElem = document.getElementById('checkedCount');
         const checkboxContainer = document.getElementById('checkbox-container');
 
@@ -51,7 +51,7 @@
             // 清空容器
             checkboxContainer.innerHTML = '';
 
-            // 创建1000个复选框
+            // 创建10000个复选框
             for (let i = 0; i < totalCheckboxes; i++) {
                 const checkboxId = 'checkbox_' + i;
                 const checkbox = document.createElement('input');
