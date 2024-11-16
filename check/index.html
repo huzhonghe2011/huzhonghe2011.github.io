@@ -13,6 +13,13 @@
         #status {
             margin-bottom: 20px;
             font-size: 18px;
+            position: relative;  /* 使噪声图层能够覆盖在此元素上 */
+            display: inline-block;
+            padding: 10px;
+        }
+
+        #status span {
+            font-weight: bold;
         }
 
         #checkbox-container {
@@ -31,12 +38,42 @@
             height: 30px; /* 增大复选框高度 */
         }
 
+        /* 背景噪声样式 */
+        #noise {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;  /* 宽度填满父元素 */
+            height: 100%; /* 高度填满父元素 */
+            background-image: url('https://huzhonghe2011.github.io/image/1.png');  /* 噪声图像 */
+            background-size: cover; /* 按比例缩放背景 */
+            pointer-events: none;  /* 确保噪声层不会干扰页面交互 */
+            opacity: 0.3;  /* 设置透明度为30% */
+        }
+
+        /* 限制噪声图层只显示在已勾选个数区域 */
+        #status {
+            position: relative;
+            overflow: hidden;  /* 只显示内部区域 */
+        }
+
+        #noise {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+
     </style>
 </head>
 <body>
     <h1>10000个复选框</h1>
-    <div id="status">已勾选的个数: <span id="checkedCount">0</span></div>
-    
+    <div id="status">
+        (防修改) 已勾选的个数: <span id="checkedCount">0</span>
+        <div id="noise"></div> <!-- 噪声图层 -->
+    </div>
+
     <div id="checkbox-container"></div>
 
     <script>
