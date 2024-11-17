@@ -5,9 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>10000个复选框</title>
     <style>
+        /* 确保背景填满整个页面，并去掉默认的 body 外边距 */
         body {
             font-family: Arial, sans-serif;
-            margin: 20px;
+            margin: 0; /* 去除默认外边距 */
+            background: linear-gradient(to bottom, #ADD8E6, #FFFFFF); /* 浅蓝到白色的渐变背景 */
         }
 
         #status {
@@ -65,9 +67,7 @@
             height: 100%;
         }
 
-
         .content {
-            background: linear-gradient(to bottom, #ADD8E6, #FFFFFF); /* 浅蓝到白色的渐变背景 */
             padding: 20px;
             box-sizing: border-box;
         }
@@ -80,6 +80,7 @@
             (防修改) 已勾选的个数: <span id="checkedCount">0</span>
             <div id="noise"></div> <!-- 噪声图层 -->
         </div>
+        <p>注:不同的设备复选框样式不一定相同</p>
 
         <div id="checkbox-container"></div>
 
