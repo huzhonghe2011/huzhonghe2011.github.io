@@ -102,10 +102,7 @@
                     const checkbox = document.createElement('input');
                     checkbox.type = 'checkbox';
                     checkbox.id = checkboxId;
-                    if (i < 5060) {
-                        checkbox.checked = true;
-                        checkedCount++;
-                    }
+                
                 // 加载已存储的状态
                     const storedStatus = localStorage.getItem(checkboxId);
                     if (storedStatus === 'true') {
