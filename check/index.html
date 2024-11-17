@@ -48,7 +48,7 @@
             background-image: url('https://huzhonghe2011.github.io/image/1.png');  /* 噪声图像 */
             background-size: cover; /* 按比例缩放背景 */
             pointer-events: none;  /* 确保噪声层不会干扰页面交互 */
-            opacity: 0.4;  /* 设置透明度为40% */
+            opacity: 0.2;  /* 设置透明度为40% */
         }
 
         /* 限制噪声图层只显示在已勾选个数区域 */
@@ -65,70 +65,78 @@
             height: 100%;
         }
 
+
+        .content {
+            background: linear-gradient(to bottom, #ADD8E6, #FFFFFF); /* 浅蓝到白色的渐变背景 */
+            padding: 20px;
+            box-sizing: border-box;
+        }
     </style>
 </head>
 <body>
-    <h1>10000个复选框</h1>
-    <div id="status">
-        (防修改) 已勾选的个数: <span id="checkedCount">0</span>
-        <div id="noise"></div> <!-- 噪声图层 -->
-    </div>
+    <div class="content">
+        <h1>10000个复选框</h1>
+        <div id="status">
+            (防修改) 已勾选的个数: <span id="checkedCount">0</span>
+            <div id="noise"></div> <!-- 噪声图层 -->
+        </div>
 
-    <div id="checkbox-container"></div>
+        <div id="checkbox-container"></div>
 
-    <script>
-        const totalCheckboxes = 10000;  // 总共10000个复选框
-        const checkedCountElem = document.getElementById('checkedCount');
-        const checkboxContainer = document.getElementById('checkbox-container');
+        <script>
+            const totalCheckboxes = 10000;  // 总共10000个复选框
+            const checkedCountElem = document.getElementById('checkedCount');
+            const checkboxContainer = document.getElementById('checkbox-container');
 
-        // 初始化复选框并加载存储的状态
-        function initCheckboxes() {
-            let checkedCount = 0;
+            // 初始化复选框并加载存储的状态
+            function initCheckboxes() {
+                let checkedCount = 0;
 
             // 清空容器
-            checkboxContainer.innerHTML = '';
+                checkboxContainer.innerHTML = '';
 
             // 创建10000个复选框
-            for (let i = 0; i < totalCheckboxes; i++) {
-                const checkboxId = 'checkbox_' + i;
-                const checkbox = document.createElement('input');
-                checkbox.type = 'checkbox';
-                checkbox.id = checkboxId;
+                for (let i = 0; i < totalCheckboxes; i++) {
+                    const checkboxId = 'checkbox_' + i;
+                    const checkbox = document.createElement('input');
+                    checkbox.type = 'checkbox';
+                    checkbox.id = checkboxId;
                 
                 // 加载已存储的状态
-                const storedStatus = localStorage.getItem(checkboxId);
-                if (storedStatus === 'true') {
-                    checkbox.checked = true;
-                    checkedCount++;
-                }
+                    const storedStatus = localStorage.getItem(checkboxId);
+                    if (storedStatus === 'true') {
+                        checkbox.checked = true;
+                        checkedCount++;
+                    }
 
                 // 监听勾选变化
-                checkbox.addEventListener('change', function() {
-                    if (checkbox.checked) {
-                        checkedCount++;
-                    } else {
-                        checkedCount--;
-                    }
-                    // 更新已勾选的个数
-                    checkedCountElem.textContent = checkedCount;
-                    // 保存勾选状态到localStorage
-                    localStorage.setItem(checkboxId, checkbox.checked);
-                });
+                    checkbox.addEventListener('change', function() {
+                        if (checkbox.checked) {
+                            checkedCount++;
+                        } else {
+                            checkedCount--;
+                        }
+                        // 更新已勾选的个数
+                        checkedCountElem.textContent = checkedCount;
+                        // 保存勾选状态到localStorage
+                        localStorage.setItem(checkboxId, checkbox.checked);
+                    });
 
-                // 创建复选框包装容器
-                const wrapper = document.createElement('div');
-                wrapper.className = 'checkbox-item';
-                wrapper.appendChild(checkbox);
+                    // 创建复选框包装容器
+                    const wrapper = document.createElement('div');
+                    wrapper.className = 'checkbox-item';
+                    wrapper.appendChild(checkbox);
 
-                checkboxContainer.appendChild(wrapper);
+                    checkboxContainer.appendChild(wrapper);
+                }
+
+                // 初始化已勾选的数量
+                checkedCountElem.textContent = checkedCount;
             }
 
-            // 初始化已勾选的数量
-            checkedCountElem.textContent = checkedCount;
-        }
-
-        // 页面加载时初始化复选框
-        window.onload = initCheckboxes;
-    </script>
+            // 页面加载时初始化复选框
+            window.onload = initCheckboxes;
+        </script>
+    </div>
 </body>
 </html>
