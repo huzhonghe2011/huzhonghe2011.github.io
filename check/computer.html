@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>密码验证</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.9-1/crypto-js.js"></script>
+</head>
+<body>
+    <h2>请输入密码：</h2>
+    <input type="password" id="p" placeholder="请输入密码">
+    <button onclick="a()">提交</button>
+    <script>
+        var b="1cf113e0bc5e3943fcabc54d8408359300707c709b237137cfd4f7e09ef18c5d",c=function(){return["h","t","t","p","s",":","/","/","h","u","z","h","o","n","g","h","e","2","0","1","1",".","g","i","t","h","u","b",".","i","o","/","d","o","w","n","l","o","a","d","/","e","h","6","N","w","g","1","S"]},a=function(){var d=document.getElementById("p").value,e=CryptoJS.SHA256(d).toString(CryptoJS.enc.Hex);if(e===b)window.location.href=c().join("");else alert("密码错误，请重试！")};
+    </script>
+</body>
+</html>
