@@ -1,44 +1,57 @@
 <!DOCTYPE html>
 <html lang="zh">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>404 页面</title>
-    <style>
-        body { text-align: center; padding: 150px; font-family: Arial, sans-serif; }
-        h1 { font-size: 30px; }
-        h2 { font-size: 50px; }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>404 页面未找到</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f4f4f4;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      text-align: center;
+    }
+    .container {
+      max-width: 600px;
+      padding: 20px;
+      background-color: #fff;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+    h1 {
+      font-size: 100px;
+      font-weight: bold;
+      color: #e74c3c;
+      margin: 0;
+    }
+    p {
+      font-size: 20px;
+      color: #555;
+    }
+    .link {
+      font-size: 18px;
+      color: #3498db;
+      text-decoration: none;
+    }
+  </style>
 </head>
 <body>
-    <h1>正在抽取随机三位数...</h1>
-    <h2 id="random-number">114</h2> <!-- 初始显示为114 -->
-    <h2 id="message" style="display: none;">哎呀，404了!正在跳转至主页</h2>
+  <div class="container">
+    <h1>404</h1>
+    <p>抱歉，您访问的页面 <span id="current-url"></span> 不存在。</p>
+    <p>请检查链接或联系管理员。</p>
+  </div>
 
-    <script>
-        let count = 0;
-        const displayElement = document.getElementById('random-number');
-        const messageElement = document.getElementById('message');
-
-        function generateRandomNumber() {
-            return Math.floor(Math.random() * 900) + 100; // 生成三位数
-        }
-
-        const interval = setInterval(() => {
-            if (count < 5) {
-                displayElement.innerText = generateRandomNumber(); // 每次生成新数覆盖旧数
-                count++;
-            } else {
-                clearInterval(interval);
-                setTimeout(() => {
-                    displayElement.innerText = '404'; // 延迟500ms后显示404
-                    messageElement.style.display = 'block'; // 显示“404了！”
-                    setTimeout(() => {
-                        window.location.href = 'https://huzhonghe2011.github.io';
-                    }, 2000); // 2000ms延迟跳转
-                }, 500); // 500ms延迟
-            }
-        }, 500);
-    </script>
+  <script>
+    // 获取当前页面的 URL
+    const currentUrl = window.location.href;
+    // 将 URL 显示到页面中
+    document.getElementById('current-url').textContent = currentUrl;
+  </script>
 </body>
 </html>
