@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>10000个复选框</title>
+    <style>
+        /* 确保背景填满整个页面，并去掉默认的 body 外边距 */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0; /* 去除默认外边距 */
+            background: linear-gradient(to bottom,#A9D6F1,#B5F0B5,#F4F800,#FFB3B3,#FF9A5F,#FF6666,#FF66CC,#D9A7FF,#A9D6F1,#B5F0B5,#F4F800,#FFB3B3,#FF9A5F,#FF6666,#FF66CC,#D9A7FF,#A9D6F1,#B5F0B5,#F4F800,#FFB3B3,#FF9A5F,#FF6666,#FF66CC,#D9A7FF); /* 浅蓝到浅绿的渐变背景 */
+        }
+
+        #status {
+            margin-bottom: 20px;
+            font-size: 18px;
+            position: relative;  /* 使噪声图层能够覆盖在此元素上 */
+            display: inline-block;
+            padding: 10px;
+        }
+
+        #status span {
+            font-weight: bold;
+        }
+
+        #checkbox-container {
+            display: grid;
+            gap: 20px;
+            grid-template-columns: repeat(20, 1fr); /* 每行20个复选框 */
+        }
+
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+        }
+
+        input[type="checkbox"] {
+            width: 30px; /* 增大复选框宽度 */
+            height: 30px; /* 增大复选框高度 */
+        }
+
+        /* 背景噪声样式 */
+        #noise {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;  /* 宽度填满父元素 */
+            height: 100%; /* 高度填满父元素 */
+            background-image: url('https://huzhonghe2011.github.io/image/1.png');  /* 噪声图像 */
+            background-size: cover; /* 按比例缩放背景 */
+            pointer-events: none;  /* 确保噪声层不会干扰页面交互 */
+            opacity: 0.2;  /* 设置透明度为40% */
+        }
+
+        /* 限制噪声图层只显示在已勾选个数区域 */
+        #status {
+            position: relative;
+            overflow: hidden;  /* 只显示内部区域 */
+        }
+
+        #noise {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+
+        .content {
+            padding: 20px;
+            box-sizing: border-box;
+        }
+    </style>
+</head>
+<body>
+    <div class="content">
+        <h1>10000个复选框</h1>
+        <div id="status">
+            (防修改) 已勾选的个数: <span id="checkedCount">0</span>
+            <div id="noise"></div> <!-- 噪声图层 -->
+        </div>
+        <p>注:不同的设备复选框样式不一定相同</p>
+
+        <div id="checkbox-container"></div>
+
+        <script>
+            const totalCheckboxes = 10000;  // 总共10000个复选框
+            const checkedCountElem = document.getElementById('checkedCount');
+            const checkboxContainer = document.getElementById('checkbox-container');
+
+            // 初始化复选框并加载存储的状态
+            function initCheckboxes() {
+                let checkedCount = 0;
+
+            // 清空容器
+                checkboxContainer.innerHTML = '';
+
+            // 创建10000个复选框
+                for (let i = 0; i < totalCheckboxes; i++) {
+                    const checkboxId = 'checkbox_' + i;
+                    const checkbox = document.createElement('input');
+                    checkbox.type = 'checkbox';
+                    checkbox.id = checkboxId;
+                
+                // 加载已存储的状态
+                    const storedStatus = localStorage.getItem(checkboxId);
+                    if (storedStatus === 'true') {
+                        checkbox.checked = true;
+                        checkedCount++;
+                    }
+
+                // 监听勾选变化
+                    checkbox.addEventListener('change', function() {
+                        if (checkbox.checked) {
+                            checkedCount++;
+                        } else {
+                            checkedCount--;
+                        }
+                        // 更新已勾选的个数
+                        checkedCountElem.textContent = checkedCount;
+                        // 保存勾选状态到localStorage
+                        localStorage.setItem(checkboxId, checkbox.checked);
+                    });
+
+                    // 创建复选框包装容器
+                    const wrapper = document.createElement('div');
+                    wrapper.className = 'checkbox-item';
+                    wrapper.appendChild(checkbox);
+
+                    checkboxContainer.appendChild(wrapper);
+                }
+
+                // 初始化已勾选的数量
+                checkedCountElem.textContent = checkedCount;
+            }
+
+            // 页面加载时初始化复选框
+            window.onload = initCheckboxes;
+        </script>
+    </div>
+</body>
+</html>
