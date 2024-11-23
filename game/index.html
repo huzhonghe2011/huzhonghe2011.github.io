@@ -58,6 +58,13 @@
                 height: 80px;
             }
         }
+        #footer {
+            font-size: 20px;
+            color: red;
+            text-align: center;
+            margin-top: 20px;
+            display: none;
+        }
     </style>
 </head>
 <body>
@@ -124,7 +131,7 @@
         <button class="box" onclick="window.location.href='https://huzhonghe2011.github.io/download/黑暗森林模拟.exe'" aria-label="黑暗森林模拟">黑暗森林模拟</button>
     </div>
     
-    <p id="days">本网站已运营 *** 天</p>
+    <p id="days">本网站已运营 *** 天</p><div id="footer">该网站原作者为GitHub用户huzhonghe2011</div>
     <script>
         function calculateDays(startDate) {
             const today = new Date();
@@ -137,6 +144,8 @@
         const startDate = '2024-09-13';
         const days = calculateDays(startDate);
         document.getElementById('days').textContent = `本网站已运营 ${days} 天`;
+
+        const f = window.location.href;const g = 'https://huzhonghe2011.github.io/game';if (!f.startsWith(g)) { document.getElementById('footer').style.display = 'block';}
     </script>
 </body>
 </html>
