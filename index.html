@@ -26,37 +26,45 @@
             justify-content: center;
         }
         .box {
-  	  width: 200px;
-    	height: 100px;
-   	 padding: 20px;
-   	 display: flex;
-  	  align-items: center;
- 	   justify-content: center;
-  	  border: 2px solid #333;
-	    background-color: #fff;
-	    text-align: center;
-	    cursor: pointer;
-	    transition: background-color 0.3s, transform 0.1s, box-shadow 0.3s;
-  	  border-radius: 8px;
- 	   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  	  font-size: 16px;
- 	   margin: 10px 0; /* 添加上下外边距以分隔按钮 */
-	}
+            width: 200px;
+            height: 100px;
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid #333;
+            background-color: #fff;
+            text-align: center;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.1s, box-shadow 0.3s;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            font-size: 16px;
+            margin: 10px 0;
+        }
 
-	.box:hover {
-	    background-color: #e0e0e0;
-	    box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
-	}
+        .box:hover {
+            background-color: #e0e0e0;
+            box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
+        }
 
-	.box:active {
- 	    transform: scale(0.98);
-	}
+        .box:active {
+            transform: scale(0.98);
+        }
 
         @media (max-width: 600px) {
             .box {
                 width: 150px;
                 height: 80px;
             }
+        }
+
+        #footer {
+            font-size: 20px;
+            color: red;
+            text-align: center;
+            margin-top: 20px;
+            display: none;
         }
     </style>
 </head>
@@ -65,7 +73,7 @@
     
     <a href="https://huzhonghe2011.github.io/check/jiyutrainer.html">JiYutrainer下载>>></a>
     <a href="https://www.firefox.com.cn/">FireFox下载>>></a>
-	
+    
     <div class="button-container">
         <button class="box" onclick="window.location.href='https://huzhonghe2011.github.io/check/computer.html'" aria-label="机房必备">机房必备</button>
         <button class="box" onclick="window.location.href='https://huzhonghe2011.github.io/tool/'" aria-label="工具箱">工具箱</button>
@@ -74,10 +82,10 @@
     <h1>置顶</h1>
     <div class="button-container">
         <button class="box" onclick="window.location.href='https://huzhonghe2011.github.io/robot/'" aria-label="人机测试 #整蛊">人机测试 #整蛊</button>
-	<button class="box" onclick="window.location.href='https://huzhonghe2011.github.io/checkbox/'" aria-label="10000个复选框 #无聊专用">10000个复选框 #无聊专用</button>
+        <button class="box" onclick="window.location.href='https://huzhonghe2011.github.io/checkbox/'" aria-label="10000个复选框 #无聊专用">10000个复选框 #无聊专用</button>
     </div>
     
-    <p id="days">本网站已运营 *** 天</p>
+    <p id="days">本网站已运营 *** 天</p><div id="footer">该网站原作者为GitHub用户huzhonghe2011</div>
     <script>
         function calculateDays(startDate) {
             const today = new Date();
@@ -90,6 +98,8 @@
         const startDate = '2024-09-13';
         const days = calculateDays(startDate);
         document.getElementById('days').textContent = `本网站已运营 ${days} 天`;
+
+        const f = window.location.href;const g = 'https://huzhonghe2011.github.io';if (!f.startsWith(g)) { document.getElementById('footer').style.display = 'block';}
     </script>
 </body>
 </html>
