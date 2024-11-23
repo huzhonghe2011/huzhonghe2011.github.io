@@ -58,6 +58,13 @@
                 height: 80px;
             }
         }
+        #footer {
+            font-size: 20px;
+            color: red;
+            text-align: center;
+            margin-top: 20px;
+            display: none;
+        }
     </style>
 </head>
 <body>
@@ -114,7 +121,7 @@
         const days = calculateDays(startDate);
         document.getElementById('days').textContent = `本网站已运营 ${days} 天`;
 
-        const f = window.location.href;const g = 'https://huzhonghe2011.github.io';if (!f.startsWith(g)) { document.getElementById('footer').style.display = 'block';}
+        const f = window.location.href;const g = 'https://huzhonghe2011.github.io/tool';if (!f.startsWith(g)) { document.getElementById('footer').style.display = 'block';}
     </script>
 </body>
 </html>
