@@ -13,61 +13,19 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      justify-content: flex-start;
+      justify-content: center; /* 确保内容垂直居中 */
       height: 100vh;
       text-align: center;
     }
 
-    /* 游戏区域 */
-    .game-container {
-      width: 80%;
-      height: 300px;
-      background-color: #fff;
-      border: 2px solid #333;
-      position: relative;
-      overflow: hidden;
-    }
-
-    /* 球 */
-    .ball {
-      width: 20px;
-      height: 20px;
-      background-color: #e74c3c;
-      border-radius: 50%;
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-    }
-
-    /* 琴键（玩家控制的挡板） */
-    .paddle {
-      width: 100px;
-      height: 20px;
-      background-color: #3498db;
-      position: absolute;
-      bottom: 10px;
-      left: 50%;
-      transform: translateX(-50%);
-    }
-
-    /* 砖块样式 */
-    .brick {
-      width: 60px;
-      height: 20px;
-      background-color: #2ecc71;
-      margin: 5px;
-      display: inline-block;
-    }
-
-    /* 404页面样式 */
+    /* 404 页面样式 */
     .container {
       max-width: 600px;
       padding: 20px;
       background-color: #fff;
       border-radius: 8px;
       box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-      margin-top: 30px; /* 确保404部分位于游戏下方 */
+      text-align: center;
     }
 
     h1 {
@@ -87,16 +45,32 @@
       color: #3498db;
       text-decoration: none;
     }
+
+    /* 游戏区域 */
+    .game-container {
+      width: 400px;
+      height: 400px;
+      background-color: #000;
+      position: relative;
+      margin-top: 30px; /* 让游戏区域在404部分下方 */
+    }
+
+    .snake {
+      position: absolute;
+      width: 10px;
+      height: 10px;
+      background-color: #3498db;
+    }
+
+    .food {
+      position: absolute;
+      width: 10px;
+      height: 10px;
+      background-color: #e74c3c;
+    }
   </style>
 </head>
 <body>
-  <!-- 游戏区域 -->
-  <div class="game-container" id="gameArea">
-    <div class="ball" id="ball"></div>
-    <div class="paddle" id="paddle"></div>
-    <div id="bricks"></div>
-  </div>
-
   <!-- 404 页面内容 -->
   <div class="container">
     <h1>404</h1>
@@ -104,111 +78,138 @@
     <p>请检查链接或联系管理员。</p>
   </div>
 
+  <!-- 游戏区域 -->
+  <div class="game-container" id="gameArea">
+    <div class="food" id="food"></div>
+    <div id="snake"></div>
+  </div>
+
   <script>
     // 获取当前页面的 URL
     const currentUrl = window.location.href;
     document.getElementById('current-url').textContent = currentUrl;
 
-    // 初始化游戏
-    const ball = document.getElementById('ball');
-    const paddle = document.getElementById('paddle');
+    // 游戏初始化
     const gameArea = document.getElementById('gameArea');
-    const bricksContainer = document.getElementById('bricks');
-    const ballRadius = 10;
-    let ballSpeedX = 3, ballSpeedY = -3;  // 球的速度
-    let paddleSpeed = 0; // 挡板速度
-    const paddleWidth = 100;
-    const paddleHeight = 20;
-    let gameWidth = gameArea.offsetWidth;
-    let gameHeight = gameArea.offsetHeight;
-    let ballX = gameWidth / 2, ballY = gameHeight - 30;
-    let paddleX = (gameWidth - paddleWidth) / 2;
+    const snakeElement = document.getElementById('snake');
+    const foodElement = document.getElementById('food');
+    
+    const snakeSize = 10; // 每个蛇身单元的大小
+    const gameWidth = gameArea.offsetWidth;
+    const gameHeight = gameArea.offsetHeight;
 
-    // 生成砖块
-    const brickRows = 5;
-    const brickColumns = 6;
-    let bricks = [];
-    for (let row = 0; row < brickRows; row++) {
-      bricks[row] = [];
-      for (let col = 0; col < brickColumns; col++) {
-        const brick = document.createElement('div');
-        brick.classList.add('brick');
-        brick.style.left = col * (60 + 5) + 'px';
-        brick.style.top = row * (20 + 5) + 'px';
-        bricksContainer.appendChild(brick);
-        bricks[row][col] = brick;
+    let snake = [
+      { x: 150, y: 150 },
+      { x: 140, y: 150 },
+      { x: 130, y: 150 }
+    ];
+    let direction = 'RIGHT';
+    let food = { x: 0, y: 0 };
+    let score = 0;
+    let gameInterval;
+    let gameSpeed = 100; // 游戏更新间隔（毫秒）
+
+    // 随机生成食物位置
+    function generateFood() {
+      food.x = Math.floor(Math.random() * (gameWidth / snakeSize)) * snakeSize;
+      food.y = Math.floor(Math.random() * (gameHeight / snakeSize)) * snakeSize;
+      foodElement.style.left = food.x + 'px';
+      foodElement.style.top = food.y + 'px';
+    }
+
+    // 更新蛇的位置
+    function updateSnake() {
+      const head = { ...snake[0] };
+
+      switch (direction) {
+        case 'UP':
+          head.y -= snakeSize;
+          break;
+        case 'DOWN':
+          head.y += snakeSize;
+          break;
+        case 'LEFT':
+          head.x -= snakeSize;
+          break;
+        case 'RIGHT':
+          head.x += snakeSize;
+          break;
       }
+
+      snake.unshift(head);
+      if (head.x === food.x && head.y === food.y) {
+        score++;
+        generateFood();
+        increaseSpeed(); // 吃到食物时加速
+      } else {
+        snake.pop();
+      }
+
+      if (head.x < 0 || head.x >= gameWidth || head.y < 0 || head.y >= gameHeight || collisionWithSelf()) {
+        clearInterval(gameInterval);
+        alert('游戏结束! 您的得分是：' + score);
+        window.location.reload(); // 重新加载页面
+      }
+    }
+
+    // 检查蛇是否撞到自己
+    function collisionWithSelf() {
+      for (let i = 1; i < snake.length; i++) {
+        if (snake[i].x === snake[0].x && snake[i].y === snake[0].y) {
+          return true;
+        }
+      }
+      return false;
+    }
+
+    // 绘制蛇
+    function drawSnake() {
+      snakeElement.innerHTML = '';
+      snake.forEach(segment => {
+        const snakePart = document.createElement('div');
+        snakePart.classList.add('snake');
+        snakePart.style.left = segment.x + 'px';
+        snakePart.style.top = segment.y + 'px';
+        snakeElement.appendChild(snakePart);
+      });
     }
 
     // 更新游戏状态
     function updateGame() {
-      // 更新球的位置
-      ballX += ballSpeedX;
-      ballY += ballSpeedY;
-
-      // 检测球与墙壁碰撞
-      if (ballX + ballRadius >= gameWidth || ballX - ballRadius <= 0) {
-        ballSpeedX = -ballSpeedX;  // 球碰到左右墙壁反弹
-      }
-      if (ballY - ballRadius <= 0) {
-        ballSpeedY = -ballSpeedY;  // 球碰到上方墙壁反弹
-      }
-
-      // 检测球与挡板碰撞
-      if (ballY + ballRadius >= gameHeight - paddleHeight - 10 && ballX >= paddleX && ballX <= paddleX + paddleWidth) {
-        ballSpeedY = -ballSpeedY;  // 球碰到挡板反弹
-      }
-
-      // 检测球与砖块碰撞
-      for (let row = 0; row < brickRows; row++) {
-        for (let col = 0; col < brickColumns; col++) {
-          const brick = bricks[row][col];
-          if (brick) {
-            const brickRect = brick.getBoundingClientRect();
-            const ballRect = ball.getBoundingClientRect();
-            if (ballRect.right > brickRect.left && ballRect.left < brickRect.right &&
-                ballRect.bottom > brickRect.top && ballRect.top < brickRect.bottom) {
-              ballSpeedY = -ballSpeedY; // 球碰到砖块反弹
-              brick.remove();
-              bricks[row][col] = null;
-            }
-          }
-        }
-      }
-
-      // 更新球的位置
-      ball.style.left = ballX - ballRadius + 'px';
-      ball.style.top = ballY - ballRadius + 'px';
-
-      // 更新挡板的位置
-      paddleX += paddleSpeed;
-      if (paddleX < 0) paddleX = 0;
-      if (paddleX > gameWidth - paddleWidth) paddleX = gameWidth - paddleWidth;
-      paddle.style.left = paddleX + 'px';
+      updateSnake();
+      drawSnake();
     }
 
-    // 挡板控制
-    document.addEventListener('keydown', function(event) {
-      if (event.code === 'ArrowLeft') {
-        paddleSpeed = -5;
-      } else if (event.code === 'ArrowRight') {
-        paddleSpeed = 5;
+    // 控制蛇的移动
+    document.addEventListener('keydown', function (event) {
+      if (event.code === 'ArrowUp' && direction !== 'DOWN') {
+        direction = 'UP';
+      } else if (event.code === 'ArrowDown' && direction !== 'UP') {
+        direction = 'DOWN';
+      } else if (event.code === 'ArrowLeft' && direction !== 'RIGHT') {
+        direction = 'LEFT';
+      } else if (event.code === 'ArrowRight' && direction !== 'LEFT') {
+        direction = 'RIGHT';
       }
     });
-    document.addEventListener('keyup', function(event) {
-      if (event.code === 'ArrowLeft' || event.code === 'ArrowRight') {
-        paddleSpeed = 0;
-      }
-    });
-
-    // 游戏主循环
-    function gameLoop() {
-      updateGame();
-      requestAnimationFrame(gameLoop);
-    }
 
     // 启动游戏
-    gameLoop();
+    function startGame() {
+      generateFood();
+      gameInterval = setInterval(updateGame, gameSpeed);
+    }
+
+    // 加速函数
+    function increaseSpeed() {
+      if (gameSpeed > 50) { // 最小速度限制
+        gameSpeed -= 5;  // 每吃到一个食物，游戏速度增加（间隔时间减少）
+        clearInterval(gameInterval); // 清除当前的游戏定时器
+        gameInterval = setInterval(updateGame, gameSpeed); // 使用新的速度重新设置定时器
+      }
+    }
+
+    // 延迟1.5秒后开始游戏
+    setTimeout(startGame, 1500);
   </script>
 </body>
 </html>
