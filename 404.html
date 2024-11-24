@@ -11,28 +11,77 @@
       margin: 0;
       padding: 0;
       display: flex;
-      justify-content: center;
+      flex-direction: column;
       align-items: center;
+      justify-content: flex-start;
       height: 100vh;
       text-align: center;
     }
+
+    /* 游戏区域 */
+    .game-container {
+      width: 80%;
+      height: 300px;
+      background-color: #fff;
+      border: 2px solid #333;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* 球 */
+    .ball {
+      width: 20px;
+      height: 20px;
+      background-color: #e74c3c;
+      border-radius: 50%;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+    }
+
+    /* 琴键（玩家控制的挡板） */
+    .paddle {
+      width: 100px;
+      height: 20px;
+      background-color: #3498db;
+      position: absolute;
+      bottom: 10px;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+
+    /* 砖块样式 */
+    .brick {
+      width: 60px;
+      height: 20px;
+      background-color: #2ecc71;
+      margin: 5px;
+      display: inline-block;
+    }
+
+    /* 404页面样式 */
     .container {
       max-width: 600px;
       padding: 20px;
       background-color: #fff;
       border-radius: 8px;
       box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      margin-top: 30px; /* 确保404部分位于游戏下方 */
     }
+
     h1 {
       font-size: 100px;
       font-weight: bold;
       color: #e74c3c;
       margin: 0;
     }
+
     p {
       font-size: 20px;
       color: #555;
     }
+
     .link {
       font-size: 18px;
       color: #3498db;
@@ -41,6 +90,14 @@
   </style>
 </head>
 <body>
+  <!-- 游戏区域 -->
+  <div class="game-container" id="gameArea">
+    <div class="ball" id="ball"></div>
+    <div class="paddle" id="paddle"></div>
+    <div id="bricks"></div>
+  </div>
+
+  <!-- 404 页面内容 -->
   <div class="container">
     <h1>404</h1>
     <p>抱歉，您访问的页面 <span id="current-url"></span> 不存在。</p>
@@ -50,8 +107,108 @@
   <script>
     // 获取当前页面的 URL
     const currentUrl = window.location.href;
-    // 将 URL 显示到页面中
     document.getElementById('current-url').textContent = currentUrl;
+
+    // 初始化游戏
+    const ball = document.getElementById('ball');
+    const paddle = document.getElementById('paddle');
+    const gameArea = document.getElementById('gameArea');
+    const bricksContainer = document.getElementById('bricks');
+    const ballRadius = 10;
+    let ballSpeedX = 3, ballSpeedY = -3;  // 球的速度
+    let paddleSpeed = 0; // 挡板速度
+    const paddleWidth = 100;
+    const paddleHeight = 20;
+    let gameWidth = gameArea.offsetWidth;
+    let gameHeight = gameArea.offsetHeight;
+    let ballX = gameWidth / 2, ballY = gameHeight - 30;
+    let paddleX = (gameWidth - paddleWidth) / 2;
+
+    // 生成砖块
+    const brickRows = 5;
+    const brickColumns = 6;
+    let bricks = [];
+    for (let row = 0; row < brickRows; row++) {
+      bricks[row] = [];
+      for (let col = 0; col < brickColumns; col++) {
+        const brick = document.createElement('div');
+        brick.classList.add('brick');
+        brick.style.left = col * (60 + 5) + 'px';
+        brick.style.top = row * (20 + 5) + 'px';
+        bricksContainer.appendChild(brick);
+        bricks[row][col] = brick;
+      }
+    }
+
+    // 更新游戏状态
+    function updateGame() {
+      // 更新球的位置
+      ballX += ballSpeedX;
+      ballY += ballSpeedY;
+
+      // 检测球与墙壁碰撞
+      if (ballX + ballRadius >= gameWidth || ballX - ballRadius <= 0) {
+        ballSpeedX = -ballSpeedX;  // 球碰到左右墙壁反弹
+      }
+      if (ballY - ballRadius <= 0) {
+        ballSpeedY = -ballSpeedY;  // 球碰到上方墙壁反弹
+      }
+
+      // 检测球与挡板碰撞
+      if (ballY + ballRadius >= gameHeight - paddleHeight - 10 && ballX >= paddleX && ballX <= paddleX + paddleWidth) {
+        ballSpeedY = -ballSpeedY;  // 球碰到挡板反弹
+      }
+
+      // 检测球与砖块碰撞
+      for (let row = 0; row < brickRows; row++) {
+        for (let col = 0; col < brickColumns; col++) {
+          const brick = bricks[row][col];
+          if (brick) {
+            const brickRect = brick.getBoundingClientRect();
+            const ballRect = ball.getBoundingClientRect();
+            if (ballRect.right > brickRect.left && ballRect.left < brickRect.right &&
+                ballRect.bottom > brickRect.top && ballRect.top < brickRect.bottom) {
+              ballSpeedY = -ballSpeedY; // 球碰到砖块反弹
+              brick.remove();
+              bricks[row][col] = null;
+            }
+          }
+        }
+      }
+
+      // 更新球的位置
+      ball.style.left = ballX - ballRadius + 'px';
+      ball.style.top = ballY - ballRadius + 'px';
+
+      // 更新挡板的位置
+      paddleX += paddleSpeed;
+      if (paddleX < 0) paddleX = 0;
+      if (paddleX > gameWidth - paddleWidth) paddleX = gameWidth - paddleWidth;
+      paddle.style.left = paddleX + 'px';
+    }
+
+    // 挡板控制
+    document.addEventListener('keydown', function(event) {
+      if (event.code === 'ArrowLeft') {
+        paddleSpeed = -5;
+      } else if (event.code === 'ArrowRight') {
+        paddleSpeed = 5;
+      }
+    });
+    document.addEventListener('keyup', function(event) {
+      if (event.code === 'ArrowLeft' || event.code === 'ArrowRight') {
+        paddleSpeed = 0;
+      }
+    });
+
+    // 游戏主循环
+    function gameLoop() {
+      updateGame();
+      requestAnimationFrame(gameLoop);
+    }
+
+    // 启动游戏
+    gameLoop();
   </script>
 </body>
 </html>
