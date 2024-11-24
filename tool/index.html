@@ -66,9 +66,14 @@
             display: none;
         }
     </style>
+    <script>(function() {var currentOrigin = window.location.origin;if (currentOrigin !== "https://huzhonghe2011.github.io") {alert("抱歉,网页无法加载");window.location.href = "about:blank";}})();</script>
 </head>
 <body>
     <h1>工具</h1>
+    <div id="footer">该网站原作者为GitHub用户huzhonghe2011</div>
+    <script>
+        const f = window.location.href;const g = 'https://huzhonghe2011.github.io';if (!f.startsWith(g)) { document.getElementById('footer').style.display = 'block';}
+    </script>
     <div class="button-container">
         <button class="box" onclick="window.location.href='https://nav.qinight.com/'" aria-label="柒夜网站导航">柒夜网站导航</button>
         <button class="box" onclick="window.location.href='https://chat18.aichatos8.com'" aria-label="ChatGpt免费">ChatGpt免费</button>
@@ -107,7 +112,7 @@
         <button class="box" onclick="window.location.href='https://official-florrio.fandom.com/wiki/Official_Florr.io_Wiki'" aria-label="英文版Wiki">英文版Wiki</button>
     </div>
     
-    <p id="days">本网站已运营 *** 天</p><div id="footer">该网站原作者为GitHub用户huzhonghe2011</div>
+    <p id="days">本网站已运营 *** 天</p>
     <script>
         function calculateDays(startDate) {
             const today = new Date();
@@ -120,7 +125,6 @@
         const startDate = '2024-09-13';
         const days = calculateDays(startDate);
         document.getElementById('days').textContent = `本网站已运营 ${days} 天`;
-        const f = window.location.href;const g = 'https://huzhonghe2011.github.io/tool';if (!f.startsWith(g)) { document.getElementById('footer').style.display = 'block';}
     </script>
 </body>
 </html>
