@@ -1,126 +1,133 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="zh">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>嵌入页面</title>
     <style>
-        /* 去掉 body 和 html 元素的默认边距和内边距 */
-        html, body {
+        /* 重置所有页面的 margin 和 padding */
+        * {
             margin: 0;
             padding: 0;
-            height: 100%; /* 保证页面高度为 100% */
+            box-sizing: border-box;
         }
 
-        /* iframe 全屏显示，去掉边框、间距 */
-        iframe {
-            width: 100%;
-            height: 100%;
-            border: none; /* 去掉边框 */
-            margin: 0;    /* 去掉外边距 */
-            padding: 0;   /* 去掉内边距 */
-            display: block; /* 去掉默认的 inline-block 属性 */
-        }
-
-        /* 输入框和按钮的样式 */
-        .input-container {
+        /* 让页面背景为白色 */
+        body {
+            background-color: white;
+            font-family: Arial, sans-serif;
+            height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 100%;
-            font-size: 18px;
+            overflow: hidden;
         }
 
-        .input-container input {
-            width: 300px;
-            padding: 10px;
+        /* 用于显示提示信息 */
+        .message {
+            text-align: center;
+            font-size: 18px;
+            color: #333;
+            padding: 20px;
+            display: none;
+        }
+
+        /* 输入框和按钮容器 */
+        .input-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        /* 输入框样式 */
+        input {
+            width: 150%; /* 调整宽度 */
+            max-width: 800px; /* 最大宽度，防止过宽 */
+            padding: 12px;
+            margin-bottom: 10px;
             font-size: 16px;
-            margin-right: 10px;
             border: 1px solid #ccc;
             border-radius: 5px;
+            box-sizing: border-box;
         }
 
-        .input-container button {
+        /* 按钮样式 */
+        button {
             padding: 10px 20px;
             font-size: 16px;
-            background-color: #4CAF50;
+            background-color: #007bff;
             color: white;
             border: none;
             border-radius: 5px;
             cursor: pointer;
         }
 
-        .input-container button:hover {
-            background-color: #45a049;
+        button:hover {
+            background-color: #0056b3;
         }
 
-        .message {
-            text-align: center;
-            font-size: 20px;
-            margin-bottom: 20px;
+        /* 使 iframe 全屏 */
+        iframe {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: none;
         }
     </style>
 </head>
 <body>
-    <div id="container">
-        <div id="message" class="message">请输入链接：</div>
-        <div class="input-container">
-            <input type="text" id="url-input" placeholder="https://" value="https://">
-            <button id="submit-button">确认</button>
-        </div>
-        <iframe id="iframe" style="display:none;"></iframe>
+    <!-- 提示信息 -->
+    <div class="message" id="message">请输入有效的 URL 地址并点击确认</div>
+
+    <!-- 输入框和按钮 -->
+    <div class="input-container">
+        <h3>输入需要嵌入的链接</h3>
+        <input type="text" id="urlInput" value="https://" placeholder="输入链接地址">
+        <button onclick="loadURL()">确认</button>
     </div>
 
+    <!-- 隐藏的 iframe 用于加载 URL -->
+    <iframe id="iframe" style="display:none;"></iframe>
+
     <script>
-        // 获取 URL 参数
+        // 获取 URL 参数中的 url 值
         const urlParams = new URLSearchParams(window.location.search);
-        const url = urlParams.get('url'); // 获取名为 "url" 的参数
+        const urlFromParams = urlParams.get('url');
 
-        // 判断是否包含 "https://huzhonghe2011.github.io/"，防止循环嵌套
-        function isEmbeddedUrl(url) {
-            return url && url.startsWith('https://huzhonghe2011.github.io/');
-        }
+        // 获取输入框和 iframe 元素
+        const iframe = document.getElementById('iframe');
+        const urlInput = document.getElementById('urlInput');
+        const message = document.getElementById('message');
 
-        // 判断 URL 是否有效，且不为循环嵌入的 URL
-        function isValidUrl(input) {
-            return (input && (input.startsWith('http://') || input.startsWith('https://'))) && !isEmbeddedUrl(input);
-        }
-
-        // 判断 URL 参数是否有效
-        if (url) {
-            // 如果有 URL 参数，检查并加载该 URL
-            const iframe = document.getElementById('iframe');
-            const message = document.getElementById('message');
-
-            // 去除 URL 的前后空格
-            const trimmedUrl = url.trim();
-
-            // 如果 URL 是有效的（以 https:// 或 http:// 开头），且不为嵌入的页面，显示 iframe 并嵌入链接
-            if (isValidUrl(trimmedUrl)) {
+        // 如果 URL 参数存在且有效，加载该 URL
+        if (urlFromParams) {
+            if (isValidURL(urlFromParams)) {
                 iframe.style.display = 'block';
-                iframe.src = trimmedUrl; // 设置 iframe 的 src 属性为目标 URL
-                message.style.display = 'none'; // 隐藏提示信息
+                iframe.src = urlFromParams;
             } else {
-                // 如果 URL 无效或为嵌入链接，显示提示
-                message.textContent = '提供的 URL 无效或为嵌入页面，无法加载。';
+                message.textContent = '无效的 URL 参数';
+                message.style.display = 'block';
             }
-        } else {
-            // 如果没有 URL 参数，显示输入框
-            const inputContainer = document.querySelector('.input-container');
-            inputContainer.style.display = 'flex';
+        }
 
-            // 处理按钮点击事件
-            document.getElementById('submit-button').addEventListener('click', function() {
-                const input = document.getElementById('url-input').value.trim();
+        // 检查 URL 是否有效
+        function isValidURL(url) {
+            const regex = /^(https?:\/\/)/;
+            return regex.test(url);
+        }
 
-                // 检查输入的链接是否有效且不为嵌入页面
-                if (isValidUrl(input)) {
-                    // 构造跳转的 URL，并跳转
-                    window.location.href = `https://huzhonghe2011.github.io/url?url=${encodeURIComponent(input)}`;
-                } else {
-                    alert('请输入有效的链接，确保以 http:// 或 https:// 开头，且不能是https://huzhonghe2011.github.io开头。');
-                }
-            });
+        // 处理用户输入的 URL
+        function loadURL() {
+            const userURL = urlInput.value.trim();
+            if (isValidURL(userURL)) {
+                // 跳转到当前页面并将 URL 作为参数传递
+                window.location.href = '?url=' + encodeURIComponent(userURL);
+            } else {
+                message.textContent = '请输入有效的 URL 地址';
+                message.style.display = 'block';
+            }
         }
     </script>
 </body>
