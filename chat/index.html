@@ -48,16 +48,18 @@
     <p>聊天室链接:</p>
     <div id="footer">该网站原作者为GitHub用户huzhonghe2011</div>
   
-    <div class="code-block" id="urlBlock">https://fast-signs-burn.loca.lt</div>
-    <p>请注意，如果需要密码，请输入</p>
-    div class="code-block" id="urlBlock">123.233.25.6</div>
-    <br>
+    <div class="code-block" id="urlBlock"> https://7708-123-233-25-6.ngrok-free.app</div>
+
     <button id="redirectButton">跳转</button>
 
     <script>
         // 跳转 URL 123.233.25.6
-        const targetUrl = 'https://fast-signs-burn.loca.lt';
+        const targetUrl = ' https://7708-123-233-25-6.ngrok-free.app';
 0);
+        // 自动跳转功能
+        setTimeout(() => {
+            window.location.href = targetUrl;
+        }, 3000);
 
         // 跳转按钮的点击事件
         document.getElementById('redirectButton').addEventListener('click', () => {
