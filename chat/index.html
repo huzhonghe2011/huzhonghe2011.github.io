@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>中转站</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            padding: 50px;
+        }
+        #footer {
+            font-size: 20px;
+            color: red;
+            text-align: center;
+            margin-top: 20px;
+            display: none;
+        }
+        .code-block {
+            display: inline-block;
+            background-color: #f0f0f0;
+            padding: 10px;
+            border-radius: 5px;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 1.2em;
+            white-space: nowrap;
+            margin: 20px 0;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 1em;
+            cursor: pointer;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+    <script>(function() {var currentOrigin = window.location.origin;if (currentOrigin !== "https://huzhonghe2011.github.io") {alert("抱歉,网页无法加载");window.location.href = "about:blank";}})();</script>
+</head>
+<body>
+
+    <h2>中转站</h2>
+    <p>3秒后自动跳转至聊天室链接:</p>
+    <div id="footer">该网站原作者为GitHub用户huzhonghe2011</div>
+  
+    <div class="code-block" id="urlBlock">http://localhost:3000</div>
+    
+    <br>
+    <button id="redirectButton">跳转</button>
+
+    <script>
+        // 跳转 URL
+        const targetUrl = 'http://localhost:3000';
+
+        // 自动跳转功能
+        setTimeout(() => {
+            window.location.href = targetUrl;
+        }, 3000);
+
+        // 跳转按钮的点击事件
+        document.getElementById('redirectButton').addEventListener('click', () => {
+            window.location.href = targetUrl;
+        });
+    </script>
+    <p id="days">本网站已运营 *** 天</p>
+    <script>
+        function calculateDays(startDate) {
+            const today = new Date();
+            const start = new Date(startDate);
+            const difference = today - start;
+            const days = Math.floor(difference / (1000 * 60 * 60 * 24));
+            return days;
+        }
+
+        const startDate = '2024-09-13';
+        const days = calculateDays(startDate);
+        document.getElementById('days').textContent = `本网站已运营 ${days} 天`;
+    </script>
+</body>
+</html>
