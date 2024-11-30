@@ -69,19 +69,7 @@
     </script>
     <p>为什么要添加中转站?</p>
     <p>这个链接时临时的，更新代码时可能会更新链接，感谢理解</p>
-    <p id="days">本网站已运营 *** 天</p>
-    <script>
-        function calculateDays(startDate) {
-            const today = new Date();
-            const start = new Date(startDate);
-            const difference = today - start;
-            const days = Math.floor(difference / (1000 * 60 * 60 * 24));
-            return days;
-        }
-
-        const startDate = '2024-09-13';
-        const days = calculateDays(startDate);
-        document.getElementById('days').textContent = `本网站已运营 ${days} 天`;
+    
     </script>
 </body>
 </html>
