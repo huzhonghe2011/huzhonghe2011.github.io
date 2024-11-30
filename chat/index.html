@@ -45,17 +45,18 @@
 <body>
 
     <h2>中转站</h2>
-    <p>聊天室链接:</p>
+    <p>3秒后自动跳转至聊天室</p>
+    <p>链接:</p>
     <div id="footer">该网站原作者为GitHub用户huzhonghe2011</div>
-  
-    <div class="code-block" id="urlBlock"> https://7708-123-233-25-6.ngrok-free.app</div>
+
+    <div class="code-block" id="urlBlock">https://2baa-123-233-25-6.ngrok-free.app</div>
 
     <button id="redirectButton">跳转</button>
 
     <script>
-        // 跳转 URL 123.233.25.6
-        const targetUrl = 'https://7708-123-233-25-6.ngrok-free.app';
-0);
+        // 正确的 targetUrl
+        const targetUrl = 'https://2baa-123-233-25-6.ngrok-free.app';
+
         // 自动跳转功能
         setTimeout(() => {
             window.location.href = targetUrl;
@@ -66,6 +67,7 @@
             window.location.href = targetUrl;
         });
     </script>
+
     <p id="days">本网站已运营 *** 天</p>
     <script>
         function calculateDays(startDate) {
