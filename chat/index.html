@@ -37,7 +37,7 @@
 <body>
 
     <h1>中转站</h2>
-    <p>3秒后自动跳转至聊天室</p>
+    <p>5秒后自动跳转至聊天室</p>
     <h3>如果链接打不开，请再试一次。</h3>
     <h2 style="color:red">如果显示ERR_NGROK_3200，就是主机电脑关闭，需要等待主机电脑开启</h2>
     <p>链接:</p>
@@ -47,13 +47,13 @@
     <button id="redirectButton">跳转</button>
 
     <script>
-        // 正确的 targetUrl
+        // targetUrl
         const targetUrl = 'https://4e9a-123-233-25-6.ngrok-free.app';
 
         // 自动跳转功能
         setTimeout(() => {
             window.location.href = targetUrl;
-        }, 3000);
+        }, 5000);
 
         // 跳转按钮的点击事件
         document.getElementById('redirectButton').addEventListener('click', () => {
