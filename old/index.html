@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>我的网站</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            height: 100vh;
+            margin: 0;
+            background-color: #f4f4f4;
+            padding-top: 20px;
+        }
+        h1 {
+            margin-bottom: 20px;
+        }
+        .button-container {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        .box {
+            width: 200px;
+            height: 100px;
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid #333;
+            background-color: #fff;
+            text-align: center;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.1s, box-shadow 0.3s;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            font-size: 16px;
+            margin: 10px 0;
+        }
+
+        .box:hover {
+            background-color: #e0e0e0;
+            box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
+        }
+
+        .box:active {
+            transform: scale(0.98);
+        }
+
+        @media (max-width: 600px) {
+            .box {
+                width: 150px;
+                height: 80px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <h1>欢迎来到本网站</h1>
+    
+    <a href="/check/jiyutrainer.html">JiYutrainer下载>>></a>
+    <a href="https://www.firefox.com.cn/">FireFox下载>>></a>
+    
+    <div class="button-container">
+        <button class="box" onclick="window.location.href='/check/computer.html'" aria-label="机房必备">机房必备</button>
+        <button class="box" onclick="window.location.href='/tool/'" aria-label="工具箱">工具箱</button>
+        <button class="box" onclick="window.location.href='/game/'" aria-label="游戏">游戏</button>
+    </div>
+    <h1>网站内置功能</h1>
+    <div class="button-container">
+        <button class="box" onclick="window.location.href='/chat/'" aria-label="聊天室">聊天室</button>
+        <button class="box" onclick="window.location.href='/robot/'" aria-label="人机测试 #整蛊">人机测试 #整蛊</button>
+        <button class="box" onclick="window.location.href='/checkbox/'" aria-label="10000个复选框 #无聊专用">10000个复选框 #无聊专用</button>
+    </div>
+    
+    <h2>主站/分站</h2>
+    <a href="https://huzhonghe2011.github.io/">主站(GitHub Page)>>>  </a>
+    <a href="https://huzhonghe2011.pages.dev/">分站1(自动从主站更新，偶尔不稳定)>>></a>
+    <a href="https://main.qwert114.us.kg/">分站2(自动从分站1更新，稳定)>>>   </a>
+    
+    <p id="days">本网站已运营 *** 天</p>
+    <script>
+        function calculateDays(startDate) {
+            const today = new Date();
+            const start = new Date(startDate);
+            const difference = today - start;
+            const days = Math.floor(difference / (1000 * 60 * 60 * 24));
+            return days;
+        }
+
+        const startDate = '2024-09-13';
+        const days = calculateDays(startDate);
+        document.getElementById('days').textContent = `本网站已运营 ${days} 天`;
+    </script>
+</body>
+</html>
