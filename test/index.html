@@ -17,32 +17,29 @@
             background-color: #f4f4f4;
         }
 
-/* 保证右侧内容区可以滚动 */
-.content {
-    margin-left: 160px; /* 适应导航栏 */
-    padding: 15px;
-    width: calc(100% - 160px); /* 避免右侧内容溢出 */
-    height: 100vh; /* 高度设置为视口高度，确保滚动内容可见 */
-    overflow-y: auto; /* 只有内容区需要滚动 */
+html, body {
+    height: 100%;
+    overflow: hidden; /* 防止整个页面有滚动条 */
 }
 
-/* 移除 body 或 .container 上的 overflow */
-body, .container {
-    overflow: hidden;  /* 防止 body 或 container 上产生滚动条 */
-}
+        /* 整体容器 */
+        .container {
+            display: flex;
+            height: 100%;
+        }
 
-/* 修改导航栏为固定定位，但避免它与右侧内容区域重叠 */
-.sidebar {
-    width: 160px; /* 导航栏宽度 */
-    background-color: #2c3e50;
-    color: white;
-    position: fixed;
-    height: 100vh; /* 高度填满视口 */
-    top: 0;
-    left: 0;
-    padding-top: 20px;
-    transition: transform 0.3s ease; /* 平滑过渡 */
-}
+        /* 左侧导航栏，变窄 */
+        .sidebar {
+            width: 160px; /* 将导航栏宽度缩小 */
+            background-color: #2c3e50;
+            color: white;
+            position: fixed;
+            height: 100%;
+            padding-top: 20px;
+            transition: transform 0.3s ease; /* 平滑过渡 */
+            z-index: 10;
+        }
+
         .sidebar ul {
             list-style: none;
             padding: 0;
@@ -71,20 +68,23 @@ body, .container {
             padding: 10px;
             width: calc(100% - 160px); /* 右侧宽度减少以适应导航栏 */
             overflow-y: auto;
+            height: 100%; /* 保证内容区域的高度占满剩余空间 */
         }
 
-h2 {
-    font-size: 24px;
-    color: white;
-    background-color: #e74c3c; /* 浅红色 */
-    padding: 10px;
-    border-radius: 5px;
-    margin-bottom: 20px;
-    text-align: left;
-    margin-left: 0px; /* 让标题左端离导航栏间距为0 */
-    margin-right: 10px; /* 右端与页面右边缘保持10px间距 */
-    width: calc(100%); /* 减去导航栏宽度和左右间距 */
-}
+        /* 标题样式 */
+        h2 {
+            font-size: 24px;
+            color: white;
+            background-color: #e74c3c; /* 浅红色 */
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            text-align: left;
+            /* 让红框的宽度从左侧导航栏的右边缘到页面的右边缘 */
+            margin-left: 0px; /* 让标题左端离导航栏10px间距 */
+            margin-right: 10px; /* 右端与页面右边缘保持10px间距 */
+            width: calc(100%); /* 宽度为页面总宽度减去左侧导航栏的宽度(180px) + 10px间距 + 10px右边距 */
+        }
 
         h3 {
             margin-top: 10px;
@@ -575,6 +575,10 @@ h2 {
                     <a class="box" href="https://cccccccccccccccccccccccccccccccccccccccccccccccccccc.cc/">
                         <p class="line1">GitHub文件加速下载</p>
                         <p class="line2">在线</p>
+                    </a>
+                    <a class="box" href="https://app.xunjieshipin.com/">
+                        <p class="line1">视频转换</p>
+                        <p class="line2">功能全</p>
                     </a>
                 </div>
                 <h3>网盘</h3>
