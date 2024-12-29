@@ -17,22 +17,32 @@
             background-color: #f4f4f4;
         }
 
-.container {
-    display: flex;
-    min-height: 100%; /* 确保容器的高度填满整个视口 */
+/* 保证右侧内容区可以滚动 */
+.content {
+    margin-left: 160px; /* 适应导航栏 */
+    padding: 15px;
+    width: calc(100% - 160px); /* 避免右侧内容溢出 */
+    height: 100vh; /* 高度设置为视口高度，确保滚动内容可见 */
+    overflow-y: auto; /* 只有内容区需要滚动 */
 }
 
-/* 左侧导航栏，变窄 */
+/* 移除 body 或 .container 上的 overflow */
+body, .container {
+    overflow: hidden;  /* 防止 body 或 container 上产生滚动条 */
+}
+
+/* 修改导航栏为固定定位，但避免它与右侧内容区域重叠 */
 .sidebar {
     width: 160px; /* 导航栏宽度 */
     background-color: #2c3e50;
     color: white;
-    position: fixed; /* 固定位置 */
-    height: 100vh; /* 使导航栏覆盖整个视口 */
+    position: fixed;
+    height: 100vh; /* 高度填满视口 */
+    top: 0;
+    left: 0;
     padding-top: 20px;
-    transition: transform 0.3s ease;
+    transition: transform 0.3s ease; /* 平滑过渡 */
 }
-
         .sidebar ul {
             list-style: none;
             padding: 0;
@@ -55,33 +65,31 @@
             background-color: #34495e;
         }
 
-/* 右侧内容区 */
-.content {
-    margin-left: 160px; /* 右侧内容区域右移，避免被固定的导航栏遮挡 */
-    padding: 15px;
-    overflow-y: auto; /* 启用垂直滚动条 */
-    height: 100vh; /* 确保内容区填满视口高度 */
-    box-sizing: border-box; /* 包括内边距在内的总宽度和高度计算 */
-}
+        /* 右侧内容区 */
+        .content {
+            margin-left: 160px; /* 适应更窄的导航栏 */
+            padding: 10px;
+            width: calc(100% - 160px); /* 右侧宽度减少以适应导航栏 */
+            overflow-y: auto;
+        }
 
-/* 标题样式 */
 h2 {
     font-size: 24px;
     color: white;
-    background-color: #e74c3c;
+    background-color: #e74c3c; /* 浅红色 */
     padding: 10px;
     border-radius: 5px;
     margin-bottom: 20px;
     text-align: left;
-    width: calc(100% - 20px); /* 保证标题宽度与右侧内容区一致 */
-    margin-left: 10px;
-    margin-right: 10px;
+    margin-left: 0px; /* 让标题左端离导航栏间距为0 */
+    margin-right: 10px; /* 右端与页面右边缘保持10px间距 */
+    width: calc(100%); /* 减去导航栏宽度和左右间距 */
 }
 
-h3 {
-    margin-top: 10px;
-    margin-bottom: 10px;
-}
+        h3 {
+            margin-top: 10px;
+            margin-bottom: 10px;
+        }
         /* 按钮样式 */
         .box {
             text-decoration: none;   /* 去除默认下划线 */
