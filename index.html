@@ -17,10 +17,15 @@
             background-color: #f4f4f4;
         }
 
+	html, body {
+ 	   height: 100%;
+ 	   overflow: hidden; /* 防止整个页面有滚动条 */
+	}
+
         /* 整体容器 */
         .container {
             display: flex;
-            height: 100vh;
+            height: 100%;
         }
 
         /* 左侧导航栏，变窄 */
@@ -32,6 +37,7 @@
             height: 100%;
             padding-top: 20px;
             transition: transform 0.3s ease; /* 平滑过渡 */
+            z-index: 10;
         }
 
         .sidebar ul {
@@ -62,6 +68,7 @@
             padding: 10px;
             width: calc(100% - 160px); /* 右侧宽度减少以适应导航栏 */
             overflow-y: auto;
+            height: 100%; /* 保证内容区域的高度占满剩余空间 */
         }
 
         /* 标题样式 */
