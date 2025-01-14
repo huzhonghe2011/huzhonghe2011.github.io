@@ -678,7 +678,20 @@
             const sidebar = document.querySelector('.sidebar');
             sidebar.classList.toggle('open');  // 切换 open 类，控制导航栏的显示与隐藏
         }
-      
+
+        var script = document.getElementById('allow-script');
+        if (script) {
+            script.onerror = function() {
+                if (confirm("网页不完整，拒绝加载")) {
+                    window.location.href = "about:blank";
+                }
+            };
+        } else {
+            if (confirm("网页不完整，拒绝加载")) {
+                window.location.href = "about:blank";
+            }
+        }
+	    
         function calculateDays(startDate) {
             const today = new Date();
             const start = new Date(startDate);
@@ -686,7 +699,7 @@
             const days = Math.floor(difference / (1000 * 60 * 60 * 24));
             return days;
         }
-
+	    
         const startDate = '2024-09-13';
         const days = calculateDays(startDate);
         document.getElementById('days').textContent = `本网站已运营 ${days} 天`;
