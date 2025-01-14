@@ -2,8 +2,8 @@ var isallow = 0;
 
 
 var allowedDomains = [
-    "https://a.github.io",
-    "https://a.pages.dev",
+    "https://huzhonghe2011.github.io",
+    "https://huzhonghe2011.pages.dev",
     "https://main.qwert114.us.kg"
 ];
 
