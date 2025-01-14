@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>猜方块</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #f2f2f2;
+        }
+        .btn {
+            margin: 10px;
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+        }
+        .btn:hover {
+            background-color: #45a049;
+        }
+        .hidden {
+            display: none;
+        }
+        .question {
+            font-size: 18px;
+            margin: 20px;
+        }
+        #result {
+            font-size: 20px;
+            margin-top: 30px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>猜方块 V0.5.0</h1>
+    
+    <div id="questionContainer" class="question"></div>
+    <div id="buttonsContainer">
+        <button id="yesButton" class="btn" onclick="answerQuestion('1')">是</button>
+        <button id="noButton" class="btn" onclick="answerQuestion('0')">否</button>
+    </div>
+
+    <div id="result" class="hidden"></div>
+
+    <script>
+        // 数据部分
+        const que = [
+            "是否自然生成？",
+            "是否在主世界生成？",
+            "是否在下界生成？",
+            "是否在末地生成？",
+            "是否是完整方块？"
+        ];
+        const block = [
+            "史蒂夫头颅",
+            "草方块",
+            "下界岩",
+            "末地石",
+            "基岩",
+            "橡木台阶",
+            "箱子"
+        ];
+        const data = [
+            "00000",
+            "11001",
+            "10101",
+            "10011",
+            "11111",
+            "11000",
+            "11110"
+        ];
+
+        let ans = [1, 2, 3, 4, 5, 6, 7];
+        let maxAns = 7;
+        let currentQuestion = 0;
+
+        // 初始化
+        function startGame() {
+            document.getElementById("result").classList.add("hidden");
+            document.getElementById("yesButton").disabled = false;
+            document.getElementById("noButton").disabled = false;
+            showQuestion();
+        }
+
+        // 显示问题
+        function showQuestion() {
+            if (currentQuestion < que.length) {
+                document.getElementById("questionContainer").textContent = que[currentQuestion];
+            } else {
+                showResult();
+                return;
+            }
+        }
+
+        // 处理回答
+        function answerQuestion(answer) {
+            let nextAns = [];
+            for (let i = 0; i < maxAns; i++) {
+                let blockIndex = ans[i] - 1;
+                if (data[blockIndex][currentQuestion] === answer) {
+                    nextAns.push(ans[i]);
+                }
+            }
+
+            ans = nextAns;
+            maxAns = ans.length;
+
+            if (maxAns <= 1) {
+                showResult();
+            } else {
+                currentQuestion++;
+                showQuestion();
+            }
+        }
+
+        // 显示结果
+        function showResult() {
+            if (maxAns === 1) {
+                let blockIndex = ans[0] - 1;
+                document.getElementById("result").textContent = `你想的方块是: ${block[blockIndex]}`;
+            } else {
+                document.getElementById("result").textContent = "数据库中没有匹配的方块";
+            }
+
+            document.getElementById("result").classList.remove("hidden");
+            document.getElementById("yesButton").disabled = true;
+            document.getElementById("noButton").disabled = true;
+        }
+
+        // 游戏开始
+        startGame();
+    </script>
+
+</body>
+</html>
