@@ -1,5 +1,4 @@
-var isallow = 0;
-
+var isallow = 1;
 
 var allowedDomains = [
     "https://huzhonghe2011.github.io",
