@@ -1,0 +1,708 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>我的网站</title>
+    <style>
+        /* 通用样式重置 */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+        }
+
+        html, body {
+           height: 100%;
+           overflow: hidden; /* 防止整个页面有滚动条 */
+        }
+
+        /* 整体容器 */
+        .container {
+            display: flex;
+            height: 100%;
+        }
+
+        /* 左侧导航栏，变窄 */
+        .sidebar {
+            width: 160px; /* 将导航栏宽度缩小 */
+            background-color: #2c3e50;
+            color: white;
+            position: fixed;
+            height: 100%;
+            padding-top: 20px;
+            transition: transform 0.3s ease; /* 平滑过渡 */
+            z-index: 10;
+        }
+
+        .sidebar ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .sidebar ul li {
+            margin: 20px 0;
+        }
+
+        .sidebar ul li a {
+            color: white;
+            text-decoration: none;
+            font-size: 18px;
+            display: block;
+            padding: 8px 20px;
+            transition: background-color 0.3s;
+        }
+
+        .sidebar ul li a:hover {
+            background-color: #34495e;
+        }
+
+        /* 右侧内容区 */
+        .content {
+            margin-left: 160px; /* 适应更窄的导航栏 */
+            padding: 10px;
+            width: calc(100% - 160px); /* 右侧宽度减少以适应导航栏 */
+            overflow-y: auto;
+            height: 100%; /* 保证内容区域的高度占满剩余空间 */
+        }
+
+        /* 标题样式 */
+        h2 {
+            font-size: 24px;
+            color: white;
+            background-color: #e74c3c; /* 浅红色 */
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            text-align: left;
+            /* 让红框的宽度从左侧导航栏的右边缘到页面的右边缘 */
+            margin-left: 0px; /* 让标题左端离导航栏10px间距 */
+            margin-right: 10px; /* 右端与页面右边缘保持10px间距 */
+            width: calc(100%); /* 宽度为页面总宽度减去左侧导航栏的宽度(180px) + 10px间距 + 10px右边距 */
+        }
+
+        h3 {
+            margin-top: 10px;
+            margin-bottom: 10px;
+        }
+        /* 按钮样式 */
+        .box {
+            text-decoration: none;   /* 去除默认下划线 */
+            color: black;            /* 设置文字颜色为黑色 */
+            line-height: 1.5; /* 确保文字垂直居中 */
+            width: 200px;
+            height: 75px;
+            padding: 10px;
+            display: flex;
+            justify-content: center;
+            background-color: #fff;
+            text-align: center;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.1s, box-shadow 0.3s;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            font-size: 15px;
+            margin: 10px 0;
+            flex-direction: column;   /* 使文字排列为两行 */
+        }
+
+        .box:hover {
+            background-color: #e0e0e0;
+            box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
+        }
+
+        .box:active {
+            transform: scale(0.98);
+        }
+
+        /* 第一行文字样式 */
+        .line1 {
+            font-weight: 700;  /* 设置粗细为700 */
+        }
+
+        /* 第二行文字样式 */
+        .line2 {
+            font-weight: 300;  /* 设置粗细为300 */
+        }
+
+        /* 链接样式 */
+        .box a {
+            width: 100%;  /* 使链接块级化 */
+            display: flex;
+            justify-content: center; /* 水平居中 */
+            align-items: center;     /* 垂直居中 */
+            height: 100%;            /* 填满父容器高度 */
+        }
+
+        /* 每个section的样式 */
+        section {
+            margin-bottom: 40px;
+        }
+
+        /* 为了让内容区可以滚动 */
+        .content {
+            overflow-y: auto;
+            padding: 15px;
+        }
+
+        /* 在需要时，可以加入更多的按钮 */
+        .buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        details {
+          margin-bottom: 10px;
+          display: none;
+        }
+
+        summary {
+          cursor: pointer;
+          padding: 10px;
+          background-color: #4CAF50;
+          color: white;
+          font-size: 16px;
+        }
+
+        /* 响应式设计，当屏幕宽度小于 600px 时，修改样式 */
+        @media (max-width: 600px) {
+            .box {
+                width: 150px;
+                font-size: 14px;
+            }
+            .sidebar {
+                display: none; /* 默认隐藏导航栏 */
+                flex-direction: column; /* 竖向排列 */
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 180px;
+                height: 100%;
+                padding-top: 20px;
+            }
+
+            /* 修正右侧内容的布局 */
+            .content {
+                margin-left: 0;
+                padding-left: 5;
+                width: 100%;
+            }
+
+            .sidebar.open {
+                display: flex; /* 当导航栏显示时，使用 flex 布局竖向排列 */
+            }
+
+            .sidebar ul li {
+                margin: 10px 0; /* 调整竖向排列时的间距 */
+            }
+
+            .sidebar ul li a {
+                padding: 10px 15px; /* 为了提高可点击区域 */
+                font-size: 16px; /* 调整字体大小 */
+            }
+            .content details {
+                display: block ;
+            }
+        }
+    </style>
+    <script src="https://huzhonghe2011.github.io/isallow.js" id="allow-script"></script>
+</head>
+<body>
+    <div class="container">
+        <!-- 左侧导航栏 -->
+        <nav class="sidebar">
+            <ul>
+                <li><a href="#section1">机房必备</a></li>
+                <li><a href="#section2">网站内置功能</a></li>
+                <li><a href="#section3">游戏</a></li>
+                <li><a href="#section4">工具箱</a></li>
+                <li><a href="#section5">网站分站</a></li>
+            </ul>
+        </nav>
+
+        <!-- 右侧内容区 -->
+        <div class="content">
+             <details>
+                   <summary>点击展开/折叠导航栏</summary>
+                       <li><a href="#section1">机房必备</a></li>
+                       <li><a href="#section2">网站内置功能</a></li>
+                       <li><a href="#section3">游戏</a></li>
+                       <li><a href="#section4">工具箱</a></li>
+                       <li><a href="#section5">网站分站</a></li>
+            </details>
+
+            <section id="section1">
+                <h2>机房必备</h2>
+                <h3>脱控工具</h3>
+                <div class="buttons">
+                    <a class="box" href="/check/dzjszjz.html">
+                        <p class="line1">电子教室终结者</p>
+                        <p class="line2">需要密码</p>
+                    </a>
+                    <a class="box" href="/check/jiyutrainer.html">
+                        <p class="line1">JiYuTrainer</p>
+                        <p class="line2">需要密码</p>
+                    </a>
+                    <a class="box" href="/check/super.html">
+                        <p class="line1">获取超级管理员权限</p>
+                        <p class="line2">别乱删文件，需要密码</p>
+                    </a>
+		    <a class="box" href="/check/ko.html">
+                        <p class="line1">KO.BAT</p>
+                        <p class="line2">循环结束除系统以外的进程</p>
+                    </a>
+                </div>
+                <h3>游览器</h3>
+                <div class="buttons">
+                    <a class="box" href="https://www.firefox.com.cn/">
+                        <p class="line1">FireFox</p>
+                        <p class="line2">推荐</p>
+                    </a>
+                    <a class="box" href="https://www.microsoft.com/zh-cn/edge/">
+                        <p class="line1">Edge</p>
+                        <p class="line2">推荐</p>
+                    </a>
+                    <a class="box" href="https://browser.360.cn/">
+                        <p class="line1">360</p>
+                        <p class="line2">不建议</p>
+                    </a>
+                </div>
+            </section>
+
+            <section id="section2">
+                <h2>网站内置功能</h2>
+                <div class="buttons">
+                    <a class="box" href="/chat/">
+                        <p class="line1">聊天室</p>
+                        <p class="line2">实时，但不稳定</p>
+                    </a>
+                    <a class="box" href="/robot/">
+                        <p class="line1">人机测试</p>
+                        <p class="line2">整蛊，一直往下划即可</p>
+                    </a>
+                    <a class="box" href="/checkbox/">
+                        <p class="line1">10000个复选框</p>
+                        <p class="line2">无聊专用</p>
+                    </a>
+                    <a class="box" href="/guessblock">
+                        <p class="line1">MC猜方块</p>
+                        <p class="line2">未完工</p>
+                    </a>
+                </div>
+            </section>
+
+            <section id="section3">
+                <h2>游戏</h2>
+                <h3>游戏合集</h3>
+                <div class="buttons">
+                    <a class="box" href="https://fuun.fun/">
+                        <p class="line1">游戏合集fuun</p>
+                        <p class="line2">啥都有</p>
+                    </a>
+                    <a class="box" href="https://iogames.space/">
+                        <p class="line1">io游戏集合</p>
+                        <p class="line2">.io后缀所有游戏</p>
+                    </a>
+                    <a class="box" href="https://poki.com/zh">
+                        <p class="line1">poki</p>
+                        <p class="line2">大家都熟</p>
+                    </a>
+                    <a class="box" href="https://xingye.me/game/index.php">
+                        <p class="line1">星夜游戏集合</p>
+                        <p class="line2">还行</p>
+                    </a>
+                    <a class="box" href="https://www.luogu.com/paste/z2kdb1e3">
+                        <p class="line1">洛谷游戏集合</p>
+                        <p class="line2">好</p>
+                    </a>
+                    <a class="box" href="https://www.ccw.site/">
+                        <p class="line1">共创世界游戏集合</p>
+                        <p class="line2">还行</p>
+                    </a>
+                    <a class="box" href="https://www.crazygames.com/">
+                        <p class="line1">CrazyGame游戏集合</p>
+                        <p class="line2">行</p>
+                    </a>
+                    <a class="box" href="https://haiyong.site/moyu/">
+                        <p class="line1">摸鱼网站</p>
+                        <p class="line2">非常多</p>
+                    </a>
+                    <a class="box" href="https://www.4399.com/">
+                        <p class="line1">4399</p>
+                        <p class="line2">绝对老熟人</p>
+                    </a>
+                    <a class="box" href="https://neal.fun/">
+                        <p class="line1">neal.fun</p>
+                        <p class="line2">一般</p>
+                    </a>
+                </div>
+                <h3>小游戏</h3>
+                <div class="buttons">
+                    <a class="box" href="https://ak-ioi.com/apps/oi-2048/">
+                        <p class="line1">2048 IOI 版</p>
+                        <p class="line2">里面还有其他版本</p>
+                    </a>
+                    <a class="box" href="https://cheeaun.github.io/chengyu-wordle/">
+                        <p class="line1">猜成语</p>
+                        <p class="line2">中国的wordle</p>
+                    </a>
+                    <a class="box" href="https://slay.one/">
+                        <p class="line1">slay.one</p>
+                        <p class="line2">联机2D枪战游戏</p>
+                    </a>
+                    <a class="box" href="https://www.arealme.com/zh">
+                        <p class="line1">A Real Me测试</p>
+                        <p class="line2">繁体中文</p>
+                    </a>
+                    <a class="box" href="https://indienova.com/corp/adofai">
+                        <p class="line1">冰与火之舞</p>
+                        <p class="line2">在线免费试玩</p>
+                    </a>
+                    <a class="box" href="https://h5mota.com/play/">
+                        <p class="line1">魔塔</p>
+                        <p class="line2">花样多</p>
+                    </a>
+                    <a class="box" href="https://liferestart.syaro.io/public/index.html">
+                        <p class="line1">人生重开模拟器</p>
+                        <p class="line2">"这垃圾人生一刻也不想呆了"</p>
+                    </a>
+                    <a class="box" href="https://yorg.io/">
+                        <p class="line1">yorg.io</p>
+                        <p class="line2">塔防</p>
+                    </a>
+
+                    <a class="box" href="https://neal.fun/password-game/">
+                        <p class="line1">设置密码</p>
+                        <p class="line2">绝对的折磨</p>
+                    </a>
+                    <a class="box" href="https://triep.io/">
+                        <p class="line1">坦克大战</p>
+                        <p class="line2">无聊专用</p>
+                    </a>
+                    <a class="box" href="https://enazo.cn/">
+                        <p class="line1">你画我猜</p>
+                        <p class="line2">很好，就是人少</p>
+                    </a>
+		    <a class="box" href="https://beta.sparebeat.com/">
+                        <p class="line1">sparebeat音游</p>
+                        <p class="line2">无聊时玩</p>
+                    </a>
+                    <a class="box" href="https://s.u7u9.com/h5game/ylgy20221021/tHmVGQ_new.html?srcid=browserbox">
+                        <p class="line1">羊了个羊</p>
+                        <p class="line2">经典</p>
+                    </a>
+                </div>
+                <h3>UT网页版专区</h3>
+                <div class="buttons">
+                    <a class="box" href="https://jcw87.github.io/c2-sans-fight/">
+                        <p class="line1">Sans</p>
+                        <p class="line2">原版</p>
+                    </a>
+                    <a class="box" href="https://meekuzo.github.io/Jotaro-Sans-Simulator/">
+                        <p class="line1">空条衫太郎</p>
+                        <p class="line2">还行</p>
+                    </a>
+                    <a class="box" href="https://hyzq.github.io/Bee-Sans-fight3/">
+                        <p class="line1">BeeSans</p>
+                        <p class="line2">简单</p>
+                    </a>
+                    <a class="box" href="https://caijiqaq.github.io/LAST-BREATH/">
+                        <p class="line1">ULB</p>
+                        <p class="line2">全阶段</p>
+                    </a>
+                    <a class="box" href="https://mario1d240.github.io/undertale-last-breath-remake-bad-time-simulator/">
+                        <p class="line1">ULB</p>
+                        <p class="line2">三阶段</p>
+                    </a>
+                    <a class="box" href="https://caijiqaq.github.io/UNDERSWAP-PAPYRUS-FIGHT/">
+                        <p class="line1">烟枪</p>
+                        <p class="line2">还行</p>
+                    </a>
+                    <a class="box" href="https://fuck-time.github.io/CJ-bad-time-simulator/">
+                        <p class="line1">HardmodeSans</p>
+                        <p class="line2">难</p>
+                    </a>
+                    <a class="box" href="https://1742137113.github.io/haogesans/">
+                        <p class="line1">HaogeSans</p>
+                        <p class="line2">极难</p>
+                    </a>
+                    <a class="box" href="https://caijiqaq.github.io/UNDERSWAP-SANS-FIGHT/">
+                        <p class="line1">SwapSans</p>
+                        <p class="line2">正常版</p>
+                    </a>
+                    <a class="box" href="https://caijiqaq.github.io/UNDERSWAP-SANS-FIGHT-EasyMode/">
+                        <p class="line1">SwapSans</p>
+                        <p class="line2">简单版</p>
+                    </a>
+                    <a class="box" href="https://caijiqaq.github.io/dusttale/">
+                        <p class="line1">尘埃</p>
+                        <p class="line2">正常版</p>
+                    </a>
+                    <a class="box" href="https://caijiqaq.github.io/dusttale-easymode/">
+                        <p class="line1">尘埃</p>
+                        <p class="line2">简单版</p>
+                    </a>
+                    <a class="box" href="https://caijiqaq.github.io/dusttale-debug/">
+                        <p class="line1">尘埃</p>
+                        <p class="line2">Degug版</p>
+                    </a>
+                </div>
+                <h3>小游戏(需下载)</h3>
+                <div class="buttons">
+                    <a class="box" href="/download/Ending Time Octet(弹幕未加强).zip">
+                        <p class="line1">八重终结-弹幕未加强</p>
+                        <p class="line2">传说之下同人</p>
+                    </a>
+                    <a class="box" href="/download/Ending Time Octet(弹幕加强).zip">
+                        <p class="line1">八重终结-弹幕加强</p>
+                        <p class="line2">传说之下同人</p>
+                    </a>
+                </div>
+                <h3>C++小游戏(需安装C++)</h3>
+                <div class="buttons">
+                    <a class="box" href="https://bloodshed-dev-c.en.softonic.com/">
+                        <p class="line1">C++下载</p>
+                        <p class="line2">如果没有，先安装这个</p>
+                    </a>
+                    <a class="box" href="/download/florr突围.exe">
+                        <p class="line1">florr突围</p>
+                        <p class="line2">florr相关游戏</p>
+                    </a>
+                    <a class="box" href="/download/人生之路.exe">
+                        <p class="line1">人生之路</p>
+                        <p class="line2">消磨时间</p>
+                    </a>
+                    <a class="box" href="/download/规则怪谈.zip">
+                        <p class="line1">规则怪谈</p>
+                        <p class="line2">持续更新</p>
+                    </a>
+                    <a class="box" href="/download/全民砸键盘.exe">
+                        <p class="line1">全民砸键盘</p>
+                        <p class="line2">解压(?)</p>
+                    </a>
+                    <a class="box" href="/download/恶魔轮盘赌.exe">
+                        <p class="line1">恶魔轮盘赌</p>
+                        <p class="line2">简陋</p>
+                    </a>
+                    <a class="box" href="/download/贪吃蛇.exe">
+                        <p class="line1">贪吃蛇</p>
+                        <p class="line2">简陋</p>
+                    </a>
+                    <a class="box" href="/download/黑暗森林模拟.exe">
+                        <p class="line1">文明模拟器</p>
+                        <p class="line2">参考《三体》</p>
+                    </a>
+                </div>
+            </section>
+
+            <section id="section4">
+                <h2>工具箱</h2>
+                <h3>常规工具</h3>
+                <div class="buttons">
+                    <a class="box" href="https://nav.qinight.com/">
+                        <p class="line1">柒夜网站导航</p>
+                        <p class="line2">非常全，推荐</p>
+                    </a>
+                    <a class="box" href="https://www.jyshare.com/front-end">
+                        <p class="line1">菜鸟工具</p>
+                        <p class="line2">比较全，推荐</p>
+                    </a>
+                    <a class="box" href="https://chat18.aichatos68.com">
+                        <p class="line1">ChatGpt</p>
+                        <p class="line2">完全免费</p>
+                    </a>
+                    <a class="box" href="https://mathsolver.microsoft.com/zh">
+                        <p class="line1">数学计算器</p>
+                        <p class="line2">一般</p>
+                    </a>
+                    <a class="box" href="https://greasyfork.org/zh-CN/">
+                        <p class="line1">用户脚本网站</p>
+                        <p class="line2">给游览器添加脚本</p>
+                    </a>
+                    <a class="box" href="http://www.bzgxdj.cn/">
+                        <p class="line1">摩斯电码翻译器</p>
+                        <p class="line2">还行</p>
+                    </a>
+                    <a class="box" href="https://base64.us/">
+                        <p class="line1">base64编码/解码</p>
+                        <p class="line2">推荐</p>
+                    </a>
+                    <a class="box" href="https://badges.toozhao.com/">
+                        <p class="line1">访问计数器</p>
+                        <p class="line2">看看你的页面有多少人访问</p>
+                    </a>
+                    <a class="box" href="https://lab.magiconch.com/homo/">
+                        <p class="line1">数字114514化工具</p>
+                        <p class="line2">无聊专用</p>
+                    </a>
+                    <a class="box" href="https://www.luogu.com/paste/b5jil6dj">
+                        <p class="line1">洛谷工具箱</p>
+                        <p class="line2">一些链接失效/国内不可用</p>
+                    </a>
+                    <a class="box" href="https://snapany.com/zh/bilibili">
+                        <p class="line1">B站视频解析下载</p>
+                        <p class="line2">告别不会下载</p>
+                    </a>
+                    <a class="box" href="/check/jiami.html">
+                        <p class="line1">加密大师(软件)</p>
+                        <p class="line2">需要密码</p>
+                    </a>
+                    <a class="box" href="https://www.jyshare.com/front-end/706/">
+                        <p class="line1">哈希加密</p>
+                        <p class="line2">密码系统使用哈希</p>
+                    </a>
+                    <a class="box" href="https://bdfy.azurewebsites.net/">
+                        <p class="line1">不会百度吗</p>
+                        <p class="line2">整蛊用</p>
+                    </a>
+                    <a class="box" href="https://www.swb.cc/">
+                        <p class="line1">免费域名</p>
+                        <p class="line2">挺好的，每人限3个</p>
+                    </a>
+		    <a class="box" href="https://luogu.codingoier.com/punch">
+                        <p class="line1">洛谷自动打卡</p>
+                        <p class="line2">不用每天打卡了</p>
+                    </a>
+                    <a class="box" href="https://s.u7u9.com/h5game/ylgy20221021/tHmVGQ_new.html?srcid=browserbox">
+                        <p class="line1">Phigros自制铺</p>
+                        <p class="line2">网页版</p>
+                    </a>
+                    <a class="box" href="https://www.eteste.com/">
+                        <p class="line1">字数统计</p>
+                        <p class="line2">在线</p>
+                    </a>
+                    <a class="box" href="https://cccccccccccccccccccccccccccccccccccccccccccccccccccc.cc/">
+                        <p class="line1">GitHub文件加速下载</p>
+                        <p class="line2">在线</p>
+                    </a>
+                    <a class="box" href="https://app.xunjieshipin.com/">
+                        <p class="line1">视频转换</p>
+                        <p class="line2">功能全</p>
+                    </a>
+                    <a class="box" href="http://www.mytju.com/classcode/tools/messycoderecover.asp">
+                        <p class="line1">乱码恢复</p>
+                        <p class="line2">跟编码错乱说再见</p>
+                    </a>
+                </div>
+                <h3>网盘</h3>
+                <div class="buttons">
+                    <a class="box" href="https://home.ctfile.com/">
+                        <p class="line1">城通</p>
+                        <p class="line2">推荐</p>
+                    </a>
+                    <a class="box" href="https://up.woozooo.com/">
+                        <p class="line1">蓝奏云</p>
+                        <p class="line2">推荐</p>
+                    </a>
+                    <a class="box" href="https://upfile.live/zh-cn/">
+                        <p class="line1">及时传</p>
+                        <p class="line2">推荐，但文件3天有效期</p>
+                    </a>
+                    <a class="box" href="https://musetransfer.com/">
+                        <p class="line1">musetransfer</p>
+                        <p class="line2">一般</p>
+                    </a>
+                </div>
+                <h3>后室相关</h3>
+                <div class="buttons">
+                    <a class="box" href="https://backrooms-wiki-cn.wikidot.com/">
+                        <p class="line1">Wiki版</p>
+                        <p class="line2">Wiki版</p>
+                    </a>
+                    <a class="box" href="https://backrooms.fandom.com/zh/wiki/">
+                        <p class="line1">Fandom版</p>
+                        <p class="line2">Fandom版</p>
+                    </a>
+                </div>
+                <h3>florr.io相关</h3>
+                <div class="buttons">
+                    <a class="box" href="https://florrio.fandom.com/zh/wiki/Florr.io_%E4%B8%AD%E6%96%87%E7%BB%B4%E5%9F%BA">
+                        <p class="line1">中文Wiki</p>
+                        <p class="line2">内容不全</p>
+                    </a>
+                    <a class="box" href="https://official-florrio.fandom.com/wiki/Official_Florr.io_Wiki">
+                        <p class="line1">英文Wiki</p>
+                        <p class="line2">需要搭配翻译工具</p>
+                    </a>
+                    <a class="box" href="https://florr-io-map-viewer.glitch.me/">
+                        <p class="line1">世界地图</p>
+                        <p class="line2">很详细</p>
+                    </a>
+                    <a class="box" href="/tool/florr-craft.html">
+                        <p class="line1">合卡计算器</p>
+                        <p class="line2">自制</p>
+                    </a>
+                </div>
+            </section>
+
+            <section id="section5">
+                <h2>网站分站</h2>
+                <div class="buttons">
+                    <a class="box" href="https://huzhonghe2011.github.io/">
+                        <p class="line1">主站</p>
+                        <p class="line2">GitHub Page</p>
+                    </a>
+                    <a class="box" href="https://huzhonghe2011.pages.dev/">
+                        <p class="line1">分站1</p>
+                        <p class="line2">偶尔不稳定</p>
+                    </a>
+                    <a class="box" href="https://main.qwert114.us.kg/">
+                        <p class="line1">分站2</p>
+                        <p class="line2">稳定</p>
+                    </a>
+                </div>
+            </section>
+            <p id="days">本网站已运营 *** 天</p>
+        </div>
+    </div>
+    <script>
+        // 平滑滚动到相应的section
+        document.querySelectorAll('.sidebar a , details a').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start'
+                });
+            });
+        });
+
+        function toggleSidebar() {
+            const sidebar = document.querySelector('.sidebar');
+            sidebar.classList.toggle('open');  // 切换 open 类，控制导航栏的显示与隐藏
+        }
+
+        var script = document.getElementById('allow-script');
+        if (script) {
+            script.onerror = function() {
+                if (confirm("网页不完整，拒绝加载")) {
+                    window.location.href = "about:blank";
+                }
+            };
+        } else {
+            if (confirm("网页不完整，拒绝加载")) {
+                window.location.href = "about:blank";
+            }
+        }
+	    
+        function calculateDays(startDate) {
+            const today = new Date();
+            const start = new Date(startDate);
+            const difference = today - start;
+            const days = Math.floor(difference / (1000 * 60 * 60 * 24));
+            return days;
+        }
+	    
+        const startDate = '2024-09-13';
+        const days = calculateDays(startDate);
+        document.getElementById('days').textContent = `本网站已运营 ${days} 天`;
+    </script>
+</body>
+</html>
