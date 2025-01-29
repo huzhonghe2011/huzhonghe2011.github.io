@@ -7,7 +7,8 @@ var allowedDomains = [
 ];
 
 // 获取 document.referrer，避免为空
-var referrer = document.referrer || window.location.href;
+// var referrer = document.referrer || window.location.href;
+var referrer = window.location.href;
 
 // 确保 isallow 为数字，避免类型错误
 if (Number(isallow) === 0 && !allowedDomains.some(function(domain) {
