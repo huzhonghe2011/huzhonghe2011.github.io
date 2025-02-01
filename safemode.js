@@ -1,11 +1,18 @@
-// safemode.js
 document.addEventListener('DOMContentLoaded', function() {
     const safemodeCheckbox = document.getElementById('safemodeCheckbox');
     let isSafeModeEnabled = false;
 
+    // 检查是否有存储的安全模式状态
+    if (localStorage.getItem('isSafeModeEnabled') === 'true') {
+        safemodeCheckbox.checked = true;
+        isSafeModeEnabled = true;
+        monitorPageVisibility(); // 如果复选框是选中的，启用监控
+    }
+
     // 监听复选框的变动
     safemodeCheckbox.addEventListener('change', function() {
         isSafeModeEnabled = safemodeCheckbox.checked;
+        localStorage.setItem('isSafeModeEnabled', isSafeModeEnabled); // 将状态存储到localStorage
         if (isSafeModeEnabled) {
             monitorPageVisibility(); // 启用安全模式时，监控页面可见性
         } else {
@@ -56,11 +63,17 @@ document.addEventListener('DOMContentLoaded', function() {
             </body>
             </html>
         `;
-
         document.body.addEventListener('dblclick', restorePageContent); // 双击恢复页面
     }
 
     function restorePageContent() {
         location.reload(); // 双击后，刷新恢复页面
+    }
+
+    // 监控页面可见性并启用安全模式
+    function monitorPageVisibility() {
+        if (!isPageVisible) {
+            blockPageContent(); // 页面不在前台时阻止显示
+        }
     }
 });
