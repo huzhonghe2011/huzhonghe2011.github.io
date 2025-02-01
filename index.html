@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>我的网站</title>
+    <title>工具箱</title>
     <style>
         /* 通用样式重置 */
         * {
@@ -170,6 +170,8 @@
           font-size: 16px;
         }
 
+        
+
         /* 响应式设计，当屏幕宽度小于 600px 时，修改样式 */
         @media (max-width: 600px) {
             .box {
@@ -223,6 +225,7 @@
                 <li><a href="#section3">游戏</a></li>
                 <li><a href="#section4">工具箱</a></li>
                 <li><a href="#section5">网站分站</a></li>
+                <li><a href="#section6">网站设置</a></li>
             </ul>
         </nav>
 
@@ -235,6 +238,7 @@
                        <li><a href="#section3">游戏</a></li>
                        <li><a href="#section4">工具箱</a></li>
                        <li><a href="#section5">网站分站</a></li>
+                       <li><a href="#section6">网站设置</a></li>
             </details>
 
             <section id="section1">
@@ -658,9 +662,19 @@
                     </a>
                 </div>
             </section>
+
+            <section id="section6">
+                <h2>网站设置</h2>
+
+                <label for="security-mode">
+                    <input type="checkbox" id="security-mode"> 启用极域安全模式 (启用后，离开网页时会自动变为该网页已被阻止，双击后恢复，如果需要关闭，刷新网页)
+                </label>
+
+            </section>
             <p id="days">本网站已运营 *** 天</p>
         </div>
     </div>
+    <script src="securityMode.js"></script>
     <script>
         // 平滑滚动到相应的section
         document.querySelectorAll('.sidebar a , details a').forEach(anchor => {
