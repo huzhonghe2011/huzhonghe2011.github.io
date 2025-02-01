@@ -170,7 +170,23 @@
           font-size: 16px;
         }
 
-        
+        .selection-container {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        .selection-item {
+            padding: 10px 20px;
+            font-size: 14px;
+            cursor: pointer;
+            border: 2px solid #333; /* 添加边框 */
+            border-radius: 5px; /* 添加圆角 */
+            background-color: #f5f5f5; /* 设置背景色 */
+            transition: background-color 0.3s; /* 添加过渡效果 */
+        }
+        .selection-item:hover {
+            background-color: #e0e0e0; /* 鼠标悬停时更改背景色 */
+        }
 
         /* 响应式设计，当屏幕宽度小于 600px 时，修改样式 */
         @media (max-width: 600px) {
@@ -666,8 +682,16 @@
             <section id="section6">
                 <h2>网站设置</h2>
 
+                <h3>选择标题</h3>
+                <div class="selection-container">
+                    <div class="selection-item" onclick="changeTitle('工具箱')">工具箱</div>
+                    <div class="selection-item" onclick="changeTitle('百度一下，你就知道')">百度一下，你就知道</div>
+                    <div class="selection-item" onclick="changeTitle('THIS SITE IS BLOCKED!')">THIS SITE IS BLOCKED!</div>
+                </div>
+
+                <h3>安全模式</h3>
                 <label for="security-mode">
-                    <input type="checkbox" id="security-mode"> 启用极域安全模式 (启用后，离开网页时会自动变为该网页已被阻止，双击后恢复，如果需要关闭，刷新网页)
+                    <input type="checkbox" id="security-mode"> 启用极域安全模式 (启用后，离开网页时会自动变为该网页已被阻止，双击后恢复，更改选择需要刷新网页)
                 </label>
 
             </section>
@@ -717,6 +741,11 @@
         const startDate = '2024-09-13';
         const days = calculateDays(startDate);
         document.getElementById('days').textContent = `本网站已运营 ${days} 天`;
+
+        // 更改页面标题的函数
+        function changeTitle(title) {
+            document.title = title;
+        }
     </script>
 </body>
 </html>
