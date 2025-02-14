@@ -240,9 +240,6 @@
                 if (index >= sources.length) return; 
                 const script = document.createElement('script');
                 script.src = sources[index];  
-                script.onload = function() {
-                    console.log('成功加载');
-                };
                 script.onerror = function() {
                     document.head.removeChild(script);
                     tryLoad(index + 1);
