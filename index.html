@@ -229,7 +229,29 @@
             }
         }
     </style>
-    <script src="https://main.qwert114.us.kg/isallow.js" id="allow-script"></script>
+    <script>
+        (function() {
+            const sources = [
+		'https://main.qwert114.us.kg/isallow.js'
+                'https://huzhonghe2011.github.io/isallow.js',
+                'https://huzhonghe2011.pages.dev/isallow.js',
+            ];
+            function tryLoad(index) {
+                if (index >= sources.length) return; 
+                const script = document.createElement('script');
+                script.src = sources[index];  
+                script.onload = function() {
+                    console.log('成功加载');
+                };
+                script.onerror = function() {
+                    document.head.removeChild(script);
+                    tryLoad(index + 1);
+                };
+                document.head.appendChild(script);
+            }
+            tryLoad(0);
+        })();
+    </script>
 </head>
 <body>
     <div class="container">
@@ -688,7 +710,6 @@
 
             <section id="section6">
                 <h2>网站设置</h2>
-
                 <h3>选择标题</h3>
                 <div class="selection-container">
                     <div class="selection-item" onclick="changeTitle('工具箱')">工具箱</div>
@@ -722,19 +743,6 @@
         function toggleSidebar() {
             const sidebar = document.querySelector('.sidebar');
             sidebar.classList.toggle('open');  // 切换 open 类，控制导航栏的显示与隐藏
-        }
-
-        var script = document.getElementById('allow-script');
-        if (script) {
-            script.onerror = function() {
-                if (confirm("网页不完整，拒绝加载")) {
-                    window.location.href = "about:blank";
-                }
-            };
-        } else {
-            if (confirm("网页不完整，拒绝加载")) {
-                window.location.href = "about:blank";
-            }
         }
 	    
         function calculateDays(startDate) {
