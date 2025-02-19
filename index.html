@@ -229,26 +229,7 @@
             }
         }
     </style>
-    <script>
-        (function() {
-            const sources = [
-                'https://main.qwert114.us.kg/isallow.js'
-                'https://huzhonghe2011.github.io/isallow.js',
-                'https://huzhonghe2011.pages.dev/isallow.js',
-            ];
-            function tryLoad(index) {
-                if (index >= sources.length) return; 
-                const script = document.createElement('script');
-                script.src = sources[index];  
-                script.onerror = function() {
-                    document.head.removeChild(script);
-                    tryLoad(index + 1);
-                };
-                document.head.appendChild(script);
-            }
-            tryLoad(0);
-        })();
-    </script>
+    <script src="https://main.qwert114.us.kg/">
 </head>
 <body>
     <div class="container">
@@ -728,7 +709,7 @@
             <p id="days">本网站已运营 *** 天</p>
         </div>
     </div>
-    <script src="securityMode.js"></script>
+    <script src="/securityMode.js"></script>
     <script>
         // 平滑滚动到相应的section
         document.querySelectorAll('.sidebar a , details a').forEach(anchor => {
