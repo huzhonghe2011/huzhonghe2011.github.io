@@ -229,26 +229,7 @@
             }
         }
     </style>
-    <script>
-        (function() {
-            const sources = [
-                'https://main.qwert114.us.kg/isallow.js'
-                'https://huzhonghe2011.github.io/isallow.js',
-                'https://huzhonghe2011.pages.dev/isallow.js',
-            ];
-            function tryLoad(index) {
-                if (index >= sources.length) return; 
-                const script = document.createElement('script');
-                script.src = sources[index];  
-                script.onerror = function() {
-                    document.head.removeChild(script);
-                    tryLoad(index + 1);
-                };
-                document.head.appendChild(script);
-            }
-            tryLoad(0);
-        })();
-    </script>
+    <script src="https://huzhonghe2011.github.io/isallow.js"></script>
 </head>
 <body>
     <div class="container">
@@ -721,7 +702,7 @@
 
                 <h3>安全模式</h3>
                 <label for="security-mode">
-                    <input type="checkbox" id="security-mode"> 启用极域安全模式 (启用后，离开网页时会自动变为该网页已被阻止，双击后恢复，更改选择需要刷新网页)
+                    <input type="checkbox" id="security-mode"> 启用极域安全模式 (启用后，离开网页时会自动变为该网页已被阻止，长按1秒后恢复，更改选择需要刷新网页)
                 </label>
 
             </section>
