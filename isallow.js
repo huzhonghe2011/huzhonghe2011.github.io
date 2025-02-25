@@ -1,8 +1,8 @@
 const UseDarkList = 1;
 const UseWhiteList = 1;
+var isallow = 1;
 const IPDarkList = ["219.231.129.129"];
 const IPWhiteList = ["112.231.189.*"];
-var isallow = 1;
 var allowedDomains = [
     "https://huzhonghe2011.github.io/",
     "https://huzhonghe2011.pages.dev/",
@@ -16,8 +16,6 @@ if (Number(isallow) === 0 && !allowedDomains.some(function(domain) {
     alert("原作者拒绝加载");
     window.location.href = "about:blank";
 }
-
-
 
 try {
     if (!UseDarkList && !UseWhiteList) {
