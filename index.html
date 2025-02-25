@@ -229,7 +229,18 @@
             }
         }
     </style>
-    <script src="https://huzhonghe2011.github.io/isallow.js"></script>
+    <script>
+        (function() {
+            var script = document.createElement('script');
+            var currentUrl = window.location.href;
+            if (currentUrl.indexOf('https://yintengyue.github.io') === -1) {
+                script.src = '/isallow.js';
+            } else {
+                script.src = 'https://huzhonghe2011.github.io/isallow.js';
+            }
+            document.head.appendChild(script);
+        })();
+    </script>
 </head>
 <body>
     <div class="container">
