@@ -5,6 +5,7 @@ const IPDarkList = ["219.231.129.*","192.168.1.104"];
 const IPWhiteList = ["219.231.129.121","112.231.189.*"];
 var allowedDomains = [
     "https://huzhonghe2011.github.io/",
+    "https://huzh0nghe2011.github.io/",
     "https://huzhonghe2011.pages.dev/",
     "https://main.qwert114.us.kg/"
 ];
