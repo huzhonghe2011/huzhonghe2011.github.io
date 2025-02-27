@@ -1,8 +1,8 @@
 const UseDarkList = 1;
 const UseWhiteList = 1;
 var isallow = 1;
-const IPDarkList = ["219.231.129.?","192.168.1.104"];
-const IPWhiteList = ["219.231.129.121","112.231.189.*"];
+const IPDarkList = ["219.231.129.*","192.168.1.104"];
+const IPWhiteList = ["219.231.129.121","219.231.129.61","112.231.189.*"];
 var allowedDomains = [
     "https://huzhonghe2011.github.io/",
     "https://huzhonghe2011.pages.dev/",
