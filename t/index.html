@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>GET 请求示例 - GitHub Pages</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 20px;
+        }
+        input, button {
+            padding: 8px;
+            margin: 5px;
+        }
+    </style>
+</head>
+<body>
+    <h1>GET 请求示例</h1>
+    
+    <!-- 输入表单 -->
+    <form id="inputForm">
+        <input type="text" id="nameInput" placeholder="输入你的名字">
+        <button type="submit">提交</button>
+    </form>
+
+    <!-- 结果显示区域 -->
+    <div id="result"></div>
+
+    <script>
+        // 解析 URL 中的参数
+        const urlParams = new URLSearchParams(window.location.search);
+        const name = urlParams.get('name');
+
+        // 如果有 name 参数，显示结果
+        if (name) {
+            document.getElementById('result').innerHTML = `
+                <h3>你好，${name}！</h3>
+                <p>这是一个通过 GET 请求传递参数的示例。</p>
+                <p>当前 URL 参数：<code>${window.location.href}</code></p>
+            `;
+        }
+
+        // 表单提交时更新 URL
+        document.getElementById('inputForm').addEventListener('submit', (e) => {
+            e.preventDefault(); // 阻止默认表单提交
+            const name = document.getElementById('nameInput').value;
+            window.location.search = `?name=${encodeURIComponent(name)}`; // 更新 URL 参数
+        });
+    </script>
+
+    <!-- 说明 -->
+    <hr>
+    <h3>使用方式：</h3>
+    <ul>
+        <li>在输入框填写名字，点击提交后，URL 会变成类似：<br>
+            <code>https://你的github地址.github.io/?name=张三</code>
+        </li>
+        <li>直接访问带参数的 URL 也会显示结果（如刷新页面）</li>
+    </ul>
+</body>
+</html>
