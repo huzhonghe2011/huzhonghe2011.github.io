@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>输入密码</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.9-1/crypto-js.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+            text-align: center;
+        }
+        .password-box {
+            margin: 20px 0;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            display: inline-block;
+        }
+        input {
+            padding: 8px;
+            margin: 10px 0;
+            width: 200px;
+            display: block;
+        }
+        button {
+            padding: 8px 16px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+    <div class="password-box">
+        <h2>受保护内容</h2>
+        <input type="password" id="passwordInput" placeholder="输入访问密码" autocomplete="off">
+        <button onclick="verifyPassword()">提交</button>
+    </div>
+
+    <script>
+        // 加密后的链接（使用Python生成的Base64字符串替换此处）
+        const ENCRYPTED_LINK = "xBgEUuiZVPvrtUdyNysB9eofk6crU3wKGdSgdFcto5bJBJLJWBndud8seL3Ljiri";
+        
+        let storedHash = '';
+
+        // 加载存储的哈希值
+        fetch('code.txt')
+            .then(response => response.text())
+            .then(text => storedHash = text.trim())
+            .catch(() => alert('系统初始化失败，请刷新重试'));
+
+        function verifyPassword() {
+            const password = document.getElementById("passwordInput").value;
+            const hash = CryptoJS.SHA256(password).toString(CryptoJS.enc.Hex);
+
+            if (hash !== storedHash) {
+                alert('密码错误');
+                return;
+            }
+
+            try {
+                // 解密链接
+                const key = CryptoJS.enc.Hex.parse(hash);
+                const encryptedData = CryptoJS.enc.Base64.parse(ENCRYPTED_LINK);
+                
+                // 分离IV（前16字节）和密文
+                const iv = encryptedData.clone();
+                iv.sigBytes = 16;
+                iv.clamp();
+                
+                const ciphertext = encryptedData.clone();
+                ciphertext.words.splice(0, 4); // 移除前16字节（4 words）
+                ciphertext.sigBytes -= 16;
+
+                const decrypted = CryptoJS.AES.decrypt(
+                    { ciphertext: ciphertext },
+                    key,
+                    { iv: iv, mode: CryptoJS.mode.CBC, padding: CryptoJS.pad.Pkcs7 }
+                );
+
+                const link = decrypted.toString(CryptoJS.enc.Utf8);
+                if (link) {
+                    window.location.href = link;
+                } else {
+                    throw new Error('解密失败');
+                }
+            } catch (error) {
+                console.error('解密错误:', error);
+                alert('解密失败，请联系管理员');
+            }
+        }
+
+        // 绑定Enter键事件
+        document.getElementById("passwordInput").addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') verifyPassword();
+        });
+    </script>
+</body>
+</html>
