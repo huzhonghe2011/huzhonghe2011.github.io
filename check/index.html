@@ -88,17 +88,26 @@
             .catch(() => alert('系统初始化失败'));
 
         function verifyPassword() {
+            if(!config.encryptedData) return;
+            
             const password = document.getElementById("passwordInput").value;
             const encryptedBytes = CryptoJS.enc.Base64.parse(config.encryptedData).toString(CryptoJS.enc.Latin1);
+
             // 提取salt（前16字节）
             const salt = CryptoJS.enc.Latin1.parse(encryptedBytes.substr(0, 16));
+            
             // 提取IV（接下来16字节）
             const iv = CryptoJS.enc.Latin1.parse(encryptedBytes.substr(16, 16));
+            
             // 提取密文（剩余部分）
             const ciphertext = CryptoJS.enc.Latin1.parse(encryptedBytes.substr(32));
+            
             // 生成密钥
-            const key = CryptoJS.SHA256(CryptoJS.enc.Utf8.parse(password).concat(salt));
-            // 验证当前条目哈希
+            const passwordBytes = CryptoJS.enc.Utf8.parse(password);
+            const combinedBytes = passwordBytes.concat(salt);
+            const key = CryptoJS.SHA256(combinedBytes);
+            
+            // 验证哈希
             const currentVerifyHash = CryptoJS.SHA256(key).toString(CryptoJS.enc.Hex);
             if(currentVerifyHash !== config.verifyHash) {
                 alert('密码错误');
