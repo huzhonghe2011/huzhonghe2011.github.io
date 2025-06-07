@@ -4,7 +4,7 @@ window.addEventListener('load', function () {
     let originalContent = document.body.innerHTML;
     let originalTitle = document.title;
     let pressTimer;
-    let isBlocked = false; // 跟踪当前是否处于被阻止状态
+    let isBlocked = false;
 
     // 从本地存储加载复选框状态
     const savedState = localStorage.getItem('securityEnabledState');
@@ -26,28 +26,25 @@ window.addEventListener('load', function () {
             originalContent = document.body.innerHTML;
             originalTitle = document.title;
         } else {
-            // 关闭保护模式时恢复内容
+            // 关闭保护模式时
             if (isBlocked) {
-                restoreContent(true); // 传递true表示需要刷新
+                restoreContent();
+                // 删除保护标记但不刷新
+                localStorage.removeItem('securityBlocked');
+                isBlocked = false;
             }
         }
     });
 
-    // 扩展的保护触发条件：窗口失去焦点或系统级操作
+    // 扩展的保护触发条件
     document.addEventListener('visibilitychange', handleProtectionTrigger);
     window.addEventListener('blur', handleProtectionTrigger);
 
     function handleProtectionTrigger() {
-        // 避免在页面卸载过程中触发
-        if (document.visibilityState === 'hidden' && performance.navigation.type === 1) {
-            return;
-        }
-        
         if (securityEnabled && !isBlocked && 
            (document.visibilityState === 'hidden' || document.activeElement === null)) {
             blockPage();
             isBlocked = true;
-            // 存储保护标记
             localStorage.setItem('securityBlocked', 'true');
         }
     }
@@ -61,7 +58,7 @@ window.addEventListener('load', function () {
 
     function startPressTimer() {
         if (isBlocked) {
-            pressTimer = setTimeout(() => restoreContent(true), 1000);
+            pressTimer = setTimeout(restoreContent, 1000);
         }
     }
 
@@ -75,22 +72,17 @@ window.addEventListener('load', function () {
         document.body.innerHTML = '<div style="font-size:90px;margin-top:300px;">该网页已被阻止！</div>';
     }
 
-    function restoreContent(shouldRefresh = false) {
+    function restoreContent() {
         document.body.innerHTML = originalContent;
         document.title = originalTitle;
         document.body.style.cssText = "";
         isBlocked = false;
         
-        // 删除保护标记
+        // 删除保护标记但不刷新
         localStorage.removeItem('securityBlocked');
         
-        if (shouldRefresh) {
-            // 刷新前保存复选框状态
-            const currentState = securityCheckbox.checked;
-            // 刷新页面
-            location.reload();
-            // 恢复复选框状态
-            securityCheckbox.checked = currentState;
-        }
+        // 重新绑定事件监听器
+        document.addEventListener('visibilitychange', handleProtectionTrigger);
+        window.addEventListener('blur', handleProtectionTrigger);
     }
 });
