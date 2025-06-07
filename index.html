@@ -735,7 +735,19 @@
                     <input type="checkbox" id="security-mode"> 启用极域安全模式 (启用后，离开网页时会自动变为该网页已被阻止，长按1秒后恢复，更改选择需要刷新网页)
                 </label>
 		<button id="qingchu-anquan" style="margin-top:10px;">清除安全模式状态</button>
-
+                <script>
+                // 清除按钮功能 - 直接在HTML中实现
+                document.getElementById('qingchu-anquan').addEventListener('click', function() {
+                    // 清除所有相关本地存储
+                    localStorage.removeItem('securityEnabledState');
+                    localStorage.removeItem('securityBlocked');
+                    // 重置页面状态
+                    const securityCheckbox = document.getElementById('security-mode');
+                    securityCheckbox.checked = false;
+                    // 刷新页面以完全重置状态
+                    location.reload();
+                });
+                </script>
             </section>
             <p id="days">本网站已运营 *** 天</p>
         </div>
