@@ -1,6 +1,5 @@
 window.addEventListener('load', function () {
     const securityCheckbox = document.getElementById('security-mode');
-    const clearBtn = document.getElementById('qingchu-anquan');
     let securityEnabled = false;
     let originalContent = document.body.innerHTML;
     let originalTitle = document.title;
@@ -35,27 +34,6 @@ window.addEventListener('load', function () {
             // 清除保护标记
             localStorage.removeItem('securityBlocked');
         }
-    });
-
-    // 清除安全模式按钮
-    clearBtn.addEventListener('click', function() {
-        // 清除所有本地存储
-        localStorage.removeItem('securityEnabledState');
-        localStorage.removeItem('securityBlocked');
-        
-        // 重置状态
-        securityEnabled = false;
-        securityCheckbox.checked = false;
-        isBlocked = false;
-        
-        // 恢复内容
-        document.body.innerHTML = originalContent;
-        document.title = originalTitle;
-        document.body.style.cssText = "";
-        
-        // 重新绑定事件
-        document.addEventListener('visibilitychange', handleProtectionTrigger);
-        window.addEventListener('blur', handleProtectionTrigger);
     });
 
     // 扩展的保护触发条件
