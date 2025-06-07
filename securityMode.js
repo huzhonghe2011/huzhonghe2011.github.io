@@ -28,10 +28,7 @@ window.addEventListener('load', function () {
         } else {
             // 关闭保护模式时恢复内容
             if (isBlocked) {
-                restoreContent();
-                // 删除保护标记并刷新
-                localStorage.removeItem('securityBlocked');
-                location.reload();
+                restoreContent(true); // 传递true表示需要刷新
             }
         }
     });
@@ -41,6 +38,11 @@ window.addEventListener('load', function () {
     window.addEventListener('blur', handleProtectionTrigger);
 
     function handleProtectionTrigger() {
+        // 避免在页面卸载过程中触发
+        if (document.visibilityState === 'hidden' && performance.navigation.type === 1) {
+            return;
+        }
+        
         if (securityEnabled && !isBlocked && 
            (document.visibilityState === 'hidden' || document.activeElement === null)) {
             blockPage();
@@ -59,7 +61,7 @@ window.addEventListener('load', function () {
 
     function startPressTimer() {
         if (isBlocked) {
-            pressTimer = setTimeout(restoreContent, 1000);
+            pressTimer = setTimeout(() => restoreContent(true), 1000);
         }
     }
 
@@ -73,14 +75,22 @@ window.addEventListener('load', function () {
         document.body.innerHTML = '<div style="font-size:90px;margin-top:300px;">该网页已被阻止！</div>';
     }
 
-    function restoreContent() {
+    function restoreContent(shouldRefresh = false) {
         document.body.innerHTML = originalContent;
         document.title = originalTitle;
         document.body.style.cssText = "";
         isBlocked = false;
         
-        // 删除保护标记并刷新
+        // 删除保护标记
         localStorage.removeItem('securityBlocked');
-        location.reload();
+        
+        if (shouldRefresh) {
+            // 刷新前保存复选框状态
+            const currentState = securityCheckbox.checked;
+            // 刷新页面
+            location.reload();
+            // 恢复复选框状态
+            securityCheckbox.checked = currentState;
+        }
     }
 });
