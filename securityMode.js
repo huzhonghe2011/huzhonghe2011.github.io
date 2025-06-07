@@ -20,19 +20,19 @@ window.addEventListener('load', function () {
     // 安全模式切换
     securityCheckbox.addEventListener('change', function () {
         securityEnabled = securityCheckbox.checked;
-        localStorage.setItem('securityEnabledState', securityEnabled);
+        localStorage.setItem('securityEnabledState', securityEnabled.toString());
         
         if (securityEnabled) {
+            // 开启保护模式时保存当前内容
             originalContent = document.body.innerHTML;
             originalTitle = document.title;
         } else {
             // 关闭保护模式时
             if (isBlocked) {
                 restoreContent();
-                // 删除保护标记但不刷新
-                localStorage.removeItem('securityBlocked');
-                isBlocked = false;
             }
+            // 无论是否被阻止，都清除保护标记
+            localStorage.removeItem('securityBlocked');
         }
     });
 
@@ -41,6 +41,7 @@ window.addEventListener('load', function () {
     window.addEventListener('blur', handleProtectionTrigger);
 
     function handleProtectionTrigger() {
+        // 仅在保护模式启用、当前未被阻止、且满足触发条件时执行
         if (securityEnabled && !isBlocked && 
            (document.visibilityState === 'hidden' || document.activeElement === null)) {
             blockPage();
@@ -67,6 +68,12 @@ window.addEventListener('load', function () {
     }
 
     function blockPage() {
+        // 保存当前内容作为恢复点
+        if (!isBlocked) {
+            originalContent = document.body.innerHTML;
+            originalTitle = document.title;
+        }
+        
         document.title = "THIS SITE IS BLOCKED!";
         document.body.style.cssText = "text-align:center; background:#36648B; font-family:arial; color:#DEDEDE;";
         document.body.innerHTML = '<div style="font-size:90px;margin-top:300px;">该网页已被阻止！</div>';
@@ -78,11 +85,14 @@ window.addEventListener('load', function () {
         document.body.style.cssText = "";
         isBlocked = false;
         
-        // 删除保护标记但不刷新
+        // 清除保护标记
         localStorage.removeItem('securityBlocked');
         
         // 重新绑定事件监听器
         document.addEventListener('visibilitychange', handleProtectionTrigger);
         window.addEventListener('blur', handleProtectionTrigger);
+        
+        // 恢复后更新复选框状态
+        securityCheckbox.checked = securityEnabled;
     }
 });
