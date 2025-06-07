@@ -243,6 +243,7 @@
     </script>
 </head>
 <body>
+    <script src="securityMode.js"></script>
     <div class="container">
         <!-- 左侧导航栏 -->
         <nav class="sidebar">
@@ -734,7 +735,7 @@
                 <label for="security-mode">
                     <input type="checkbox" id="security-mode"> 启用极域安全模式 (启用后，离开网页时会自动变为该网页已被阻止，长按1秒后恢复，更改选择需要刷新网页)
                 </label>
-		<button id="qingchu-anquan" style="margin-top:10px;">清除安全模式状态</button>
+		    
                 <script>
                 // 清除按钮功能 - 直接在HTML中实现
                 document.getElementById('qingchu-anquan').addEventListener('click', function() {
@@ -748,11 +749,12 @@
                     location.reload();
                 });
                 </script>
+                <button id="qingchu-anquan" style="margin-top:10px;">清除安全模式状态</button>
+		
             </section>
             <p id="days">本网站已运营 *** 天</p>
         </div>
     </div>
-    <script src="securityMode.js"></script>
     <script>
         // 平滑滚动到相应的section
         document.querySelectorAll('.sidebar a , details a').forEach(anchor => {
