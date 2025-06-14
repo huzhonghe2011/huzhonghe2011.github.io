@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>猜方块</title>
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap">
     <style>
         * {
             margin: 0;
@@ -48,8 +47,8 @@
         }
         
         h1 {
-            font-family: 'Press Start 2P', cursive;
-            font-size: 2.2rem;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 2.4rem;
             color: #fff;
             text-shadow: 0 0 10px rgba(52, 152, 219, 0.5);
             margin-bottom: 20px;
@@ -192,6 +191,30 @@
             display: none;
         }
         
+        .minecraft-icon {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            background: #e2b93b;
+            border: 2px solid #c19b2a;
+            border-radius: 3px;
+            position: relative;
+            margin: 0 5px;
+            transform: rotate(45deg);
+        }
+        
+        .minecraft-icon::before {
+            content: "";
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            right: 2px;
+            bottom: 2px;
+            background: #d4a72c;
+            border-radius: 1px;
+            transform: rotate(-45deg);
+        }
+        
         @media (max-width: 768px) {
             h1 {
                 font-size: 1.8rem;
@@ -262,7 +285,8 @@
         </div>
         
         <div class="footer">
-            Minecraft猜方块游戏 &copy; 2023
+            <div class="minecraft-icon"></div>
+            Minecraft猜方块游戏 <div class="minecraft-icon"></div>
         </div>
     </div>
 
@@ -393,11 +417,11 @@
             const resultElement = document.getElementById("result");
             
             if (maxAns === 1) {
-                resultElement.textContent = `你想到的方块是：${block[ans[0]]}`;
+                resultElement.innerHTML = `你想到的方块是：<strong>${block[ans[0]]}</strong>`;
                 resultElement.style.borderLeftColor = '#2ecc71';
             } else if (maxAns > 1) {
-                resultElement.textContent = "可能是以下方块之一: " + 
-                    ans.map(index => block[index]).join(", ");
+                resultElement.innerHTML = "可能是以下方块之一: <br>" + 
+                    ans.map(index => `<span class="block-item">${block[index]}</span>`).join(", ");
                 resultElement.style.borderLeftColor = '#f39c12';
             } else {
                 resultElement.textContent = "数据库中没有匹配的方块";
