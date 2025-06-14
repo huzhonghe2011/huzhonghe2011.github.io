@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>猜方块</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #f2f2f2;
+        }
+        .btn {
+            margin: 10px;
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+        }
+        .btn:hover {
+            background-color: #45a049;
+        }
+        .hidden {
+            display: none;
+        }
+        .question {
+            font-size: 18px;
+            margin: 20px;
+        }
+        #result {
+            font-size: 20px;
+            margin-top: 30px;
+            font-weight: bold;
+        }
+        #loading {
+            margin: 20px;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>猜方块 V0.7</h1>
+    
+    <div id="loading">正在加载数据...</div>
+    
+    <div id="gameContainer" class="hidden">
+        <div id="questionContainer" class="question"></div>
+        <div id="buttonsContainer">
+            <button id="yesButton" class="btn" onclick="answerQuestion('1')">是</button>
+            <button id="noButton" class="btn" onclick="answerQuestion('0')">否</button>
+        </div>
+
+        <div id="result" class="hidden"></div>
+    </div>
+
+    <script>
+        let que = [];
+        let block = [];
+        let data = [];
+        let ans = [];
+        let maxAns = 0;
+        let currentQuestion = 0;
+
+        // 从文件加载数据
+        function loadData() {
+            fetch('data.txt')
+                .then(response => response.text())
+                .then(text => {
+                    parseData(text);
+                    document.getElementById('loading').classList.add('hidden');
+                    document.getElementById('gameContainer').classList.remove('hidden');
+                    startGame();
+                })
+                .catch(error => {
+                    console.error('加载数据失败:', error);
+                    document.getElementById('loading').textContent = '数据加载失败，请检查data.txt文件';
+                });
+        }
+
+        // 解析数据文件
+        function parseData(text) {
+            const lines = text.trim().split('\n');
+            let section = 0;
+            
+            for (let line of lines) {
+                line = line.trim();
+                if (line === '-1') {
+                    section++;
+                    continue;
+                }
+                
+                if (section === 0) {
+                    // 问题部分
+                    if (line) que.push(line);
+                } else if (section === 1) {
+                    // 方块数据部分
+                    const parts = line.split(' ');
+                    if (parts.length >= 2) {
+                        block.push(parts[0]);
+                        data.push(parts[1]);
+                    }
+                }
+            }
+            
+            // 初始化答案数组
+            ans = Array.from({length: block.length}, (_, i) => i);
+            maxAns = block.length;
+        }
+
+        // 初始化游戏
+        function startGame() {
+            document.getElementById("result").classList.add("hidden");
+            document.getElementById("yesButton").disabled = false;
+            document.getElementById("noButton").disabled = false;
+            skipQuestions();
+        }
+
+        // 跳过答案相同的问题
+        function skipQuestions() {
+            while (currentQuestion < que.length) {
+                // 检查当前问题在剩余答案中是否答案相同
+                let allSame = true;
+                let firstValue = null;
+                
+                for (let i = 0; i < maxAns; i++) {
+                    const blockIndex = ans[i];
+                    const value = data[blockIndex][currentQuestion];
+                    
+                    if (firstValue === null) {
+                        firstValue = value;
+                    } else if (value !== firstValue) {
+                        allSame = false;
+                        break;
+                    }
+                }
+                
+                if (!allSame) break;
+                currentQuestion++;
+            }
+            
+            if (currentQuestion >= que.length || maxAns <= 1) {
+                showResult();
+            } else {
+                showQuestion();
+            }
+        }
+
+        // 显示问题
+        function showQuestion() {
+            document.getElementById("questionContainer").textContent = que[currentQuestion];
+        }
+
+        // 处理回答
+        function answerQuestion(answer) {
+            let nextAns = [];
+            for (let i = 0; i < maxAns; i++) {
+                const blockIndex = ans[i];
+                if (data[blockIndex][currentQuestion] === answer) {
+                    nextAns.push(blockIndex);
+                }
+            }
+
+            ans = nextAns;
+            maxAns = ans.length;
+            currentQuestion++;
+            
+            skipQuestions();
+        }
+
+        // 显示结果
+        function showResult() {
+            const resultElement = document.getElementById("result");
+            
+            if (maxAns === 1) {
+                resultElement.textContent = `你想的方块是: ${block[ans[0]]}`;
+            } else if (maxAns > 1) {
+                resultElement.textContent = "可能是以下方块之一: " + 
+                    ans.map(index => block[index]).join(", ");
+            } else {
+                resultElement.textContent = "数据库中没有匹配的方块";
+            }
+
+            resultElement.classList.remove("hidden");
+            document.getElementById("yesButton").disabled = true;
+            document.getElementById("noButton").disabled = true;
+        }
+
+        // 页面加载时开始加载数据
+        window.onload = loadData;
+    </script>
+
+</body>
+</html>
