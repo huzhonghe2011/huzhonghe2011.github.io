@@ -20,14 +20,14 @@
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            padding: 20px;
+            padding: 15px;
         }
         
         .container {
             background: rgba(30, 40, 60, 0.85);
             border-radius: 15px;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
-            padding: 30px;
+            padding: 25px;
             width: 100%;
             max-width: 700px;
             text-align: center;
@@ -47,11 +47,11 @@
         }
         
         h1 {
-            font-family: 'Courier New', Courier, monospace;
+            font-family: 'Segoe UI', 'Microsoft YaHei', sans-serif;
             font-size: 2.4rem;
             color: #fff;
             text-shadow: 0 0 10px rgba(52, 152, 219, 0.5);
-            margin-bottom: 20px;
+            margin-bottom: 15px;
             letter-spacing: 1px;
             background: linear-gradient(45deg, #3498db, #2ecc71);
             -webkit-background-clip: text;
@@ -63,14 +63,14 @@
         .subtitle {
             font-size: 1.1rem;
             color: #a0aec0;
-            margin-bottom: 30px;
+            margin-bottom: 20px;
         }
         
         #info {
             background: rgba(26, 32, 44, 0.7);
             border-radius: 10px;
-            padding: 15px;
-            margin: 20px 0;
+            padding: 12px;
+            margin: 15px 0;
             border: 1px solid #2d3748;
             font-size: 1rem;
         }
@@ -80,7 +80,7 @@
             text-decoration: none;
             transition: all 0.3s;
             background: rgba(100, 181, 246, 0.1);
-            padding: 5px 10px;
+            padding: 4px 8px;
             border-radius: 5px;
             margin-left: 5px;
         }
@@ -93,21 +93,21 @@
         .content-box {
             background: rgba(26, 32, 44, 0.7);
             border-radius: 12px;
-            padding: 25px;
-            margin: 20px 0;
+            padding: 20px;
+            margin: 15px 0;
             border: 1px solid #2d3748;
             box-shadow: inset 0 0 15px rgba(0, 0, 0, 0.3);
         }
         
         #loading {
             font-size: 1.2rem;
-            padding: 20px;
+            padding: 15px;
         }
         
         .spinner {
             width: 40px;
             height: 40px;
-            margin: 20px auto;
+            margin: 15px auto;
             border: 4px solid rgba(255, 255, 255, 0.1);
             border-left-color: #3498db;
             border-radius: 50%;
@@ -121,8 +121,8 @@
         .question {
             font-size: 1.6rem;
             font-weight: bold;
-            margin: 25px 0;
-            min-height: 80px;
+            margin: 20px 0;
+            min-height: 70px;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -133,11 +133,11 @@
             display: flex;
             justify-content: center;
             gap: 20px;
-            margin: 30px 0;
+            margin: 25px 0;
         }
         
         .btn {
-            padding: 15px 30px;
+            padding: 14px 28px;
             font-size: 1.2rem;
             cursor: pointer;
             border: none;
@@ -169,12 +169,12 @@
         
         #result {
             font-size: 1.8rem;
-            margin: 30px 0;
-            padding: 20px;
+            margin: 25px 0;
+            padding: 18px;
             background: rgba(40, 50, 70, 0.7);
             border-radius: 10px;
             border-left: 5px solid #f39c12;
-            min-height: 100px;
+            min-height: 90px;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -182,37 +182,13 @@
         }
         
         .footer {
-            margin-top: 20px;
+            margin-top: 15px;
             color: #718096;
-            font-size: 0.9rem;
+            font-size: 0.85rem;
         }
         
         .hidden {
             display: none;
-        }
-        
-        .minecraft-icon {
-            display: inline-block;
-            width: 20px;
-            height: 20px;
-            background: #e2b93b;
-            border: 2px solid #c19b2a;
-            border-radius: 3px;
-            position: relative;
-            margin: 0 5px;
-            transform: rotate(45deg);
-        }
-        
-        .minecraft-icon::before {
-            content: "";
-            position: absolute;
-            top: 2px;
-            left: 2px;
-            right: 2px;
-            bottom: 2px;
-            background: #d4a72c;
-            border-radius: 1px;
-            transform: rotate(-45deg);
         }
         
         @media (max-width: 768px) {
@@ -282,11 +258,6 @@
             </div>
 
             <div id="result" class="hidden"></div>
-        </div>
-        
-        <div class="footer">
-            <div class="minecraft-icon"></div>
-            Minecraft猜方块游戏 <div class="minecraft-icon"></div>
         </div>
     </div>
 
