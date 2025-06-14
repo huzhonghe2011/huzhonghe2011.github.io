@@ -4,70 +4,266 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>猜方块</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap">
     <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
         body {
-            font-family: Arial, sans-serif;
+            font-family: 'Segoe UI', 'Microsoft YaHei', sans-serif;
+            background: linear-gradient(135deg, #1a2a3a, #2c3e50);
+            color: #ecf0f1;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        
+        .container {
+            background: rgba(30, 40, 60, 0.85);
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+            padding: 30px;
+            width: 100%;
+            max-width: 700px;
             text-align: center;
-            background-color: #f2f2f2;
+            position: relative;
+            overflow: hidden;
+            border: 1px solid #4a5568;
         }
-        .btn {
-            margin: 10px;
-            padding: 10px 20px;
-            font-size: 16px;
-            cursor: pointer;
-            background-color: #4CAF50;
-            color: white;
-            border: none;
+        
+        .container::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 5px;
+            background: linear-gradient(90deg, #3498db, #2ecc71, #e74c3c, #f39c12, #9b59b6);
+        }
+        
+        h1 {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 2.2rem;
+            color: #fff;
+            text-shadow: 0 0 10px rgba(52, 152, 219, 0.5);
+            margin-bottom: 20px;
+            letter-spacing: 1px;
+            background: linear-gradient(45deg, #3498db, #2ecc71);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            font-weight: 700;
+        }
+        
+        .subtitle {
+            font-size: 1.1rem;
+            color: #a0aec0;
+            margin-bottom: 30px;
+        }
+        
+        #info {
+            background: rgba(26, 32, 44, 0.7);
+            border-radius: 10px;
+            padding: 15px;
+            margin: 20px 0;
+            border: 1px solid #2d3748;
+            font-size: 1rem;
+        }
+        
+        #info a {
+            color: #64b5f6;
+            text-decoration: none;
+            transition: all 0.3s;
+            background: rgba(100, 181, 246, 0.1);
+            padding: 5px 10px;
             border-radius: 5px;
+            margin-left: 5px;
         }
+        
+        #info a:hover {
+            text-decoration: underline;
+            background: rgba(100, 181, 246, 0.3);
+        }
+        
+        .content-box {
+            background: rgba(26, 32, 44, 0.7);
+            border-radius: 12px;
+            padding: 25px;
+            margin: 20px 0;
+            border: 1px solid #2d3748;
+            box-shadow: inset 0 0 15px rgba(0, 0, 0, 0.3);
+        }
+        
+        #loading {
+            font-size: 1.2rem;
+            padding: 20px;
+        }
+        
+        .spinner {
+            width: 40px;
+            height: 40px;
+            margin: 20px auto;
+            border: 4px solid rgba(255, 255, 255, 0.1);
+            border-left-color: #3498db;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        .question {
+            font-size: 1.6rem;
+            font-weight: bold;
+            margin: 25px 0;
+            min-height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .btn-container {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin: 30px 0;
+        }
+        
+        .btn {
+            padding: 15px 30px;
+            font-size: 1.2rem;
+            cursor: pointer;
+            border: none;
+            border-radius: 8px;
+            font-weight: bold;
+            transition: all 0.3s;
+            min-width: 120px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+        }
+        
+        #yesButton {
+            background: linear-gradient(to bottom, #2ecc71, #27ae60);
+            color: white;
+        }
+        
+        #noButton {
+            background: linear-gradient(to bottom, #e74c3c, #c0392b);
+            color: white;
+        }
+        
         .btn:hover {
-            background-color: #45a049;
+            transform: translateY(-3px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.3);
         }
+        
+        .btn:active {
+            transform: translateY(1px);
+        }
+        
+        #result {
+            font-size: 1.8rem;
+            margin: 30px 0;
+            padding: 20px;
+            background: rgba(40, 50, 70, 0.7);
+            border-radius: 10px;
+            border-left: 5px solid #f39c12;
+            min-height: 100px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .footer {
+            margin-top: 20px;
+            color: #718096;
+            font-size: 0.9rem;
+        }
+        
         .hidden {
             display: none;
         }
-        .question {
-            font-size: 18px;
-            margin: 20px;
+        
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 1.8rem;
+            }
+            
+            .question {
+                font-size: 1.3rem;
+            }
+            
+            .btn {
+                padding: 12px 25px;
+                font-size: 1.1rem;
+                min-width: 100px;
+            }
+            
+            .btn-container {
+                gap: 15px;
+            }
+            
+            .container {
+                padding: 20px;
+            }
         }
-        #result {
-            font-size: 20px;
-            margin-top: 30px;
-            font-weight: bold;
-        }
-        #loading {
-            margin: 20px;
-        }
-        #info {
-            margin: 15px 0;
-            font-size: 14px;
-            color: #555;
-        }
-        #info a {
-            color: #1a73e8;
-            text-decoration: none;
-        }
-        #info a:hover {
-            text-decoration: underline;
+        
+        @media (max-width: 480px) {
+            h1 {
+                font-size: 1.5rem;
+            }
+            
+            .question {
+                font-size: 1.1rem;
+            }
+            
+            .btn-container {
+                flex-direction: column;
+                gap: 10px;
+            }
+            
+            .btn {
+                width: 100%;
+            }
         }
     </style>
 </head>
 <body>
-
-    <h1>猜方块 V1.1</h1>
-    
-    <div id="info" class="hidden"></div>
-    
-    <div id="loading">正在加载数据...</div>
-    
-    <div id="gameContainer" class="hidden">
-        <div id="questionContainer" class="question"></div>
-        <div id="buttonsContainer">
-            <button id="yesButton" class="btn" onclick="answerQuestion('1')">是</button>
-            <button id="noButton" class="btn" onclick="answerQuestion('0')">否</button>
+    <div class="container">
+        <h1>猜方块</h1>
+        <div class="subtitle">V1.1 - 想想一个方块，我来猜猜看</div>
+        
+        <div id="info" class="hidden"></div>
+        
+        <div id="loading">
+            <div class="spinner"></div>
+            正在加载方块数据...
         </div>
+        
+        <div id="gameContainer" class="hidden">
+            <div class="content-box">
+                <div id="questionContainer" class="question"></div>
+            </div>
+            
+            <div class="btn-container">
+                <button id="yesButton" class="btn" onclick="answerQuestion('1')">是</button>
+                <button id="noButton" class="btn" onclick="answerQuestion('0')">否</button>
+            </div>
 
-        <div id="result" class="hidden"></div>
+            <div id="result" class="hidden"></div>
+        </div>
+        
+        <div class="footer">
+            Minecraft猜方块游戏 &copy; 2023
+        </div>
     </div>
 
     <script>
@@ -92,14 +288,14 @@
                 })
                 .catch(error => {
                     console.error('加载数据失败:', error);
-                    document.getElementById('loading').textContent = '数据加载失败，请检查data.txt文件';
+                    document.getElementById('loading').innerHTML = '<div class="error">数据加载失败，请检查data.txt文件</div>';
                 });
         }
 
         // 更新信息区域
         function updateInfo() {
             const infoElement = document.getElementById("info");
-            infoElement.innerHTML = `目前已加入 <b>${block.length}</b> 个方块, <a href="view.html" target="_blank">点此查看所有已加入的方块</a>`;
+            infoElement.innerHTML = `目前已加入 <b>${block.length}</b> 个方块, <a href="view.html" target="_blank">点此查看所有方块</a>`;
         }
 
         // 解析数据文件
@@ -197,12 +393,15 @@
             const resultElement = document.getElementById("result");
             
             if (maxAns === 1) {
-                resultElement.textContent = `你想的方块是: ${block[ans[0]]}`;
+                resultElement.textContent = `你想到的方块是：${block[ans[0]]}`;
+                resultElement.style.borderLeftColor = '#2ecc71';
             } else if (maxAns > 1) {
                 resultElement.textContent = "可能是以下方块之一: " + 
                     ans.map(index => block[index]).join(", ");
+                resultElement.style.borderLeftColor = '#f39c12';
             } else {
                 resultElement.textContent = "数据库中没有匹配的方块";
+                resultElement.style.borderLeftColor = '#e74c3c';
             }
 
             resultElement.classList.remove("hidden");
@@ -213,6 +412,5 @@
         // 页面加载时开始加载数据
         window.onload = loadData;
     </script>
-
 </body>
 </html>
