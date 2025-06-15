@@ -283,14 +283,14 @@
                 })
                 .catch(error => {
                     console.error('加载数据失败:', error);
-                    document.getElementById('loading').innerHTML = '<div class="error">数据加载失败，请检查data.txt文件</div>';
+                    document.getElementById('loading').innerHTML = '<div class="error">数据加载失败</div>';
                 });
         }
 
         // 更新信息区域
         function updateInfo() {
             const infoElement = document.getElementById("info");
-            infoElement.innerHTML = `目前已加入 <b>${block.length}</b> 个方块, <a href="view.html" target="_blank">点此查看所有方块</a>`;
+            infoElement.innerHTML = `已加入 <b>${block.length}</b> 个方块, <a href="view.html" target="_blank">查看所有方块</a>`;
         }
 
         // 解析数据文件
@@ -388,14 +388,14 @@
             const resultElement = document.getElementById("result");
             
             if (maxAns === 1) {
-                resultElement.innerHTML = `你想到的方块是：<strong>${block[ans[0]]}</strong>`;
+                resultElement.innerHTML = `<strong>${block[ans[0]]}</strong>`;
                 resultElement.style.borderLeftColor = '#2ecc71';
             } else if (maxAns > 1) {
-                resultElement.innerHTML = "可能是以下方块之一: <br>" + 
+                resultElement.innerHTML = "是以下方块之一: <br>" + 
                     ans.map(index => `<span class="block-item">${block[index]}</span>`).join(", ");
                 resultElement.style.borderLeftColor = '#f39c12';
             } else {
-                resultElement.textContent = "数据库中没有匹配的方块";
+                resultElement.textContent = "无匹配方块";
                 resultElement.style.borderLeftColor = '#e74c3c';
             }
 
