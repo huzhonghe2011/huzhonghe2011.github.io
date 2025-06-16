@@ -34,6 +34,10 @@
             position: relative;
             overflow: hidden;
             border: 1px solid #4a5568;
+            min-height: 500px; /* 保持整体高度不变 */
+            display: flex;
+            flex-direction: column;
+            justify-content: center; /* 垂直居中内容 */
         }
         
         .container::before {
@@ -191,31 +195,16 @@
             display: none;
         }
         
-        /* 新添加的样式 */
         #restartButton {
-            background: linear-gradient(to bottom, #f39c12, #e67e22);
+            background: linear-gradient(to bottom, #f39c12, #e67e22) !important;
             color: white;
             margin-top: 20px;
         }
         
         .result-container {
-            margin: 25px 0;
-        }
-        
-        .result-content {
-            min-height: 90px;
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: center;
-        }
-        
-        .block-item {
-            display: inline-block;
-            margin: 5px;
-            padding: 5px 10px;
-            background: rgba(52, 73, 94, 0.7);
-            border-radius: 5px;
         }
         
         @media (max-width: 768px) {
@@ -239,6 +228,7 @@
             
             .container {
                 padding: 20px;
+                min-height: 450px;
             }
         }
         
@@ -251,26 +241,21 @@
                 font-size: 1.1rem;
             }
             
-            /* 修改按钮排列方式为左右排列 */
             .btn-container {
-                flex-direction: row;
-                flex-wrap: wrap;
+                flex-direction: row; /* 保持按钮左右排列 */
                 gap: 10px;
+                flex-wrap: wrap;
+                justify-content: center;
             }
             
             .btn {
-                width: 48%;
-                min-width: auto;
+                width: auto;
+                padding: 10px 20px;
+                font-size: 1rem;
             }
             
-            /* 结果区域适配 */
-            .result-content {
-                font-size: 1.4rem;
-            }
-            
-            #restartButton {
-                width: 100%;
-                max-width: 300px;
+            .container {
+                min-height: 400px;
             }
         }
     </style>
@@ -297,9 +282,7 @@
                 <button id="noButton" class="btn" onclick="answerQuestion('0')">否</button>
             </div>
 
-            <div id="result" class="hidden">
-                <div class="result-content"></div>
-            </div>
+            <div id="result" class="hidden"></div>
         </div>
     </div>
 
@@ -367,24 +350,20 @@
 
         // 初始化游戏
         function startGame() {
-            // 重置显示状态
-            document.getElementById("questionContainer").parentElement.classList.remove("hidden");
-            document.querySelector('.btn-container').classList.remove("hidden");
             document.getElementById("result").classList.add("hidden");
-            
-            // 移除"再来一次"按钮
-            const restartBtn = document.getElementById("restartButton");
-            if (restartBtn) {
-                restartBtn.remove();
-            }
-            
-            // 重置状态
-            ans = Array.from({length: block.length}, (_, i) => i);
-            maxAns = block.length;
-            currentQuestion = 0;
-            
             document.getElementById("yesButton").disabled = false;
             document.getElementById("noButton").disabled = false;
+            
+            // 移除可能存在的重新开始按钮
+            const restartButton = document.getElementById("restartButton");
+            if (restartButton) {
+                restartButton.remove();
+            }
+            
+            // 显示问题区域和按钮
+            document.querySelector(".content-box").classList.remove("hidden");
+            document.querySelector(".btn-container").classList.remove("hidden");
+            
             skipQuestions();
         }
 
@@ -443,41 +422,38 @@
         // 显示结果
         function showResult() {
             const resultElement = document.getElementById("result");
-            const resultContent = resultElement.querySelector('.result-content');
-            
-            // 隐藏问题和按钮区域
-            document.getElementById("questionContainer").parentElement.classList.add("hidden");
-            document.querySelector('.btn-container').classList.add("hidden");
-            
-            // 显示结果区域
-            resultElement.classList.remove("hidden");
-            
-            // 禁用按钮
-            document.getElementById("yesButton").disabled = true;
-            document.getElementById("noButton").disabled = true;
             
             if (maxAns === 1) {
-                resultContent.innerHTML = `你想的方块是：<strong>${block[ans[0]]}</strong>`;
+                resultElement.innerHTML = `你想的方块是：<strong>${block[ans[0]]}</strong>`;
                 resultElement.style.borderLeftColor = '#2ecc71';
             } else if (maxAns > 1) {
-                resultContent.innerHTML = "是以下方块之一: <br>" + 
+                resultElement.innerHTML = "是以下方块之一: <br>" + 
                     ans.map(index => `<span class="block-item">${block[index]}</span>`).join(", ");
                 resultElement.style.borderLeftColor = '#f39c12';
             } else {
-                resultContent.textContent = "数据库中无匹配方块";
+                resultElement.textContent = "数据库中无匹配方块";
                 resultElement.style.borderLeftColor = '#e74c3c';
             }
-            
-            // 添加"再来一次"按钮
+
+            resultElement.classList.remove("hidden");
+            document.getElementById("yesButton").disabled = true;
+            document.getElementById("noButton").disabled = true;
+
+            // 隐藏问题区域和按钮
+            document.querySelector(".content-box").classList.add("hidden");
+            document.querySelector(".btn-container").classList.add("hidden");
+
+            // 添加重新开始按钮
             const restartButton = document.createElement('button');
+            restartButton.textContent = '再来一次';
             restartButton.id = 'restartButton';
             restartButton.className = 'btn';
-            restartButton.textContent = '再来一次';
             restartButton.onclick = function() {
-                startGame();
+                location.reload();
             };
             
-            resultElement.appendChild(restartButton);
+            // 添加到结果区域下方
+            resultElement.insertAdjacentElement('afterend', restartButton);
         }
 
         // 页面加载时开始加载数据
