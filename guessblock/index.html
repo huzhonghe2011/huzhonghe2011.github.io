@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>猜方块游戏</title>
+    <title>猜方块</title>
     <style>
         * {
             margin: 0;
@@ -101,7 +101,6 @@
             margin: 15px 0;
             border: 1px solid #2d3748;
             box-shadow: inset 0 0 15px rgba(0, 0, 0, 0.3);
-            transition: all 0.3s ease;
         }
         
         #loading {
@@ -180,33 +179,24 @@
             border-radius: 10px;
             min-height: 90px;
             display: flex;
+            flex-direction: column;
             align-items: center;
             justify-content: center;
             text-shadow: 0 2px 4px rgba(0,0,0,0.3);
-            flex-direction: column;
+            /* 去掉左边框 */
+            border-left: none;
         }
         
         .result-title {
             font-size: 1.8rem;
-            margin-bottom: 20px;
-            text-align: center;
-        }
-        
-        .block-item {
-            display: inline-block;
-            background: rgba(52, 73, 94, 0.7);
-            padding: 10px 20px;
-            border-radius: 8px;
-            margin: 5px;
+            margin-bottom: 15px;
             font-weight: bold;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.2);
-            transition: all 0.3s;
         }
         
-        .block-item:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 6px 10px rgba(0,0,0,0.3);
-            background: rgba(44, 62, 80, 0.9);
+        .result-content {
+            font-size: 1.8rem;
+            padding: 10px;
+            text-align: center;
         }
         
         .footer {
@@ -220,44 +210,15 @@
         }
         
         #restartButton {
-            background: linear-gradient(to bottom, #f39c12, #e67e22);
+            background: linear-gradient(to bottom, #f39c12, #e67e22) !important;
             color: white;
-            padding: 14px 35px;
-            font-size: 1.2rem;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: all 0.3s;
             margin-top: 20px;
-            font-weight: bold;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
-        }
-        
-        #restartButton:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 6px 12px rgba(0,0,0,0.3);
-            background: linear-gradient(to bottom, #e67e22, #d35400);
         }
         
         .result-container {
             display: flex;
             flex-direction: column;
             align-items: center;
-            width: 100%;
-        }
-        
-        .block-grid {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            gap: 15px;
-            margin-top: 15px;
-        }
-        
-        .result-header {
-            font-size: 1.8rem;
-            margin-bottom: 10px;
-            font-weight: bold;
         }
         
         @media (max-width: 768px) {
@@ -284,9 +245,12 @@
                 min-height: 450px;
             }
             
-            #result {
+            .result-title {
                 font-size: 1.5rem;
-                padding: 15px;
+            }
+            
+            .result-content {
+                font-size: 1.5rem;
             }
         }
         
@@ -307,32 +271,29 @@
             }
             
             .btn {
-                width: 45%;
-                padding: 10px 5px;
+                width: auto;
+                padding: 10px 20px;
                 font-size: 1rem;
-                min-width: auto;
             }
             
             .container {
                 min-height: 400px;
             }
             
-            #result {
+            .result-title {
                 font-size: 1.3rem;
-                padding: 12px;
             }
             
-            .block-item {
-                padding: 8px 15px;
-                font-size: 1rem;
+            .result-content {
+                font-size: 1.3rem;
             }
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>猜方块游戏</h1>
-        <div class="subtitle">V1.2 优化版 - 在脑海中想一个方块，我会尝试猜出它</div>
+        <h1>猜方块</h1>
+        <div class="subtitle">V1.1 版本以网易基岩版为准</div>
         
         <div id="info" class="hidden"></div>
         
@@ -351,82 +312,67 @@
                 <button id="noButton" class="btn" onclick="answerQuestion('0')">否</button>
             </div>
 
-            <div id="result" class="hidden">
-                <div class="result-title" id="resultTitle"></div>
-                <div id="resultBlocks"></div>
-            </div>
+            <div id="result" class="hidden"></div>
         </div>
     </div>
 
     <script>
-        // 模拟数据 - 实际应用中应从data.txt加载
-        const que = [
-            "这个方块是自然生成的？",
-            "这个方块是透明的？",
-            "这个方块会发光？",
-            "这个方块可以燃烧？",
-            "这个方块有爆炸抗性？",
-            "这个方块可以用于合成？",
-            "这个方块是矿石？",
-            "这个方块是植物？",
-            "这个方块是建筑方块？"
-        ];
-        
-        const block = [
-            "草方块", "石头", "橡木木板", "玻璃", "萤石块", 
-            "钻石矿石", "红石矿石", "沙子", "沙砾", "水",
-            "熔岩", "橡树树叶", "煤炭块", "铁块", "金块",
-            "钻石块", "绿宝石块", "红石块", "书架", "南瓜灯"
-        ];
-        
-        const data = [
-            "110000100", // 草方块
-            "110000101", // 石头
-            "100000110", // 橡木木板
-            "101100100", // 玻璃
-            "101111000", // 萤石块
-            "110000111", // 钻石矿石
-            "110000111", // 红石矿石
-            "110000000", // 沙子
-            "110000000", // 沙砾
-            "101100000", // 水
-            "101111000", // 熔岩
-            "110000010", // 橡树树叶
-            "101111110", // 煤炭块
-            "101111110", // 铁块
-            "101111110", // 金块
-            "101111110", // 钻石块
-            "101111110", // 绿宝石块
-            "101111110", // 红石块
-            "101000110", // 书架
-            "101101110"  // 南瓜灯
-        ];
-        
+        let que = [];
+        let block = [];
+        let data = [];
         let ans = [];
         let maxAns = 0;
         let currentQuestion = 0;
 
-        // 模拟加载数据
+        // 从文件加载数据
         function loadData() {
-            // 模拟加载延迟
-            setTimeout(() => {
-                parseData();
-                updateInfo();
-                document.getElementById('loading').classList.add('hidden');
-                document.getElementById('gameContainer').classList.remove('hidden');
-                document.getElementById('info').classList.remove('hidden');
-                startGame();
-            }, 1500);
+            fetch('data.txt')
+                .then(response => response.text())
+                .then(text => {
+                    parseData(text);
+                    updateInfo();
+                    document.getElementById('loading').classList.add('hidden');
+                    document.getElementById('gameContainer').classList.remove('hidden');
+                    document.getElementById('info').classList.remove('hidden');
+                    startGame();
+                })
+                .catch(error => {
+                    console.error('加载数据失败:', error);
+                    document.getElementById('loading').innerHTML = '<div class="error">数据加载失败</div>';
+                });
         }
 
         // 更新信息区域
         function updateInfo() {
             const infoElement = document.getElementById("info");
-            infoElement.innerHTML = `已加入 <b>${block.length}</b> 个方块, <a href="#" onclick="viewAllBlocks()">查看所有方块</a>`;
+            infoElement.innerHTML = `已加入 <b>${block.length}</b> 个方块, <a href="view.html" target="_blank">查看所有方块</a>`;
         }
 
-        // 解析数据
-        function parseData() {
+        // 解析数据文件
+        function parseData(text) {
+            const lines = text.trim().split('\n');
+            let section = 0;
+            
+            for (let line of lines) {
+                line = line.trim();
+                if (line === '-1') {
+                    section++;
+                    continue;
+                }
+                
+                if (section === 0) {
+                    // 问题部分
+                    if (line) que.push(line);
+                } else if (section === 1) {
+                    // 方块数据部分
+                    const parts = line.split(' ');
+                    if (parts.length >= 2) {
+                        block.push(parts[0]);
+                        data.push(parts[1]);
+                    }
+                }
+            }
+            
             // 初始化答案数组
             ans = Array.from({length: block.length}, (_, i) => i);
             maxAns = block.length;
@@ -437,6 +383,17 @@
             document.getElementById("result").classList.add("hidden");
             document.getElementById("yesButton").disabled = false;
             document.getElementById("noButton").disabled = false;
+            
+            // 移除可能存在的重新开始按钮
+            const restartButton = document.getElementById("restartButton");
+            if (restartButton) {
+                restartButton.remove();
+            }
+            
+            // 显示问题区域和按钮
+            document.querySelector(".content-box").classList.remove("hidden");
+            document.querySelector(".btn-container").classList.remove("hidden");
+            
             skipQuestions();
         }
 
@@ -495,30 +452,34 @@
         // 显示结果
         function showResult() {
             const resultElement = document.getElementById("result");
-            const resultTitle = document.getElementById("resultTitle");
-            const resultBlocks = document.getElementById("resultBlocks");
+            resultElement.innerHTML = '';
             
-            // 清空之前的内容
-            resultTitle.innerHTML = "";
-            resultBlocks.innerHTML = "";
+            // 创建结果标题区域
+            const titleElement = document.createElement('div');
+            titleElement.className = 'result-title';
+            
+            // 创建结果内容区域
+            const contentElement = document.createElement('div');
+            contentElement.className = 'result-content';
             
             if (maxAns === 1) {
-                resultTitle.innerHTML = "你想的方块是：";
-                resultBlocks.innerHTML = `<div class="block-item">${block[ans[0]]}</div>`;
+                titleElement.textContent = "你想的方块是：";
+                contentElement.innerHTML = `<strong>${block[ans[0]]}</strong>`;
             } else if (maxAns > 1) {
-                resultTitle.innerHTML = "是以下方块之一：";
-                resultBlocks.innerHTML = '<div class="block-grid">' + 
-                    ans.map(index => `<div class="block-item">${block[index]}</div>`).join("") + 
-                    '</div>';
+                titleElement.textContent = "是以下方块之一：";
+                contentElement.innerHTML = ans.map(index => `<span class="block-item">${block[index]}</span>`).join(", ");
             } else {
-                resultTitle.innerHTML = "数据库中无匹配方块";
-                resultBlocks.innerHTML = "";
+                titleElement.textContent = "数据库中无匹配方块";
             }
 
-            // 显示结果区域
-            resultElement.classList.remove("hidden");
+            resultElement.appendChild(titleElement);
             
-            // 禁用按钮
+            // 如果有匹配结果，显示内容区域
+            if (maxAns > 0) {
+                resultElement.appendChild(contentElement);
+            }
+
+            resultElement.classList.remove("hidden");
             document.getElementById("yesButton").disabled = true;
             document.getElementById("noButton").disabled = true;
 
@@ -530,45 +491,13 @@
             const restartButton = document.createElement('button');
             restartButton.textContent = '再来一次';
             restartButton.id = 'restartButton';
+            restartButton.className = 'btn';
             restartButton.onclick = function() {
                 location.reload();
             };
             
             // 添加到结果区域下方
-            resultElement.appendChild(restartButton);
-        }
-
-        // 查看所有方块
-        function viewAllBlocks() {
-            const resultElement = document.getElementById("result");
-            const resultTitle = document.getElementById("resultTitle");
-            const resultBlocks = document.getElementById("resultBlocks");
-            
-            // 清空之前的内容
-            resultTitle.innerHTML = "所有方块列表";
-            resultBlocks.innerHTML = '<div class="block-grid">' + 
-                block.map(b => `<div class="block-item">${b}</div>`).join("") + 
-                '</div>';
-            
-            // 显示结果区域
-            resultElement.classList.remove("hidden");
-            
-            // 隐藏问题区域和按钮
-            document.querySelector(".content-box").classList.add("hidden");
-            document.querySelector(".btn-container").classList.add("hidden");
-            
-            // 添加重新开始按钮
-            if (!document.getElementById('restartButton')) {
-                const restartButton = document.createElement('button');
-                restartButton.textContent = '开始游戏';
-                restartButton.id = 'restartButton';
-                restartButton.onclick = function() {
-                    location.reload();
-                };
-                
-                // 添加到结果区域下方
-                resultElement.appendChild(restartButton);
-            }
+            resultElement.insertAdjacentElement('afterend', restartButton);
         }
 
         // 页面加载时开始加载数据
