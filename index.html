@@ -3,6 +3,32 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<script>
+(function checkReferrerAndRedirect() {
+    // 获取来源页面的 URL（document.referrer）
+    const referrer = document.referrer;
+    if (!referrer) return; // 无来源页面则退出
+
+    // 解析来源 URL 的路径部分
+    const referrerUrl = new URL(referrer);
+    const referrerPath = referrerUrl.pathname;
+
+    // 检查来源路径是否符合要求
+    const isFromMain = 
+        referrerPath === '/main' || 
+        referrerPath === '/main/' || 
+        referrerPath === '/main/index.html';
+
+    // 检查当前 URL 是否包含 ?cd=qaz 参数
+    const currentParams = new URLSearchParams(window.location.search);
+    const hasCdQaz = currentParams.get('cd') === 'qaz';
+
+    // 满足条件：来源正确且无 cd=qaz 参数 → 跳转到 /main
+    if (isFromMain && !hasCdQaz) {
+        window.location.href = '/main';
+    }
+})();
+</script>
     <title>工具箱</title>
     <style>
         /* 通用样式重置 */
