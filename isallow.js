@@ -1,6 +1,6 @@
 const UseDarkList = 0;
 const UseWhiteList = 0;
-var isallow = 0;
+var isallow = 1;
 const IPDarkList = ["219.231.129.*","192.168.1.104"];
 const IPWhiteList = ["219.231.129.121","219.231.129.60","219.231.129.61","112.224.162.136","112.231.189.*"];
 var allowedDomains = [
