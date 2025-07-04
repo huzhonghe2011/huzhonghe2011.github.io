@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tor浏览器指纹拦截测试</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        :root {
+            --primary-color: #4e2772;
+            --secondary-color: #8c52ff;
+            --success-color: #4caf50;
+            --warning-color: #ff9800;
+            --danger-color: #f44336;
+            --dark-bg: #1a1a2e;
+            --card-bg: #16213e;
+            --text-light: #f0f0f0;
+            --text-muted: #b0b0b0;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, var(--dark-bg) 0%, #0f3460 100%);
+            color: var(--text-light);
+            line-height: 1.6;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        header {
+            text-align: center;
+            padding: 40px 20px;
+            background: rgba(30, 30, 46, 0.7);
+            border-radius: 15px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        h1 {
+            font-size: 2.8rem;
+            margin-bottom: 15px;
+            background: linear-gradient(45deg, #8c52ff, #5ce1e6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+        
+        .subtitle {
+            font-size: 1.2rem;
+            color: var(--text-muted);
+            max-width: 800px;
+            margin: 0 auto 25px;
+        }
+        
+        .tor-status {
+            display: inline-block;
+            padding: 8px 20px;
+            border-radius: 50px;
+            font-weight: bold;
+            margin: 15px 0;
+            background: rgba(0, 0, 0, 0.3);
+            border: 2px solid var(--secondary-color);
+        }
+        
+        .cards-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+        
+        .card {
+            background: var(--card-bg);
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            border: 1px solid rgba(92, 225, 230, 0.2);
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 30px rgba(140, 82, 255, 0.3);
+        }
+        
+        .card-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .card-icon {
+            width: 50px;
+            height: 50px;
+            background: rgba(92, 225, 230, 0.1);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 15px;
+            font-size: 1.5rem;
+            color: #5ce1e6;
+        }
+        
+        .card-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+        
+        .info-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 12px 0;
+            border-bottom: 1px dashed rgba(255, 255, 255, 0.05);
+        }
+        
+        .info-item:last-child {
+            border-bottom: none;
+        }
+        
+        .info-label {
+            font-weight: 500;
+            color: #5ce1e6;
+        }
+        
+        .info-value {
+            font-weight: 500;
+            text-align: right;
+            max-width: 60%;
+            word-break: break-word;
+        }
+        
+        .tor-protected {
+            color: var(--success-color);
+            font-weight: bold;
+        }
+        
+        .tor-vulnerable {
+            color: var(--warning-color);
+            font-weight: bold;
+        }
+        
+        .explanation {
+            background: rgba(30, 30, 46, 0.7);
+            border-radius: 15px;
+            padding: 30px;
+            margin: 40px 0;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .explanation h2 {
+            color: #8c52ff;
+            margin-bottom: 20px;
+            font-size: 1.8rem;
+        }
+        
+        .explanation p {
+            margin-bottom: 15px;
+            font-size: 1.1rem;
+        }
+        
+        .tips {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-top: 30px;
+        }
+        
+        .tip {
+            background: rgba(92, 225, 230, 0.1);
+            padding: 20px;
+            border-radius: 12px;
+            border-left: 4px solid #5ce1e6;
+        }
+        
+        .tip h3 {
+            color: #5ce1e6;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .tip h3 i {
+            margin-right: 10px;
+        }
+        
+        footer {
+            text-align: center;
+            padding: 30px 0;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            margin-top: 40px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .highlight {
+            background: linear-gradient(45deg, #8c52ff, #5ce1e6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: bold;
+        }
+        
+        @media (max-width: 768px) {
+            .cards-container {
+                grid-template-columns: 1fr;
+            }
+            
+            h1 {
+                font-size: 2.2rem;
+            }
+            
+            .subtitle {
+                font-size: 1rem;
+            }
+        }
+        
+        .pulse {
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(92, 225, 230, 0.4); }
+            70% { box-shadow: 0 0 0 10px rgba(92, 225, 230, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(92, 225, 230, 0); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1><i class="fas fa-user-secret"></i> Tor浏览器指纹拦截测试</h1>
+            <p class="subtitle">此页面检测Tor浏览器对常见浏览器指纹收集技术的防护能力。实时显示的信息中，绿色标记表示Tor可能拦截的数据，黄色表示可能暴露的信息。</p>
+            
+            <div class="tor-status">
+                <i class="fas fa-shield-alt"></i> 测试状态: <span id="tor-detection">正在检测浏览器类型...</span>
+            </div>
+        </header>
+        
+        <div class="cards-container">
+            <div class="card pulse">
+                <div class="card-header">
+                    <div class="card-icon">
+                        <i class="fas fa-desktop"></i>
+                    </div>
+                    <h2 class="card-title">屏幕与视窗信息</h2>
+                </div>
+                <div class="card-content">
+                    <div class="info-item">
+                        <span class="info-label">屏幕分辨率</span>
+                        <span class="info-value" id="screen-resolution"></span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">可用屏幕大小</span>
+                        <span class="info-value" id="screen-avail"></span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">视窗大小</span>
+                        <span class="info-value" id="window-size"></span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">设备像素比</span>
+                        <span class="info-value" id="pixel-ratio"></span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">色彩深度</span>
+                        <span class="info-value" id="color-depth"></span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-icon">
+                        <i class="fas fa-fingerprint"></i>
+                    </div>
+                    <h2 class="card-title">浏览器标识</h2>
+                </div>
+                <div class="card-content">
+                    <div class="info-item">
+                        <span class="info-label">用户代理</span>
+                        <span class="info-value" id="user-agent"></span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">浏览器语言</span>
+                        <span class="info-value" id="browser-lang"></span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">支持Cookies</span>
+                        <span class="info-value" id="cookies-enabled"></span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">时区</span>
+                        <span class="info-value" id="timezone"></span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">在线状态</span>
+                        <span class="info-value" id="online-status"></span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-icon">
+                        <i class="fas fa-code"></i>
+                    </div>
+                    <h2 class="card-title">高级指纹信息</h2>
+                </div>
+                <div class="card-content">
+                    <div class="info-item">
+                        <span class="info-label">WebGL 渲染器</span>
+                        <span class="info-value" id="webgl-renderer"></span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Canvas 指纹</span>
+                        <span class="info-value" id="canvas-fingerprint"></span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">音频上下文指纹</span>
+                        <span class="info-value" id="audio-fingerprint"></span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">支持的字体</span>
+                        <span class="info-value" id="fonts"></span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">硬件并发数</span>
+                        <span class="info-value" id="hardware-concurrency"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="explanation">
+            <h2><i class="fas fa-lightbulb"></i> Tor浏览器如何保护您的隐私</h2>
+            <p>Tor浏览器通过多种技术保护您的隐私，防止网站通过浏览器指纹追踪您的身份：</p>
+            
+            <div class="tips">
+                <div class="tip">
+                    <h3><i class="fas fa-sync-alt"></i> 统一化分辨率</h3>
+                    <p>Tor浏览器将报告标准化的屏幕分辨率，使所有Tor用户看起来具有相同的屏幕尺寸，防止通过分辨率进行追踪。</p>
+                </div>
+                
+                <div class="tip">
+                    <h3><i class="fas fa-ban"></i> 禁用危险API</h3>
+                    <p>Tor默认禁用WebGL、电池状态API等可能泄露设备信息的API，并限制Canvas指纹识别。</p>
+                </div>
+                
+                <div class="tip">
+                    <h3><i class="fas fa-user-friends"></i> 用户代理标准化</h3>
+                    <p>所有Tor浏览器用户使用相同的用户代理字符串，使您无法通过浏览器类型和版本被识别。</p>
+                </div>
+            </div>
+            
+            <p style="margin-top: 25px;"><span class="highlight">注意：</span> 虽然Tor提供了强大的保护，但某些高级指纹技术仍可能识别用户。建议保持Tor浏览器更新，并避免安装可能破坏匿名性的插件。</p>
+        </div>
+        
+        <footer>
+            <p>此页面仅用于教育目的，展示Tor浏览器的隐私保护功能 | 数据仅存储在您的浏览器中，不会被发送到任何服务器</p>
+            <p>测试结果仅供参考，实际隐私保护效果可能因Tor版本和配置而异</p>
+        </footer>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // 检测是否为Tor浏览器
+            const isTor = navigator.userAgent.includes('Tor');
+            document.getElementById('tor-detection').textContent = isTor ? 
+                '已检测到Tor浏览器 - 保护模式开启' : 
+                '未检测到Tor浏览器 - 普通模式';
+            
+            if (isTor) {
+                document.getElementById('tor-detection').className = 'tor-protected';
+            }
+            
+            // 屏幕信息
+            document.getElementById('screen-resolution').textContent = 
+                `${screen.width} × ${screen.height}`;
+            document.getElementById('screen-resolution').className += 
+                isTor ? ' tor-protected' : '';
+                
+            document.getElementById('screen-avail').textContent = 
+                `${screen.availWidth} × ${screen.availHeight}`;
+            document.getElementById('screen-avail').className += 
+                isTor ? ' tor-protected' : '';
+                
+            document.getElementById('window-size').textContent = 
+                `${window.innerWidth} × ${window.innerHeight}`;
+                
+            document.getElementById('pixel-ratio').textContent = 
+                window.devicePixelRatio;
+                
+            document.getElementById('color-depth').textContent = 
+                `${screen.colorDepth} 位`;
+            
+            // 浏览器标识
+            document.getElementById('user-agent').textContent = 
+                navigator.userAgent;
+            document.getElementById('user-agent').className += 
+                isTor ? ' tor-protected' : '';
+                
+            document.getElementById('browser-lang').textContent = 
+                navigator.language || navigator.userLanguage;
+                
+            document.getElementById('cookies-enabled').textContent = 
+                navigator.cookieEnabled ? '是' : '否';
+                
+            document.getElementById('timezone').textContent = 
+                Intl.DateTimeFormat().resolvedOptions().timeZone;
+            document.getElementById('timezone').className += 
+                isTor ? ' tor-protected' : '';
+                
+            document.getElementById('online-status').textContent = 
+                navigator.onLine ? '在线' : '离线';
+            
+            // 高级指纹信息
+            try {
+                const canvas = document.createElement('canvas');
+                const ctx = canvas.getContext('2d');
+                ctx.textBaseline = 'top';
+                ctx.font = '14px Arial';
+                ctx.fillStyle = '#f60';
+                ctx.fillRect(125, 1, 62, 20);
+                ctx.fillStyle = '#069';
+                ctx.fillText('指纹测试', 2, 15);
+                ctx.strokeStyle = 'rgba(102, 204, 0, 0.7)';
+                ctx.strokeRect(0, 0, canvas.width, canvas.height);
+                
+                document.getElementById('canvas-fingerprint').textContent = 
+                    canvas.toDataURL().substring(0, 40) + '...';
+            } catch(e) {
+                document.getElementById('canvas-fingerprint').textContent = 
+                    '被浏览器阻止';
+                document.getElementById('canvas-fingerprint').className += ' tor-protected';
+            }
+            
+            // 简化版WebGL检测
+            try {
+                const gl = document.createElement('canvas').getContext('webgl');
+                if (gl) {
+                    const debugInfo = gl.getExtension('WEBGL_debug_renderer_info');
+                    if (debugInfo) {
+                        const renderer = gl.getParameter(debugInfo.UNMASKED_RENDERER_WEBGL);
+                        document.getElementById('webgl-renderer').textContent = 
+                            renderer.substring(0, 30) + (renderer.length > 30 ? '...' : '');
+                    } else {
+                        document.getElementById('webgl-renderer').textContent = 
+                            '信息不可用';
+                    }
+                } else {
+                    document.getElementById('webgl-renderer').textContent = 
+                        'WebGL不可用';
+                }
+            } catch(e) {
+                document.getElementById('webgl-renderer').textContent = 
+                    '被浏览器阻止';
+            }
+            
+            if (isTor) {
+                document.getElementById('webgl-renderer').className += ' tor-protected';
+            }
+            
+            // 其他信息
+            document.getElementById('hardware-concurrency').textContent = 
+                navigator.hardwareConcurrency || '不可用';
+            document.getElementById('hardware-concurrency').className += 
+                isTor ? ' tor-protected' : '';
+                
+            document.getElementById('audio-fingerprint').textContent = 
+                isTor ? '被Tor浏览器阻止' : '需要高级检测';
+                
+            document.getElementById('fonts').textContent = 
+                isTor ? '标准化字体列表' : '需要高级检测';
+        });
+    </script>
+</body>
+</html>
