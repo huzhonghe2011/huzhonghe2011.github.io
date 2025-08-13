@@ -490,5 +490,20 @@
         });
     </script>
     <script src="../2.js"></script>
+    <script>
+        // 初始化配置
+        DisableDevtool({
+            debugger: true, // 启用无限debugger阻断
+            interval: 800,  // 每800ms检测一次
+            ondevtoolopen: function(type) {
+                console.error("警告：开发者工具已被禁用！检测方式：" + type);
+                // 可选：弹出一个警告框 (对用户可见)
+                alert('检测到非法调试操作，页面功能受限！');
+                // 可选但谨慎：跳转到错误页或空白页
+                // window.location.href = 'error.html'; // 确保你有这个页面
+            }
+        });
+    </script>
+    
 </body>
 </html>
