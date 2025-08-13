@@ -60,31 +60,7 @@
     }
     document.addEventListener('visibilitychange', visibilityChangeHandler);
 
-    // 定期检查开发者工具状态
-    const detectionInterval = setInterval(() => {
-        const now = Date.now();
-        
-        // 忽略页面不可见时的检测
-        if (document.visibilityState !== 'visible') {
-            lastDetectionTime = now; // 防止误判
-            return;
-        }
-        
-        const timeSinceLastDetection = now - lastDetectionTime;
-        const timeSinceVisible = now - lastVisibleTime;
-        
-        // 双重检测：开发者工具状态和页面活跃状态
-        if (timeSinceLastDetection > 300 && timeSinceVisible < 1000) {
-            redirectSilently();
-        }
-        
-        // 触发属性检测
-        try {
-            console.log(devToolsDetector.id);
-        } catch(e) {
-            redirectSilently();
-        }
-    }, 150); // 稍长的检测间隔
+
 
     // 禁用右键菜单
     function contextMenuHandler(e) {
@@ -175,4 +151,30 @@
             redirectSilently();
         }
     }, 300);
+
+        // 定期检查开发者工具状态
+    const detectionInterval = setInterval(() => {
+        const now = Date.now();
+        
+        // 忽略页面不可见时的检测
+        if (document.visibilityState !== 'visible') {
+            lastDetectionTime = now; // 防止误判
+            return;
+        }
+        
+        const timeSinceLastDetection = now - lastDetectionTime;
+        const timeSinceVisible = now - lastVisibleTime;
+        
+        // 双重检测：开发者工具状态和页面活跃状态
+        if (timeSinceLastDetection > 300 && timeSinceVisible < 1000) {
+            redirectSilently();
+        }
+        
+        // 触发属性检测
+        try {
+            console.log(devToolsDetector.id);
+        } catch(e) {
+            redirectSilently();
+        }
+    }, 150); // 稍长的检测间隔
 })();
