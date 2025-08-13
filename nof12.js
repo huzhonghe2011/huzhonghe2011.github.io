@@ -1,15 +1,23 @@
-// nof12.js - 开发者工具拦截与保护系统
+// nof12.js - 优化版开发者工具拦截系统
 (function() {
+    // 状态标志
+    let isRedirecting = false;
+    let lastVisibleTime = Date.now();
+    
     // 静默跳转函数
     function redirectSilently() {
+        if (isRedirecting) return;
+        isRedirecting = true;
+        
         // 清除所有检测机制
         clearInterval(detectionInterval);
         document.removeEventListener('contextmenu', contextMenuHandler);
         document.removeEventListener('keydown', keyDownHandler);
         window.removeEventListener('load', initialDetection);
+        document.removeEventListener('visibilitychange', visibilityChangeHandler);
         
         // 执行跳转
-        window.location.href = 'https://www.yuanshen.com/#/';
+        window.location.href = 'https://example.com/redirect';
     }
 
     // 创建检测元素
@@ -30,20 +38,43 @@
 
     // 初始检测
     function initialDetection() {
+        // 初始检测使用更长的阈值
         const now = Date.now();
-        // 延长初始检测时间阈值
-        if (now - lastDetectionTime > 500) {
+        if (now - lastDetectionTime > 1000) {
             redirectSilently();
         }
     }
 
+    // 处理页面可见性变化
+    function visibilityChangeHandler() {
+        if (document.visibilityState === 'visible') {
+            // 页面重新可见时更新时间戳
+            lastVisibleTime = Date.now();
+            // 立即触发一次检测
+            try {
+                console.log(devToolsDetector.id);
+            } catch(e) {
+                redirectSilently();
+            }
+        }
+    }
+    document.addEventListener('visibilitychange', visibilityChangeHandler);
+
     // 定期检查开发者工具状态
     const detectionInterval = setInterval(() => {
         const now = Date.now();
-        const timeSinceLastDetection = now - lastDetectionTime;
         
-        // 如果检测间隔异常，可能开发者工具已打开
-        if (timeSinceLastDetection > 200) {
+        // 忽略页面不可见时的检测
+        if (document.visibilityState !== 'visible') {
+            lastDetectionTime = now; // 防止误判
+            return;
+        }
+        
+        const timeSinceLastDetection = now - lastDetectionTime;
+        const timeSinceVisible = now - lastVisibleTime;
+        
+        // 双重检测：开发者工具状态和页面活跃状态
+        if (timeSinceLastDetection > 300 && timeSinceVisible < 1000) {
             redirectSilently();
         }
         
@@ -51,51 +82,54 @@
         try {
             console.log(devToolsDetector.id);
         } catch(e) {
-            // 如果检测元素被移除，也视为异常
             redirectSilently();
         }
-    }, 100);
+    }, 150); // 稍长的检测间隔
 
     // 禁用右键菜单
     function contextMenuHandler(e) {
         e.preventDefault();
         // 右键菜单时也触发检测
-        console.log(devToolsDetector.id);
+        try {
+            console.log(devToolsDetector.id);
+        } catch(e) {
+            redirectSilently();
+        }
     }
     document.addEventListener('contextmenu', contextMenuHandler);
 
-    // 拦截开发者工具快捷键
+    // 拦截开发者工具快捷键 - 最高优先级
     function keyDownHandler(e) {
-        // F12 - 最高优先级拦截
+        // F12
         if (e.key === 'F12') {
             e.preventDefault();
             redirectSilently();
-            return; // 立即返回，不执行后续检测
+            return;
         }
         
-        // Ctrl+Shift+I
-        if (e.ctrlKey && e.shiftKey && e.key === 'I') {
+        // Ctrl+Shift+I (Cmd+Opt+I for Mac)
+        if ((e.ctrlKey || e.metaKey) && e.shiftKey && (e.key === 'I' || e.key === 'i')) {
             e.preventDefault();
             redirectSilently();
             return;
         }
         
-        // Ctrl+U
-        if (e.ctrlKey && e.key === 'u') {
+        // Ctrl+U (查看源代码)
+        if ((e.ctrlKey || e.metaKey) && e.key === 'u') {
             e.preventDefault();
             redirectSilently();
             return;
         }
         
-        // Ctrl+Shift+J
-        if (e.ctrlKey && e.shiftKey && e.key === 'J') {
+        // Ctrl+Shift+J (Cmd+Opt+J for Mac)
+        if ((e.ctrlKey || e.metaKey) && e.shiftKey && e.key === 'J') {
             e.preventDefault();
             redirectSilently();
             return;
         }
         
-        // Ctrl+Shift+C
-        if (e.ctrlKey && e.shiftKey && e.key === 'C') {
+        // Ctrl+Shift+C (检查元素)
+        if ((e.ctrlKey || e.metaKey) && e.shiftKey && e.key === 'C') {
             e.preventDefault();
             redirectSilently();
             return;
@@ -116,22 +150,29 @@
         }
         
         // 额外检测：任何Ctrl+Alt+Shift组合键
-        if (e.ctrlKey && e.altKey && e.shiftKey) {
+        if ((e.ctrlKey || e.metaKey) && e.altKey && e.shiftKey) {
             e.preventDefault();
             redirectSilently();
             return;
         }
-        
-        // 触发常规检测（针对其他可能的开发者工具打开方式）
-        console.log(devToolsDetector.id);
     }
     document.addEventListener('keydown', keyDownHandler);
 
     // 页面加载完成后立即检测
     window.addEventListener('load', initialDetection);
     
-    // 初始立即触发一次检测
+    // 初始立即触发检测 - 解决预打开开发者工具的问题
     setTimeout(() => {
-        console.log(devToolsDetector.id);
-    }, 50);
+        try {
+            console.log(devToolsDetector.id);
+            
+            // 初始状态检测
+            const initialCheckTime = Date.now();
+            if (initialCheckTime - lastDetectionTime > 300) {
+                redirectSilently();
+            }
+        } catch(e) {
+            redirectSilently();
+        }
+    }, 300);
 })();
