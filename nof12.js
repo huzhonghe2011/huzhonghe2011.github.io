@@ -16,7 +16,7 @@
         window.removeEventListener('load', initialDetection);
         
         // 执行跳转
-        window.location.href = 'https://example.com/redirect';
+        window.location.href = 'https://www.yuanshen.com/#/';
     }
 
     // 主要检测函数 - 使用debugger检测
