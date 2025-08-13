@@ -1,8 +1,9 @@
-// nof12.js - 开发者工具拦截与检测系统
+// nof12.js - 优化版开发者工具拦截系统
 (function() {
     // 状态标志
     let devtoolsOpen = false;
     let isRedirecting = false;
+    let lastDebuggerTime = 0;
     
     // 静默跳转函数
     function redirectSilently() {
@@ -16,38 +17,65 @@
         window.removeEventListener('load', initialDetection);
         
         // 执行跳转
-        window.location.href = 'https://www.yuanshen.com/#/';
+        window.location.href = 'https://example.com/redirect';
     }
 
-    // 主要检测函数 - 使用debugger检测
+    // 优化的debugger检测
     function checkDevTools() {
-        if (devtoolsOpen) return true;
+        // 避免频繁检测
+        const now = Date.now();
+        if (now - lastDebuggerTime < 1000) return devtoolsOpen;
+        lastDebuggerTime = now;
         
-        const startTime = performance.now();
+        let detected = false;
         
         try {
-            // 创建并执行debugger检测
-            (function() {
-                // 使用特殊对象防止被直接检测
-                const obj = {};
-                Object.defineProperty(obj, 'isDevTools', {
-                    get: () => {
-                        // 强制进入debugger
-                        debugger;
-                    }
-                });
-                
-                // 尝试访问属性触发debugger
-                obj.isDevTools;
-            })();
+            // 创建特殊检测对象
+            const debuggerObject = {};
+            
+            // 添加调试陷阱
+            Object.defineProperty(debuggerObject, 'devToolsTrap', {
+                get: function() {
+                    detected = true;
+                    return true;
+                }
+            });
+            
+            // 创建iframe进行隔离检测
+            const iframe = document.createElement('iframe');
+            iframe.style.display = 'none';
+            document.body.appendChild(iframe);
+            
+            // 在iframe中设置调试器
+            const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+            iframeDoc.open();
+            iframeDoc.write(`
+                <script>
+                    // 设置调试陷阱
+                    Object.defineProperty(window, 'debuggerTrap', {
+                        get: function() {
+                            parent.postMessage('devtools-detected', '*');
+                            debugger;
+                        }
+                    });
+                </script>
+            `);
+            iframeDoc.close();
+            
+            // 尝试访问属性触发检测
+            iframe.contentWindow.debuggerTrap;
+            
+            // 清理iframe
+            setTimeout(() => {
+                document.body.removeChild(iframe);
+            }, 100);
+            
         } catch (e) {
             // 忽略错误
         }
         
-        const diff = performance.now() - startTime;
-        
-        // 如果执行时间异常长，说明debugger被触发
-        if (diff > 200) {
+        // 如果检测到开发者工具
+        if (detected) {
             devtoolsOpen = true;
             return true;
         }
@@ -57,32 +85,41 @@
 
     // 初始检测
     function initialDetection() {
-        // 立即检测一次
-        if (checkDevTools()) {
-            redirectSilently();
-        }
-    }
-
-    // 定期检查开发者工具状态
-    let lastCheckTime = Date.now();
-    const detectionInterval = setInterval(() => {
-        // 每10次检测使用一次debugger检测（避免性能问题）
-        if (Math.random() < 0.1 || Date.now() - lastCheckTime > 3000) {
+        // 延迟检测避免误判
+        setTimeout(() => {
             if (checkDevTools()) {
                 redirectSilently();
             }
-            lastCheckTime = Date.now();
+        }, 1500);
+    }
+
+    // 消息监听 - 处理iframe检测结果
+    window.addEventListener('message', (e) => {
+        if (e.data === 'devtools-detected') {
+            devtoolsOpen = true;
+            redirectSilently();
         }
-        
-        // 常规检测：检查窗口尺寸变化
+    });
+
+    // 定期检查开发者工具状态
+    const detectionInterval = setInterval(() => {
+        // 轻量级检测：窗口尺寸变化
         const widthThreshold = window.outerWidth - window.innerWidth > 100;
         const heightThreshold = window.outerHeight - window.innerHeight > 100;
         
         if (widthThreshold || heightThreshold) {
             devtoolsOpen = true;
             redirectSilently();
+            return;
         }
-    }, 500);
+        
+        // 每5秒进行一次debugger检测
+        if (Date.now() - lastDebuggerTime > 5000) {
+            if (checkDevTools()) {
+                redirectSilently();
+            }
+        }
+    }, 1000);
 
     // 禁用右键菜单
     function contextMenuHandler(e) {
@@ -127,23 +164,15 @@
     // 页面加载完成后立即检测
     window.addEventListener('load', initialDetection);
     
-    // 初始立即触发检测 - 解决预打开问题
+    // 初始轻量级检测 - 解决预打开问题
     setTimeout(() => {
-        if (checkDevTools()) {
+        // 初始尺寸检测
+        const widthThreshold = window.outerWidth - window.innerWidth > 100;
+        const heightThreshold = window.outerHeight - window.innerHeight > 100;
+        
+        if (widthThreshold || heightThreshold) {
+            devtoolsOpen = true;
             redirectSilently();
         }
-    }, 1000);
-    
-    // 额外检测：开发者工具打开事件
-    const devtoolsCheck = () => {
-        if (checkDevTools()) {
-            redirectSilently();
-        }
-    };
-    
-    // 添加多种事件监听确保检测
-    window.addEventListener('resize', devtoolsCheck);
-    window.addEventListener('mousemove', devtoolsCheck);
-    window.addEventListener('focus', devtoolsCheck);
-    window.addEventListener('blur', devtoolsCheck);
+    }, 500);
 })();
