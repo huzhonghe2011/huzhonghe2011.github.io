@@ -1,9 +1,9 @@
-// nof12.js - 可靠开发者工具拦截系统
+// nof12.js - 精准开发者工具拦截系统
 (function() {
     // 状态标志
     let devtoolsOpen = false;
     let isRedirecting = false;
-    let lastCheckTime = 0;
+    let lastDebuggerTime = 0;
     
     // 静默跳转函数
     function redirectSilently() {
@@ -20,59 +20,74 @@
         window.location.href = 'https://example.com/redirect';
     }
 
-    // 优化的开发者工具检测
+    // 安全可靠的debugger检测
     function checkDevTools() {
         // 避免频繁检测
         const now = Date.now();
-        if (now - lastCheckTime < 1000) return devtoolsOpen;
-        lastCheckTime = now;
+        if (now - lastDebuggerTime < 1500) return devtoolsOpen;
+        lastDebuggerTime = now;
         
-        // 方法1: 控制台检测
-        const start = Date.now();
-        console.log('detection');
-        console.clear();
-        const diff = Date.now() - start;
-        
-        // 控制台操作耗时检测
-        if (diff > 100) {
-            return true;
-        }
-        
-        // 方法2: 特殊属性检测
-        try {
-            const element = document.createElement('div');
-            Object.defineProperty(element, 'id', {
-                get: function() {
-                    devtoolsOpen = true;
-                    return 'detection';
-                }
-            });
-            
-            // 触发检测
-            console.log(element.id);
-        } catch(e) {
-            // 忽略错误
-        }
-        
-        return devtoolsOpen;
+        return new Promise(resolve => {
+            try {
+                // 创建隔离检测环境
+                const iframe = document.createElement('iframe');
+                iframe.style.display = 'none';
+                document.body.appendChild(iframe);
+                
+                // 设置检测超时
+                const detectionTimeout = setTimeout(() => {
+                    document.body.removeChild(iframe);
+                    resolve(false);
+                }, 300);
+                
+                // 在iframe中设置调试器陷阱
+                iframe.contentWindow.eval(`
+                    Object.defineProperty(window, 'debuggerTrap', {
+                        get: function() {
+                            clearTimeout(parent.detectionTimeout);
+                            parent.postMessage('devtools-detected', '*');
+                            debugger;
+                        }
+                    });
+                    // 触发检测
+                    window.debuggerTrap;
+                `);
+                
+                // 保存超时引用
+                window.detectionTimeout = detectionTimeout;
+                
+            } catch (e) {
+                resolve(false);
+            }
+        });
     }
+
+    // 消息监听 - 处理检测结果
+    window.addEventListener('message', (e) => {
+        if (e.data === 'devtools-detected') {
+            devtoolsOpen = true;
+            redirectSilently();
+        }
+    });
 
     // 初始检测
     function initialDetection() {
         // 延迟检测避免误判
         setTimeout(() => {
-            if (checkDevTools()) {
-                redirectSilently();
-            }
-        }, 1000);
+            checkDevTools().then(result => {
+                if (result) redirectSilently();
+            });
+        }, 2000);
     }
 
     // 定期检查开发者工具状态
     const detectionInterval = setInterval(() => {
-        if (checkDevTools()) {
-            redirectSilently();
+        if (!devtoolsOpen) {
+            checkDevTools().then(result => {
+                if (result) redirectSilently();
+            });
         }
-    }, 2000); // 降低检测频率
+    }, 3000); // 较长的检测间隔
 
     // 禁用右键菜单
     function contextMenuHandler(e) {
@@ -111,29 +126,20 @@
             e.preventDefault();
             return;
         }
-        
-        // Ctrl+Shift+K (Firefox开发者工具)
-        if ((e.ctrlKey || e.metaKey) && e.shiftKey && e.key === 'K') {
-            e.preventDefault();
-            return;
-        }
     }
     document.addEventListener('keydown', keyDownHandler);
 
     // 页面加载完成后立即检测
     window.addEventListener('load', initialDetection);
     
-    // 初始轻量级检测
+    // 初始轻量级检测 - 避免立即跳转
     setTimeout(() => {
-        // 简单控制台检测
-        const start = Date.now();
-        console.log('initial-detection');
-        console.clear();
-        const diff = Date.now() - start;
-        
-        // 如果控制台操作耗时过长
-        if (diff > 150) {
-            redirectSilently();
-        }
-    }, 500);
+        // 初始检测但不跳转
+        checkDevTools().then(result => {
+            if (result) {
+                devtoolsOpen = true;
+                // 不立即跳转，等待定期检测处理
+            }
+        });
+    }, 1000);
 })();
