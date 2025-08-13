@@ -1,9 +1,9 @@
-// nof12.js - 优化版开发者工具拦截系统
+// nof12.js - 可靠开发者工具拦截系统
 (function() {
     // 状态标志
     let devtoolsOpen = false;
     let isRedirecting = false;
-    let lastDebuggerTime = 0;
+    let lastCheckTime = 0;
     
     // 静默跳转函数
     function redirectSilently() {
@@ -20,67 +20,41 @@
         window.location.href = 'https://example.com/redirect';
     }
 
-    // 优化的debugger检测
+    // 优化的开发者工具检测
     function checkDevTools() {
         // 避免频繁检测
         const now = Date.now();
-        if (now - lastDebuggerTime < 1000) return devtoolsOpen;
-        lastDebuggerTime = now;
+        if (now - lastCheckTime < 1000) return devtoolsOpen;
+        lastCheckTime = now;
         
-        let detected = false;
+        // 方法1: 控制台检测
+        const start = Date.now();
+        console.log('detection');
+        console.clear();
+        const diff = Date.now() - start;
         
-        try {
-            // 创建特殊检测对象
-            const debuggerObject = {};
-            
-            // 添加调试陷阱
-            Object.defineProperty(debuggerObject, 'devToolsTrap', {
-                get: function() {
-                    detected = true;
-                    return true;
-                }
-            });
-            
-            // 创建iframe进行隔离检测
-            const iframe = document.createElement('iframe');
-            iframe.style.display = 'none';
-            document.body.appendChild(iframe);
-            
-            // 在iframe中设置调试器
-            const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
-            iframeDoc.open();
-            iframeDoc.write(`
-                <script>
-                    // 设置调试陷阱
-                    Object.defineProperty(window, 'debuggerTrap', {
-                        get: function() {
-                            parent.postMessage('devtools-detected', '*');
-                            debugger;
-                        }
-                    });
-                </script>
-            `);
-            iframeDoc.close();
-            
-            // 尝试访问属性触发检测
-            iframe.contentWindow.debuggerTrap;
-            
-            // 清理iframe
-            setTimeout(() => {
-                document.body.removeChild(iframe);
-            }, 100);
-            
-        } catch (e) {
-            // 忽略错误
-        }
-        
-        // 如果检测到开发者工具
-        if (detected) {
-            devtoolsOpen = true;
+        // 控制台操作耗时检测
+        if (diff > 100) {
             return true;
         }
         
-        return false;
+        // 方法2: 特殊属性检测
+        try {
+            const element = document.createElement('div');
+            Object.defineProperty(element, 'id', {
+                get: function() {
+                    devtoolsOpen = true;
+                    return 'detection';
+                }
+            });
+            
+            // 触发检测
+            console.log(element.id);
+        } catch(e) {
+            // 忽略错误
+        }
+        
+        return devtoolsOpen;
     }
 
     // 初始检测
@@ -90,36 +64,15 @@
             if (checkDevTools()) {
                 redirectSilently();
             }
-        }, 1500);
+        }, 1000);
     }
-
-    // 消息监听 - 处理iframe检测结果
-    window.addEventListener('message', (e) => {
-        if (e.data === 'devtools-detected') {
-            devtoolsOpen = true;
-            redirectSilently();
-        }
-    });
 
     // 定期检查开发者工具状态
     const detectionInterval = setInterval(() => {
-        // 轻量级检测：窗口尺寸变化
-        const widthThreshold = window.outerWidth - window.innerWidth > 100;
-        const heightThreshold = window.outerHeight - window.innerHeight > 100;
-        
-        if (widthThreshold || heightThreshold) {
-            devtoolsOpen = true;
+        if (checkDevTools()) {
             redirectSilently();
-            return;
         }
-        
-        // 每5秒进行一次debugger检测
-        if (Date.now() - lastDebuggerTime > 5000) {
-            if (checkDevTools()) {
-                redirectSilently();
-            }
-        }
-    }, 1000);
+    }, 2000); // 降低检测频率
 
     // 禁用右键菜单
     function contextMenuHandler(e) {
@@ -158,20 +111,28 @@
             e.preventDefault();
             return;
         }
+        
+        // Ctrl+Shift+K (Firefox开发者工具)
+        if ((e.ctrlKey || e.metaKey) && e.shiftKey && e.key === 'K') {
+            e.preventDefault();
+            return;
+        }
     }
     document.addEventListener('keydown', keyDownHandler);
 
     // 页面加载完成后立即检测
     window.addEventListener('load', initialDetection);
     
-    // 初始轻量级检测 - 解决预打开问题
+    // 初始轻量级检测
     setTimeout(() => {
-        // 初始尺寸检测
-        const widthThreshold = window.outerWidth - window.innerWidth > 100;
-        const heightThreshold = window.outerHeight - window.innerHeight > 100;
+        // 简单控制台检测
+        const start = Date.now();
+        console.log('initial-detection');
+        console.clear();
+        const diff = Date.now() - start;
         
-        if (widthThreshold || heightThreshold) {
-            devtoolsOpen = true;
+        // 如果控制台操作耗时过长
+        if (diff > 150) {
             redirectSilently();
         }
     }, 500);
