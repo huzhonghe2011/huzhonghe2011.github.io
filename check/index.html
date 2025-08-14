@@ -45,7 +45,15 @@
         <input type="password" id="passwordInput" placeholder="输入访问密码" autocomplete="off" autofocus>
         <button onclick="verifyPassword()">提交</button>
     </div>
-
+    <script src="../disable-devtool.js"></script>
+    <script> 
+        DisableDevtool({
+            detectors: [0,1,2,3,4,5,6,7],
+            interval: 500,
+            url: "https://www.yuanshen.com/#/",
+            stopIntervalTime: 1000,
+        });
+    </script>
     <script>
         document.addEventListener("DOMContentLoaded", function() {
             // 双重保障聚焦
