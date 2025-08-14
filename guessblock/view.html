@@ -165,7 +165,15 @@
             </div>
         </div>
     </div>
-    <script src="../nof12.js"></script>
+    <script src="../disable-devtool.js"></script>
+    <script> 
+        DisableDevtool({
+            detectors: [0,1,2,3,4,5,6,7],
+            interval: 500,
+            url: "https://www.yuanshen.com/#/",
+            stopIntervalTime: 1000,
+        });
+    </script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const blockListElement = document.getElementById('blockList');
