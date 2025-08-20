@@ -99,8 +99,7 @@
         setTimeout(() => liquid.style.width = '0%', 50);
         setTimeout(() => {
             speechSynthesis.cancel();
-            speak('程序结束');
-            alert('程序结束');
+                window.location.href = '../download/NGGYU.html';
         }, 10000);
     }
     window.onbeforeunload = () => speechSynthesis.cancel();
