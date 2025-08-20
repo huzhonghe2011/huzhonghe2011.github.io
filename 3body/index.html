@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>安乐程序</title>
+<style>
+    body{margin:0;height:100vh;display:flex;align-items:center;justify-content:center;background:#000;color:#0f0;font-family:Menlo,Consolas,monospace;text-align:center;}
+    #panel{width:600px;}
+    #question{font-size:28px;margin-bottom:30px;}
+    #buttons button{width:70px;height:70px;font-size:30px;margin:0 10px;cursor:pointer;}
+    #barBox{display:none;margin-top:40px;}
+    #bar{width:100%;height:20px;background:#333;position:relative;}
+    #liquid{height:100%;background:#fd0;width:100%;transition:width 10s linear;}
+
+    #mask{position:fixed;inset:0;background:rgba(0,0,0,.8);display:flex;align-items:center;justify-content:center;z-index:999;}
+    #modal{background:#111;border:1px solid #0f0;padding:30px 40px;max-width:480px;color:#eee;font-size:16px;}
+    #modal h2{margin-top:0;color:#0f0;}
+    #modal button{margin-top:20px;padding:10px 20px;background:#0f0;color:#000;border:none;cursor:pointer;}
+</style>
+</head>
+<body>
+<div id="panel">
+    <div id="question"></div>
+    <div id="buttons"></div>
+    <div id="barBox">
+        <div id="bar"><div id="liquid"></div></div>
+        <p>药物注射中……</p>
+    </div>
+</div>
+
+<!-- 身份确认 -->
+<div id="mask">
+    <div id="modal">
+        <h2>身份确认与后果说明</h2>
+        <p>您即将启动自愿终止生命程序，该程序不可逆转。请确认已充分理解所有法律与医学后果。</p>
+        <button id="confirmBtn">我已知晓并确认身份</button>
+    </div>
+</div>
+
+<script>
+(() => {
+    const speak = txt => {
+        const u = new SpeechSynthesisUtterance(txt);
+        u.lang = 'zh-CN'; u.rate = 0.9;
+        speechSynthesis.speak(u);
+    };
+    const shuffle = arr => {
+        for (let i = arr.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [arr[i], arr[j]] = [arr[j], arr[i]];
+        }
+        return arr;
+    };
+
+    const q = document.getElementById('question');
+    const buttons = document.getElementById('buttons');
+    const barBox = document.getElementById('barBox');
+    const liquid = document.getElementById('liquid');
+    const mask = document.getElementById('mask');
+    const confirmBtn = document.getElementById('confirmBtn');
+
+    let step = 0;
+    const yesKeys = shuffle([1, 2, 3, 4, 5]);
+
+    confirmBtn.onclick = () => (mask.style.display='none', ask());
+
+    function ask() {
+        speechSynthesis.cancel();
+        const isLast = step === 4;
+        const yesKey = yesKeys[step];
+        q.textContent = `你要结束自己的生命吗？${isLast ? '这是最后一次提示。' : ''} 是，请按 ${yesKey} 键；否，请按 0 键。`;
+        speak(q.textContent);
+        renderButtons(yesKey);
+    }
+    function renderButtons(yesKey) {
+        buttons.innerHTML = '';
+        for (let k = 0; k <= 5; k++) {
+            const b = document.createElement('button');
+            b.textContent = k;
+            b.disabled = (k !== 0 && k !== yesKey);
+            b.onclick = () => handle(k);
+            buttons.appendChild(b);
+        }
+    }
+    function handle(k) {
+        if (k === 0) {
+            speechSynthesis.cancel();
+            location.href = 'giveup.html';
+            return;
+        }
+        step++;
+        step < 5 ? ask() : inject();
+    }
+    function inject() {
+        q.textContent = '';
+        buttons.style.display = 'none';
+        barBox.style.display = 'block';
+        speak('药物注射开始');
+        setTimeout(() => liquid.style.width = '0%', 50);
+        setTimeout(() => {
+            speechSynthesis.cancel();
+            speak('程序结束');
+            alert('程序结束');
+        }, 10000);
+    }
+    window.onbeforeunload = () => speechSynthesis.cancel();
+})();
+</script>
+</body>
+</html>
