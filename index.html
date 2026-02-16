@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>工具箱</title>
     <style>
-        /* 通用样式重置 */
+        /* ===== 基础重置 ===== */
         * {
             margin: 0;
             padding: 0;
@@ -18,17 +18,17 @@
         }
 
         html, body {
-           height: 100%;
-           overflow: hidden;
+            height: 100%;
+            overflow: hidden;
         }
 
-        /* 整体容器 */
+        /* ===== 整体容器 ===== */
         .container {
             display: flex;
             height: 100%;
         }
 
-        /* 左侧导航栏，变窄 */
+        /* ===== 左侧导航栏 ===== */
         .sidebar {
             width: 160px;
             background-color: #2c3e50;
@@ -62,7 +62,7 @@
             background-color: #34495e;
         }
 
-        /* 右侧内容区 */
+        /* ===== 右侧内容区 ===== */
         .content {
             margin-left: 160px;
             padding: 10px;
@@ -80,7 +80,7 @@
             border-radius: 5px;
             margin-bottom: 20px;
             text-align: left;
-            margin-left: 0px;
+            margin-left: 0;
             margin-right: 10px;
             width: calc(100%);
         }
@@ -89,6 +89,7 @@
             margin-top: 10px;
             margin-bottom: 10px;
         }
+
         /* 按钮样式 */
         .box {
             text-decoration: none;
@@ -119,17 +120,14 @@
             transform: scale(0.98);
         }
 
-        /* 第一行文字样式 */
         .line1 {
             font-weight: 700;
         }
 
-        /* 第二行文字样式 */
         .line2 {
             font-weight: 300;
         }
 
-        /* 每个section的样式 */
         section {
             margin-bottom: 40px;
         }
@@ -141,18 +139,33 @@
         }
 
         details {
-          margin-bottom: 10px;
-          display: none;
+            margin-bottom: 10px;
+            display: none;
         }
 
         summary {
-          cursor: pointer;
-          padding: 10px;
-          background-color: #4CAF50;
-          color: white;
-          font-size: 16px;
+            cursor: pointer;
+            padding: 10px;
+            background-color: #4CAF50;
+            color: white;
+            font-size: 16px;
         }
 
+        /* 加载中提示 */
+        .loading {
+            text-align: center;
+            padding: 40px;
+            font-size: 18px;
+            color: #666;
+        }
+
+        /* 默认隐藏 section6（网站设置）和 section1（机房必备） */
+        #section1,
+        #section6 {
+            display: none;
+        }
+
+        /* 选择器容器（网站设置内） */
         .selection-container {
             display: flex;
             gap: 10px;
@@ -187,30 +200,27 @@
                 height: 100%;
                 padding-top: 20px;
             }
-
             .content {
                 margin-left: 0;
-                padding-left: 5;
+                padding-left: 5px;
                 width: 100%;
             }
-
             .sidebar.open {
                 display: flex;
             }
-
             .sidebar ul li {
                 margin: 10px 0;
             }
-
             .sidebar ul li a {
                 padding: 10px 15px;
                 font-size: 16px;
             }
             .content details {
-                display: block ;
+                display: block;
             }
         }
     </style>
+    <!-- 外部脚本（原样保留） -->
     <script>
         (function() {
             var script = document.createElement('script');
@@ -235,16 +245,18 @@
 
         <!-- 右侧内容区 -->
         <div class="content">
-            <!-- 折叠导航栏（动态生成） -->
+            <!-- 移动端折叠导航栏（动态生成） -->
             <details id="mobile-nav-details">
                 <summary>点击展开/折叠导航栏</summary>
                 <div id="mobile-nav-list"></div>
             </details>
 
-            <!-- 动态 section 容器（section1~section5 将在此动态生成） -->
-            <div id="dynamic-sections"></div>
+            <!-- 动态生成的 section1~section5 将放在这里 -->
+            <div id="dynamic-sections">
+                <div class="loading">加载中...</div>
+            </div>
 
-            <!-- section6 固定不变 -->
+            <!-- section6 固定不变（默认隐藏） -->
             <section id="section6">
                 <h2>网站设置</h2>
                 <h3>选择标题</h3>
@@ -261,8 +273,43 @@
             <p id="days">本网站已运营 *** 天</p>
         </div>
     </div>
+
     <script>
-        // 平滑滚动函数
+        // ===== 全局变量 =====
+        let seeallEntered = false;          // 是否已解锁隐藏区域
+        let inputBuffer = '';               // 密码输入缓冲区
+        const targetPassword = 'seeall';     // 触发密码
+        const hiddenSectionIds = ['section1', 'section6']; // 默认隐藏的模块ID
+        let fullNavItems = [];               // 存储完整的导航项（从JSON加载）
+
+        // ===== 键盘监听：检测 "seeall" 输入（忽略输入框）=====
+        document.addEventListener('keydown', function(e) {
+            // 如果焦点在输入框、文本域或可编辑元素中，不处理
+            if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA' || e.target.isContentEditable) {
+                return;
+            }
+            // 只处理字符键
+            if (e.key.length === 1) {
+                inputBuffer += e.key.toLowerCase();
+                if (inputBuffer.length > targetPassword.length) {
+                    inputBuffer = inputBuffer.slice(-targetPassword.length);
+                }
+                if (inputBuffer === targetPassword) {
+                    seeallEntered = true;
+                    // 显示隐藏的 sections
+                    hiddenSectionIds.forEach(id => {
+                        const section = document.getElementById(id);
+                        if (section) section.style.display = 'block';
+                    });
+
+                    // 重新渲染导航栏（显示隐藏的菜单项）
+                    renderNavbar(true);
+                    inputBuffer = ''; // 清空缓冲区
+                }
+            }
+        });
+
+        // ===== 平滑滚动函数 =====
         function setupSmoothScroll() {
             document.querySelectorAll('.sidebar a, #mobile-nav-list a').forEach(anchor => {
                 anchor.addEventListener('click', function (e) {
@@ -278,7 +325,44 @@
             });
         }
 
-        // 计算网站运营天数
+        // ===== 渲染导航栏（根据 showAll 决定是否显示隐藏项）=====
+        function renderNavbar(showAll) {
+            const navList = document.getElementById('nav-list');
+            const mobileNavDiv = document.getElementById('mobile-nav-list');
+            if (!navList || !mobileNavDiv) return;
+
+            // 清空现有内容
+            navList.innerHTML = '';
+            mobileNavDiv.innerHTML = '';
+
+            // 遍历完整导航项
+            fullNavItems.forEach(item => {
+                // 如果该项对应的 section 是隐藏项且 showAll 为 false，则跳过
+                if (!showAll && hiddenSectionIds.includes(item.targetId)) {
+                    return;
+                }
+                // 左侧导航
+                const li = document.createElement('li');
+                const a = document.createElement('a');
+                a.href = `#${item.targetId}`;
+                a.textContent = item.text;
+                li.appendChild(a);
+                navList.appendChild(li);
+
+                // 移动端导航（简单用 p 包裹）
+                const p = document.createElement('p');
+                const mobileA = document.createElement('a');
+                mobileA.href = `#${item.targetId}`;
+                mobileA.textContent = item.text;
+                p.appendChild(mobileA);
+                mobileNavDiv.appendChild(p);
+            });
+
+            // 重新绑定平滑滚动
+            setupSmoothScroll();
+        }
+
+        // ===== 计算网站运营天数 =====
         function calculateDays(startDate) {
             const today = new Date();
             const start = new Date(startDate);
@@ -291,43 +375,29 @@
         const days = calculateDays(startDate);
         document.getElementById('days').textContent = `本网站已运营 ${days} 天`;
 
-        // 更改页面标题的函数
+        // ===== 更改页面标题 =====
         function changeTitle(title) {
             document.title = title;
         }
 
-        // 动态加载 JSON 并渲染整个页面
+        // ===== 动态加载 JSON 并渲染整个页面 =====
         async function loadAndRender() {
+            const dynamicSections = document.getElementById('dynamic-sections');
+            // 显示加载中
+            dynamicSections.innerHTML = '<div class="loading">加载中...</div>';
+
             try {
                 const response = await fetch('data.json');
                 if (!response.ok) throw new Error('无法加载 data.json');
                 const data = await response.json();
 
-                // 1. 渲染左侧导航栏
-                const navList = document.getElementById('nav-list');
-                data.navItems.forEach(item => {
-                    const li = document.createElement('li');
-                    const a = document.createElement('a');
-                    a.href = `#${item.targetId}`;
-                    a.textContent = item.text;
-                    li.appendChild(a);
-                    navList.appendChild(li);
-                });
+                // 保存完整的导航项供后续使用
+                fullNavItems = data.navItems || [];
 
-                // 2. 渲染移动端折叠导航栏
-                const mobileNavDiv = document.getElementById('mobile-nav-list');
-                data.navItems.forEach(item => {
-                    const a = document.createElement('a');
-                    a.href = `#${item.targetId}`;
-                    a.textContent = item.text;
-                    // 为了样式，可以包装在 li 中（可选），这里简单加个换行
-                    const p = document.createElement('p');
-                    p.appendChild(a);
-                    mobileNavDiv.appendChild(p);
-                });
+                // 清空动态区域，准备生成 sections
+                dynamicSections.innerHTML = '';
 
-                // 3. 渲染动态 sections (section1~section5)
-                const dynamicSections = document.getElementById('dynamic-sections');
+                // 生成 sections
                 data.sections.forEach(sectionData => {
                     const section = document.createElement('section');
                     section.id = sectionData.id;
@@ -369,15 +439,20 @@
                         section.appendChild(buttonsDiv);
                     });
 
+                    // 如果是隐藏模块且密码未输入，保持隐藏（CSS 已处理，但以防万一再设置一次）
+                    if (!seeallEntered && hiddenSectionIds.includes(section.id)) {
+                        section.style.display = 'none';
+                    }
+
                     dynamicSections.appendChild(section);
                 });
 
-                // 4. 重新绑定平滑滚动事件（因为新生成的链接需要监听）
-                setupSmoothScroll();
+                // 初始渲染导航栏（不显示隐藏项）
+                renderNavbar(false);
 
             } catch (error) {
                 console.error('渲染失败:', error);
-                // 可显示错误提示，但为了简洁，静默失败
+                dynamicSections.innerHTML = '<div class="loading">加载失败，请刷新页面重试。</div>';
             }
         }
 
