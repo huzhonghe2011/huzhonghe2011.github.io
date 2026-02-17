@@ -56,30 +56,29 @@
           {
             "groupTitle": "游戏合集",
             "buttons": [
-              { "link": "https://fuun.fun/", "line1": "游戏合集fuun", "line2": "啥都有" },
-              { "link": "https://iogames.space/", "line1": "io游戏集合", "line2": ".io后缀所有游戏" },
+              { "link": "https://fuun.fun/", "line1": "游戏合集fuun", "line2": "游戏比较多" },
+              { "link": "https://iogames.space/", "line1": "io游戏集合", "line2": ".io后缀很多游戏" },
               { "link": "https://poki.com/zh", "line1": "poki", "line2": "大家都熟" },
               { "link": "https://xingye.me/game/index.php", "line1": "星夜游戏集合", "line2": "还行" },
-              { "link": "https://www.luogu.com/paste/z2kdb1e3", "line1": "洛谷游戏集合", "line2": "好" },
+              { "link": "https://www.luogu.com/paste/z2kdb1e3", "line1": "洛谷游戏集合", "line2": "还可以" },
               { "link": "https://www.ccw.site/", "line1": "共创世界游戏集合", "line2": "还行" },
               { "link": "https://www.crazygames.com/", "line1": "CrazyGame游戏集合", "line2": "行" },
-              { "link": "https://haiyong.site/moyu/", "line1": "摸鱼网站", "line2": "非常多" },
+              { "link": "https://haiyong.site/moyu/", "line1": "摸鱼网站", "line2": "游戏很多" },
               { "link": "https://www.4399.com/", "line1": "4399", "line2": "老熟人了" },
               { "link": "https://neal.fun/", "line1": "neal.fun", "line2": "一般" }
             ]
           },
           {
-            "groupTitle": "小游戏",
+            "groupTitle": "游戏",
             "buttons": [
               { "link": "https://ak-ioi.com/apps/oi-2048/", "line1": "2048 IOI 版", "line2": "里面还有其他版本" },
               { "link": "https://cheeaun.github.io/chengyu-wordle/", "line1": "猜成语", "line2": "中国的wordle" },
               { "link": "https://slay.one/", "line1": "slay.one", "line2": "联机2D枪战游戏" },
-              { "link": "https://www.arealme.com/cn", "line1": "A Real Me测试", "line2": "有简体中文了" },
+              { "link": "https://www.arealme.com/cn", "line1": "A Real Me测试", "line2": "一些测试" },
               { "link": "https://indienova.com/corp/adofai", "line1": "冰与火之舞", "line2": "在线免费试玩" },
-              { "link": "https://h5mota.com/play/", "line1": "魔塔", "line2": "花样多" },
-              { "link": "https://liferestart.syaro.io/public/index.html", "line1": "人生重开模拟器", "line2": "\"这垃圾人生一刻也不想呆了\"" },
-              { "link": "https://yorg.io/", "line1": "yorg.io", "line2": "塔防" },
-              { "link": "https://neal.fun/password-game/", "line1": "设置密码", "line2": "绝对的折磨" },
+              { "link": "https://h5mota.com/play/", "line1": "魔塔", "line2": "经典游戏，里面有很多二创" },
+              { "link": "https://liferestart.syaro.io/public/index.html", "line1": "人生重开模拟器", "line2": "经典" },
+              { "link": "https://yorg.io/", "line1": "yorg.io", "line2": "一种塔防" },
               { "link": "https://triep.io/", "line1": "坦克大战", "line2": "无聊专用" },
               { "link": "https://enazo.cn/", "line1": "你画我猜", "line2": "很好，就是人少" },
               { "link": "https://beta.sparebeat.com/", "line1": "sparebeat", "line2": "音游，无聊时玩" },
@@ -188,7 +187,7 @@
             "groupTitle": null,
             "buttons": [
               { "link": "https://huzhonghe2011.github.io/", "line1": "主站", "line2": "GitHub Page" },
-              { "link": "https://huzhonghe2011.pages.dev/", "line1": "分站1", "line2": "偶尔不稳定" }
+              { "link": "https://huzhonghe2011.pages.dev/", "line1": "分站1", "line2": "CloudFlare站" }
             ]
           }
         ]
