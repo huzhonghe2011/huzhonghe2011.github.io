@@ -87,7 +87,7 @@
             ]
           },
           {
-            "groupTitle": "UT网页版专区",
+            "groupTitle": "UnderTale/AU专区",
             "buttons": [
               { "link": "https://jcw87.github.io/c2-sans-fight/", "line1": "Sans", "line2": "原版" },
               { "link": "https://meekuzo.github.io/Jotaro-Sans-Simulator/", "line1": "空条衫太郎", "line2": "还行" },
@@ -101,14 +101,9 @@
               { "link": "https://caijiqaq.github.io/UNDERSWAP-SANS-FIGHT-EasyMode/", "line1": "SwapSans", "line2": "简单版" },
               { "link": "https://caijiqaq.github.io/dusttale/", "line1": "尘埃", "line2": "正常版" },
               { "link": "https://caijiqaq.github.io/dusttale-easymode/", "line1": "尘埃", "line2": "简单版" },
-              { "link": "https://caijiqaq.github.io/dusttale-debug/", "line1": "尘埃", "line2": "Degug版" }
-            ]
-          },
-          {
-            "groupTitle": "小游戏(需下载)",
-            "buttons": [
-              { "link": "download/Ending Time Octet(弹幕未加强).zip", "line1": "八重终结-弹幕未加强", "line2": "传说之下同人" },
-              { "link": "download/Ending Time Octet(弹幕加强).zip", "line1": "八重终结-弹幕加强", "line2": "传说之下同人" }
+              { "link": "https://caijiqaq.github.io/dusttale-debug/", "line1": "尘埃", "line2": "Degug版" },
+              { "link": "download/Ending Time Octet(弹幕未加强).zip", "line1": "八重终结-弹幕未加强", "line2": "需要下载" },
+              { "link": "download/Ending Time Octet(弹幕加强).zip", "line1": "八重终结-弹幕加强", "line2": "需要下载" }
             ]
           },
           {
@@ -170,9 +165,9 @@
           {
             "groupTitle": "网盘",
             "buttons": [
-              { "link": "https://home.ctfile.com/", "line1": "城通", "line2": "推荐" },
-              { "link": "https://up.woozooo.com/", "line1": "蓝奏云", "line2": "推荐" },
               { "link": "https://upfile.live/zh-cn/", "line1": "及时传", "line2": "推荐，但文件3天有效期" },
+              { "link": "https://up.woozooo.com/", "line1": "蓝奏云", "line2": "推荐" },
+              { "link": "https://home.ctfile.com/", "line1": "城通", "line2": "推荐" },
               { "link": "https://musetransfer.com/", "line1": "musetransfer", "line2": "一般，不登录对文件类型有限制" }
             ]
           },
