@@ -59,10 +59,10 @@
               { "link": "https://fuun.fun/", "line1": "游戏合集fuun", "line2": "游戏比较多" },
               { "link": "https://iogames.space/", "line1": "io游戏集合", "line2": ".io后缀很多游戏" },
               { "link": "https://poki.com/zh", "line1": "poki", "line2": "大家都熟" },
-              { "link": "https://xingye.me/game/index.php", "line1": "星夜游戏集合", "line2": "还行" },
-              { "link": "https://www.luogu.com/paste/z2kdb1e3", "line1": "洛谷游戏集合", "line2": "还可以" },
+              { "link": "https://xingye.me/game/index.php", "line1": "星夜游戏合集", "line2": "还行" },
+              { "link": "https://www.luogu.com/paste/z2kdb1e3", "line1": "洛谷游戏合集", "line2": "还可以" },
               { "link": "https://www.ccw.site/", "line1": "共创世界游戏集合", "line2": "还行" },
-              { "link": "https://www.crazygames.com/", "line1": "CrazyGame游戏集合", "line2": "行" },
+              { "link": "https://www.crazygames.com/", "line1": "CrazyGame游戏合集", "line2": "行" },
               { "link": "https://haiyong.site/moyu/", "line1": "摸鱼网站", "line2": "游戏很多" },
               { "link": "https://www.4399.com/", "line1": "4399", "line2": "老熟人了" },
               { "link": "https://neal.fun/", "line1": "neal.fun", "line2": "一般" }
@@ -101,15 +101,15 @@
               { "link": "https://caijiqaq.github.io/dusttale/", "line1": "尘埃", "line2": "正常版" },
               { "link": "https://caijiqaq.github.io/dusttale-easymode/", "line1": "尘埃", "line2": "简单版" },
               { "link": "https://caijiqaq.github.io/dusttale-debug/", "line1": "尘埃", "line2": "Degug版" },
-              { "link": "download/Ending Time Octet(弹幕未加强).zip", "line1": "八重终结-弹幕未加强", "line2": "需要下载" },
+              { "link": "download/Ending Time Octet(弹幕未加强).zip", "line1": "八重终结-普通弹幕", "line2": "需要下载" },
               { "link": "download/Ending Time Octet(弹幕加强).zip", "line1": "八重终结-弹幕加强", "line2": "需要下载" }
             ]
           },
           {
             "groupTitle": "C++小游戏",
             "buttons": [
-              { "link": "download/人生之路.exe", "line1": "人生之路", "line2": "消磨时间" },
-              { "link": "download/规则怪谈.zip", "line1": "规则怪谈", "line2": "持续更新" },
+              { "link": "download/人生之路.exe", "line1": "人生之路", "line2": "流程特别长" },
+              { "link": "download/规则怪谈.zip", "line1": "规则怪谈", "line2": "没完" },
               { "link": "download/全民砸键盘.exe", "line1": "全民砸键盘", "line2": "解压(?)" },
               { "link": "download/恶魔轮盘赌.exe", "line1": "恶魔轮盘赌", "line2": "简陋" },
               { "link": "download/贪吃蛇.exe", "line1": "贪吃蛇", "line2": "简陋" },
@@ -151,13 +151,14 @@
             ]
           },
           {
-            "groupTitle": "Wiki/Fandom专区",
+            "groupTitle": "Wiki专区",
             "buttons": [
               { "link": "https://backrooms-wiki-cn.wikidot.com/", "line1": "后室", "line2": "Wiki" },
               { "link": "https://backrooms.fandom.com/zh/wiki/", "line1": "后室", "line2": "Fandom" },
               { "link": "https://florrio.fandom.com/zh/wiki/Florr.io_%E4%B8%AD%E6%96%87%E7%BB%B4%E5%9F%BA", "line1": "Florr.io", "line2": "中文Fandom" },
               { "link": "https://official-florrio.fandom.com/wiki/Official_Florr.io_Wiki", "line1": "Florr.io", "line2": "英文Fandom" },
-              { "link": "https://scp-wiki-cn.wikidot.com/", "line1": "SCP基金会", "line2": "Wiki" }
+              { "link": "https://scp-wiki-cn.wikidot.com/", "line1": "SCP基金会", "line2": "Wiki" },
+              { "link": "https://zh.minecraft.wiki/", "line1": "我的世界", "line2": "中文Wiki" }
             ]
           },
           {
