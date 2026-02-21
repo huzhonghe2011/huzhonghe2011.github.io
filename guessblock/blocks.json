@@ -1,0 +1,96 @@
+[
+    {
+      "name": "仙人掌",
+      "natural": true,
+      "dimension": "overworld",
+      "craftedOnly": false,
+      "commandOnly": false,
+  
+      "fullBlock": false,
+      "transparent": false,
+      "luminous": false,
+      "gravity": false,
+      "pushable": true,
+  
+      "type": "plant",
+  
+      "interactable": false,
+      "hasGUI": false,
+      "container": false,
+      "redstone": false,
+      "lightSource": false,
+  
+      "plantable": true,
+      "needsWater": false,
+      "needsSand": true,
+      "causesDamage": true,
+      "boneMeal": false,
+  
+      "requiresSilkTouch": false,
+      "burnable": true,
+      "explosionProof": false
+    },
+    {
+      "name": "甘蔗",
+      "natural": true,
+      "dimension": "overworld",
+      "craftedOnly": false,
+      "commandOnly": false,
+  
+      "fullBlock": false,
+      "transparent": true,
+      "luminous": false,
+      "gravity": false,
+      "pushable": true,
+  
+      "type": "plant",
+  
+      "interactable": false,
+      "hasGUI": false,
+      "container": false,
+      "redstone": false,
+      "lightSource": false,
+  
+      "plantable": true,
+      "needsWater": true,
+      "needsSand": false,
+      "causesDamage": false,
+      "boneMeal": false,
+  
+      "requiresSilkTouch": false,
+      "burnable": true,
+      "explosionProof": false
+    },
+    {
+      "name": "钻石矿石",
+      "natural": true,
+      "dimension": "overworld",
+      "craftedOnly": false,
+      "commandOnly": false,
+  
+      "fullBlock": true,
+      "transparent": false,
+      "luminous": false,
+      "gravity": false,
+      "pushable": true,
+  
+      "type": "ore",
+  
+      "interactable": false,
+      "hasGUI": false,
+      "container": false,
+      "redstone": false,
+      "lightSource": false,
+  
+      "plantable": false,
+      "needsWater": false,
+      "needsSand": false,
+      "causesDamage": false,
+      "boneMeal": false,
+  
+      "requiresSilkTouch": true,
+      "burnable": false,
+      "explosionProof": false
+    }
+  ]
+  

@@ -3,8 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>猜方块</title>
+    <title>猜方块 V2 · 经典样式</title>
     <style>
+        /* ========== 完全采用 V1.1 的样式 ========== */
         * {
             margin: 0;
             padding: 0;
@@ -183,7 +184,6 @@
             align-items: center;
             justify-content: center;
             text-shadow: 0 2px 4px rgba(0,0,0,0.3);
-            /* 去掉左边框 */
             border-left: none;
         }
         
@@ -292,215 +292,221 @@
 </head>
 <body>
     <div class="container">
-        <h1>猜方块</h1>
-        <div class="subtitle">V1.1 版本以网易基岩版为准</div>
-        
+        <h1>猜方块 V2</h1>
+        <div class="subtitle">终极版 · 以Java版特性为参考</div>
+
+        <!-- 信息栏：显示方块数量 (V1.1风格) 初始隐藏 -->
         <div id="info" class="hidden"></div>
-        
+
+        <!-- 加载动画 (V1.1风格) -->
         <div id="loading">
             <div class="spinner"></div>
             正在加载方块数据...
         </div>
-        
+
+        <!-- 游戏主容器 (初始隐藏) 结构与V1.1保持一致 -->
         <div id="gameContainer" class="hidden">
             <div class="content-box">
                 <div id="questionContainer" class="question"></div>
             </div>
-            
+
             <div class="btn-container">
-                <button id="yesButton" class="btn" onclick="answerQuestion('1')">是</button>
-                <button id="noButton" class="btn" onclick="answerQuestion('0')">否</button>
+                <!-- 按钮ID保持与V1.1一致，但调用V2的answer函数 -->
+                <button id="yesButton" class="btn" onclick="answer(true)">是</button>
+                <button id="noButton" class="btn" onclick="answer(false)">否</button>
             </div>
 
-            <div id="result" class="hidden"></div>
+            <!-- 结果显示区 (V1.1样式) -->
+            <div id="result" class="result hidden"></div>
+
+            <!-- 重启按钮 (预先放置，隐藏，与V1.1风格匹配) -->
+            <button id="restartButton" class="btn hidden" onclick="restart()">再来一次</button>
         </div>
     </div>
 
     <script>
-        let que = [];
-        let block = [];
-        let data = [];
-        let ans = [];
-        let maxAns = 0;
-        let currentQuestion = 0;
+        // ========== 完全保留 V2 的逻辑，仅适配 V1.1 的 DOM 结构和样式 ==========
+        let blocks = [];
+        let questions = [];
+        let candidates = [];
+        let askedQuestions = [];
+        let currentQuestion = null;
 
-        // 从文件加载数据
-        function loadData() {
-            fetch('data.txt')
-                .then(response => response.text())
-                .then(text => {
-                    parseData(text);
-                    updateInfo();
-                    document.getElementById('loading').classList.add('hidden');
-                    document.getElementById('gameContainer').classList.remove('hidden');
-                    document.getElementById('info').classList.remove('hidden');
-                    startGame();
-                })
-                .catch(error => {
-                    console.error('加载数据失败:', error);
-                    document.getElementById('loading').innerHTML = '<div class="error">数据加载失败</div>';
-                });
+        // 加载 blocks.json (V2 数据源)
+        async function loadData() {
+            try {
+                const res = await fetch("blocks.json");
+                blocks = await res.json();
+                buildQuestions();
+                // 更新info栏 (V1.1风格)
+                const infoDiv = document.getElementById("info");
+                // 保留链接样式
+                infoDiv.innerHTML = `已加入 <b>${blocks.length}</b> 个方块 <a href="view.html">查看所有方块</a>`;
+                infoDiv.classList.remove("hidden");
+
+                // 隐藏loading，显示游戏容器
+                document.getElementById("loading").classList.add("hidden");
+                document.getElementById("gameContainer").classList.remove("hidden");
+
+                startGame();
+            } catch (error) {
+                console.error("加载blocks.json失败:", error);
+                document.getElementById("loading").innerHTML = '<div class="error">数据加载失败，请刷新重试</div>';
+            }
         }
 
-        // 更新信息区域
-        function updateInfo() {
-            const infoElement = document.getElementById("info");
-            infoElement.innerHTML = `已加入 <b>${block.length}</b> 个方块, <a href="view.html" target="_blank">查看所有方块</a>`;
-        }
+        // 构建问题库 (V2 完整列表)
+        function buildQuestions() {
+            questions = [
+                { key: "natural", text: "是否自然生成？" },
+                { key: "dimension:overworld", text: "是否在主世界生成？" },
+                { key: "dimension:nether", text: "是否在下界生成？" },
+                { key: "dimension:end", text: "是否在末地生成？" },
+                { key: "craftedOnly", text: "是否只能通过合成获得？" },
+                { key: "commandOnly", text: "是否只能通过指令获得？" },
 
-        // 解析数据文件
-        function parseData(text) {
-            const lines = text.trim().split('\n');
-            let section = 0;
-            
-            for (let line of lines) {
-                line = line.trim();
-                if (line === '-1') {
-                    section++;
-                    continue;
-                }
+                { key: "fullBlock", text: "是否为完整立方体？" },
+                { key: "transparent", text: "是否为透明方块？" },
+                { key: "luminous", text: "是否会发光？" },
+                { key: "gravity", text: "是否受重力影响？" },
+                { key: "pushable", text: "是否可被活塞推动？" },
+
+                { key: "type:stone", text: "是否属于石质类？" },
+                { key: "type:dirt", text: "是否属于泥土类？" },
+                { key: "type:ore", text: "是否属于矿物类？" },
+                { key: "type:plant", text: "是否属于植物类？" },
+                { key: "type:wood", text: "是否属于木质类？" },
+                { key: "type:metal", text: "是否属于金属类？" },
+
+                { key: "interactable", text: "是否具有交互功能？" },
+                { key: "hasGUI", text: "是否会打开界面？" },
+                { key: "container", text: "是否可以存储物品？" },
+                { key: "redstone", text: "是否与红石相关？" },
+                { key: "lightSource", text: "是否属于照明类？" },
+
+                { key: "plantable", text: "是否需要种植？" },
+                { key: "needsWater", text: "是否需要水源？" },
+                { key: "needsSand", text: "是否只能种在沙子上？" },
+                { key: "causesDamage", text: "是否会造成伤害？" },
+                { key: "boneMeal", text: "是否可以被骨粉催熟？" },
                 
-                if (section === 0) {
-                    // 问题部分
-                    if (line) que.push(line);
-                } else if (section === 1) {
-                    // 方块数据部分
-                    const parts = line.split(' ');
-                    if (parts.length >= 2) {
-                        block.push(parts[0]);
-                        data.push(parts[1]);
-                    }
-                }
-            }
-            
-            // 初始化答案数组
-            ans = Array.from({length: block.length}, (_, i) => i);
-            maxAns = block.length;
+                { key: "requiresSilkTouch", text: "是否需要精准采集？" },
+                { key: "burnable", text: "是否可以被火烧毁？" },
+                { key: "explosionProof", text: "是否抗爆炸？" }
+            ];
         }
 
-        // 初始化游戏
+        // 开始新游戏 (重置状态)
         function startGame() {
+            candidates = [...blocks];
+            askedQuestions = [];
+
+            // 确保界面元素正确显示/隐藏 (V1.1风格)
             document.getElementById("result").classList.add("hidden");
-            document.getElementById("yesButton").disabled = false;
-            document.getElementById("noButton").disabled = false;
-            
-            // 移除可能存在的重新开始按钮
-            const restartButton = document.getElementById("restartButton");
-            if (restartButton) {
-                restartButton.remove();
-            }
-            
-            // 显示问题区域和按钮
+            document.getElementById("restartButton").classList.add("hidden");
+            // 显示问题区域和按钮 (它们本来就可见，但以防之前隐藏)
             document.querySelector(".content-box").classList.remove("hidden");
             document.querySelector(".btn-container").classList.remove("hidden");
-            
-            skipQuestions();
+
+            askNext();
         }
 
-        // 跳过答案相同的问题
-        function skipQuestions() {
-            while (currentQuestion < que.length) {
-                // 检查当前问题在剩余答案中是否答案相同
-                let allSame = true;
-                let firstValue = null;
-                
-                for (let i = 0; i < maxAns; i++) {
-                    const blockIndex = ans[i];
-                    const value = data[blockIndex][currentQuestion];
-                    
-                    if (firstValue === null) {
-                        firstValue = value;
-                    } else if (value !== firstValue) {
-                        allSame = false;
-                        break;
-                    }
-                }
-                
-                if (!allSame) break;
-                currentQuestion++;
-            }
-            
-            if (currentQuestion >= que.length || maxAns <= 1) {
+        // 选择下一个最佳问题
+        function askNext() {
+            if (candidates.length <= 1) {
                 showResult();
-            } else {
-                showQuestion();
+                return;
             }
-        }
 
-        // 显示问题
-        function showQuestion() {
-            document.getElementById("questionContainer").textContent = que[currentQuestion];
-        }
+            let best = null;
+            let bestScore = 0;
 
-        // 处理回答
-        function answerQuestion(answer) {
-            let nextAns = [];
-            for (let i = 0; i < maxAns; i++) {
-                const blockIndex = ans[i];
-                if (data[blockIndex][currentQuestion] === answer) {
-                    nextAns.push(blockIndex);
+            for (let q of questions) {
+                if (askedQuestions.includes(q.key)) continue;
+
+                let yes = 0, no = 0;
+                for (let b of candidates) {
+                    if (evaluate(b, q.key)) yes++;
+                    else no++;
+                }
+
+                if (yes === 0 || no === 0) continue;  // 无效问题
+
+                let score = Math.min(yes, no);
+                if (score > bestScore) {
+                    bestScore = score;
+                    best = q;
                 }
             }
 
-            ans = nextAns;
-            maxAns = ans.length;
-            currentQuestion++;
-            
-            skipQuestions();
+            if (!best) {
+                showResult();
+                return;
+            }
+
+            currentQuestion = best;
+            askedQuestions.push(best.key);
+            document.getElementById("questionContainer").innerText = best.text;
         }
 
-        // 显示结果
+        // 判断方块是否满足某个属性 (支持冒号分割的字段:值)
+        function evaluate(block, key) {
+            if (key.includes(":")) {
+                let [field, value] = key.split(":");
+                return block[field] === value;
+            }
+            return !!block[key];
+        }
+
+        // 处理用户回答 (true=是, false=否)
+        function answer(value) {
+            candidates = candidates.filter(b => evaluate(b, currentQuestion.key) === value);
+            askNext();
+        }
+
+        // 显示最终结果 (采用 V1.1 的结果布局)
         function showResult() {
-            const resultElement = document.getElementById("result");
-            resultElement.innerHTML = '';
-            
-            // 创建结果标题区域
-            const titleElement = document.createElement('div');
-            titleElement.className = 'result-title';
-            
-            // 创建结果内容区域
-            const contentElement = document.createElement('div');
-            contentElement.className = 'result-content';
-            
-            if (maxAns === 1) {
-                titleElement.textContent = "你想的方块是：";
-                contentElement.innerHTML = `<strong>${block[ans[0]]}</strong>`;
-            } else if (maxAns > 1) {
-                titleElement.textContent = "是以下方块之一：";
-                contentElement.innerHTML = ans.map(index => `<span class="block-item">${block[index]}</span>`).join(", ");
-            } else {
-                titleElement.textContent = "数据库中无匹配方块";
-            }
-
-            resultElement.appendChild(titleElement);
-            
-            // 如果有匹配结果，显示内容区域
-            if (maxAns > 0) {
-                resultElement.appendChild(contentElement);
-            }
-
-            resultElement.classList.remove("hidden");
-            document.getElementById("yesButton").disabled = true;
-            document.getElementById("noButton").disabled = true;
-
             // 隐藏问题区域和按钮
             document.querySelector(".content-box").classList.add("hidden");
             document.querySelector(".btn-container").classList.add("hidden");
 
-            // 添加重新开始按钮
-            const restartButton = document.createElement('button');
-            restartButton.textContent = '再来一次';
-            restartButton.id = 'restartButton';
-            restartButton.className = 'btn';
-            restartButton.onclick = function() {
-                location.reload();
-            };
-            
-            // 添加到结果区域下方
-            resultElement.insertAdjacentElement('afterend', restartButton);
+            const resultDiv = document.getElementById("result");
+            resultDiv.innerHTML = "";  // 清空旧内容
+
+            // 创建标题和内容元素 (符合 V1.1 样式)
+            const titleEl = document.createElement("div");
+            titleEl.className = "result-title";
+            const contentEl = document.createElement("div");
+            contentEl.className = "result-content";
+
+            if (candidates.length === 1) {
+                titleEl.textContent = "你想的方块是：";
+                contentEl.innerHTML = `<strong>${candidates[0].name}</strong>`;
+            } else if (candidates.length > 1) {
+                titleEl.textContent = "可能是以下方块之一：";
+                contentEl.innerHTML = candidates.map(b => b.name).join("、");
+            } else {
+                titleEl.textContent = "数据库中没有匹配方块";
+            }
+
+            resultDiv.appendChild(titleEl);
+            if (candidates.length > 0) {
+                resultDiv.appendChild(contentEl);
+            }
+
+            resultDiv.classList.remove("hidden");
+
+            // 显示重启按钮 (预先存在的 #restartButton)
+            const restartBtn = document.getElementById("restartButton");
+            restartBtn.classList.remove("hidden");
         }
 
-        // 页面加载时开始加载数据
+        // 重启游戏 (刷新页面，与V2一致)
+        function restart() {
+            location.reload();
+        }
+
+        // 页面加载时启动
         window.onload = loadData;
     </script>
 </body>
