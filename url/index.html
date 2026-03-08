@@ -1,134 +1,211 @@
 <!DOCTYPE html>
 <html lang="zh">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>嵌入页面</title>
-    <style>
-        /* 重置所有页面的 margin 和 padding */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>嵌入页面</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
 
-        /* 让页面背景为白色 */
-        body {
-            background-color: white;
-            font-family: Arial, sans-serif;
-            height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            overflow: hidden;
-        }
+    body {
+      background: #fff;
+      font-family: Arial, sans-serif;
+      height: 100vh;
+      overflow: hidden;
+    }
 
-        /* 用于显示提示信息 */
-        .message {
-            text-align: center;
-            font-size: 18px;
-            color: #333;
-            padding: 20px;
-            display: none;
-        }
+    .panel {
+      position: fixed;
+      top: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 10;
+      background: rgba(255, 255, 255, 0.96);
+      border: 1px solid #ddd;
+      border-radius: 10px;
+      padding: 16px;
+      box-shadow: 0 4px 14px rgba(0,0,0,0.08);
+      min-width: 320px;
+      max-width: 90vw;
+    }
 
-        /* 输入框和按钮容器 */
-        .input-container {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
+    .panel h3 {
+      margin-bottom: 10px;
+      font-size: 18px;
+      color: #222;
+      text-align: center;
+    }
 
-        /* 输入框样式 */
-        input {
-            width: 150%; /* 调整宽度 */
-            max-width: 800px; /* 最大宽度，防止过宽 */
-            padding: 12px;
-            margin-bottom: 10px;
-            font-size: 16px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            box-sizing: border-box;
-        }
+    .row {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
 
-        /* 按钮样式 */
-        button {
-            padding: 10px 20px;
-            font-size: 16px;
-            background-color: #007bff;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-        }
+    input {
+      flex: 1;
+      min-width: 260px;
+      padding: 12px;
+      font-size: 15px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      outline: none;
+    }
 
-        button:hover {
-            background-color: #0056b3;
-        }
+    button {
+      padding: 12px 18px;
+      font-size: 15px;
+      background: #007bff;
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      white-space: nowrap;
+    }
 
-        /* 使 iframe 全屏 */
-        iframe {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            border: none;
-        }
-    </style>
+    button:hover {
+      background: #0056b3;
+    }
+
+    .message {
+      margin-top: 10px;
+      font-size: 14px;
+      color: #d93025;
+      display: none;
+      line-height: 1.5;
+    }
+
+    iframe {
+      position: fixed;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      border: none;
+      display: none;
+      background: #fff;
+    }
+  </style>
 </head>
 <body>
-    <!-- 提示信息 -->
-    <div class="message" id="message">请输入有效的 URL 地址并点击确认</div>
-
-    <!-- 输入框和按钮 -->
-    <div class="input-container">
-        <h3>输入需要嵌入的链接</h3>
-        <input type="text" id="urlInput" value="https://" placeholder="输入链接地址">
-        <button onclick="loadURL()">确认</button>
+  <div class="panel" id="panel">
+    <h3>输入需要嵌入的链接</h3>
+    <div class="row">
+      <input type="text" id="urlInput" value="https://" placeholder="输入链接地址">
+      <button id="loadBtn">确认</button>
     </div>
+    <div class="message" id="message"></div>
+  </div>
 
-    <!-- 隐藏的 iframe 用于加载 URL -->
-    <iframe id="iframe" style="display:none;"></iframe>
+  <iframe id="iframe" referrerpolicy="no-referrer"></iframe>
 
-    <script>
-        // 获取 URL 参数中的 url 值
-        const urlParams = new URLSearchParams(window.location.search);
-        const urlFromParams = urlParams.get('url');
+  <script>
+    const iframe = document.getElementById("iframe");
+    const urlInput = document.getElementById("urlInput");
+    const message = document.getElementById("message");
+    const panel = document.getElementById("panel");
+    const loadBtn = document.getElementById("loadBtn");
 
-        // 获取输入框和 iframe 元素
-        const iframe = document.getElementById('iframe');
-        const urlInput = document.getElementById('urlInput');
-        const message = document.getElementById('message');
+    const urlParams = new URLSearchParams(window.location.search);
+    const urlFromParams = urlParams.get("url");
 
-        // 如果 URL 参数存在且有效，加载该 URL
-        if (urlFromParams) {
-            if (isValidURL(urlFromParams)) {
-                iframe.style.display = 'block';
-                iframe.src = urlFromParams;
-            } else {
-                message.textContent = '无效的 URL 参数';
-                message.style.display = 'block';
-            }
-        }
+    function showMessage(text) {
+      message.textContent = text;
+      message.style.display = "block";
+    }
 
-        // 检查 URL 是否有效
-        function isValidURL(url) {
-            const regex = /^(https?:\/\/)/;
-            return regex.test(url);
-        }
+    function hideMessage() {
+      message.textContent = "";
+      message.style.display = "none";
+    }
 
-        // 处理用户输入的 URL
-        function loadURL() {
-            const userURL = urlInput.value.trim();
-            if (isValidURL(userURL)) {
-                // 跳转到当前页面并将 URL 作为参数传递
-                window.location.href = '?url=' + encodeURIComponent(userURL);
-            } else {
-                message.textContent = '请输入有效的 URL 地址';
-                message.style.display = 'block';
-            }
-        }
-    </script>
+    function isValidURL(url) {
+      try {
+        const u = new URL(url);
+        return u.protocol === "http:" || u.protocol === "https:";
+      } catch {
+        return false;
+      }
+    }
+
+    function openInIframe(url) {
+      hideMessage();
+      iframe.style.display = "block";
+      panel.style.display = "none";
+      iframe.src = url;
+    }
+
+    function loadURL() {
+      const userURL = urlInput.value.trim();
+      if (!isValidURL(userURL)) {
+        showMessage("请输入有效的 http:// 或 https:// 地址");
+        return;
+      }
+      const newUrl = window.location.pathname + "?url=" + encodeURIComponent(userURL);
+      history.replaceState(null, "", newUrl);
+      openInIframe(userURL);
+    }
+
+    loadBtn.addEventListener("click", loadURL);
+    urlInput.addEventListener("keydown", function (e) {
+      if (e.key === "Enter") loadURL();
+    });
+
+    if (urlFromParams) {
+      if (isValidURL(urlFromParams)) {
+        urlInput.value = urlFromParams;
+        openInIframe(urlFromParams);
+      } else {
+        showMessage("无效的 URL 参数");
+      }
+    }
+
+    // 同源情况下，尽量把 iframe 内的弹窗和新窗口跳转都改成留在 iframe 中
+    iframe.addEventListener("load", () => {
+      try {
+        const doc = iframe.contentDocument || iframe.contentWindow.document;
+        const win = iframe.contentWindow;
+
+        // 拦截 window.open
+        win.open = function(url) {
+          if (url) {
+            iframe.src = url;
+          }
+          return null;
+        };
+
+        // 重写所有 a[target=_blank]
+        doc.querySelectorAll("a").forEach(a => {
+          a.setAttribute("target", "_self");
+          a.addEventListener("click", function () {
+            const href = a.getAttribute("href");
+            if (!href) return;
+          });
+        });
+
+        // 重写 form target
+        doc.querySelectorAll("form").forEach(form => {
+          form.setAttribute("target", "_self");
+        });
+
+      } catch (err) {
+        // 跨域会进入这里，前端无法继续干预 iframe 内部行为
+        showMessage("当前页面已嵌入，但这是跨域网站，无法强制接管其弹窗、新窗口或内部跳转行为。若要完全控制，必须通过服务端代理重写页面。");
+      }
+    });
+
+    // 如果 iframe 内页面通过 postMessage 请求外层跳转，可在这里统一改成 iframe 内加载
+    window.addEventListener("message", (event) => {
+      const data = event.data;
+      if (!data || typeof data !== "object") return;
+
+      if (data.type === "open-url" && data.url && isValidURL(data.url)) {
+        iframe.src = data.url;
+      }
+    });
+  </script>
 </body>
 </html>
