@@ -69,7 +69,7 @@
 
     .row {
       display: grid;
-      grid-template-columns: 1fr auto auto auto;
+      grid-template-columns: 1fr auto auto;
       gap: 10px;
       align-items: center;
     }
@@ -139,17 +139,6 @@
       .grid2 {
         grid-template-columns: 1fr;
       }
-    }
-
-    .tips {
-      margin-top: 12px;
-      padding: 12px 14px;
-      border-radius: 12px;
-      background: rgba(255,255,255,.03);
-      border: 1px solid var(--line);
-      color: var(--muted);
-      font-size: 13px;
-      line-height: 1.6;
     }
 
     .status {
@@ -226,13 +215,6 @@
       background: #000;
     }
 
-    .footer {
-      color: var(--muted);
-      font-size: 12px;
-      line-height: 1.6;
-      padding: 0 2px 10px;
-    }
-
     a {
       color: #8bc2ff;
       text-decoration: none;
@@ -246,19 +228,11 @@
   <main class="app">
     <section class="card controls">
       <h1>B站视频嵌入播放器</h1>
-      <p class="sub">
-        支持输入完整的 B 站视频链接，例如：
-        <code>/video/BV...</code>，
-        或带 <code>bvid=...</code> 的 <code>list/...</code> 链接。
-        本页会自动提取 BV 号并切换到官方外链播放器。<br>
-        不支持纯前端自动去 list 页面抓“最新视频”；如果 list 链接里自带 <code>bvid</code>，则会用这个当前视频。
-      </p>
 
       <div class="row">
-        <input id="urlInput" type="text" placeholder="粘贴完整的 B 站链接，例如 https://www.bilibili.com/video/BV12HcRzSEhB/?p=1" />
+        <input id="urlInput" type="text" placeholder="粘贴 B 站链接或输入 BV 号，例如 BV1vK4y1P74F" />
         <button id="loadBtn">载入</button>
-        <button id="copyBtn" class="secondary">复制播放链接</button>
-        <button id="resetBtn" class="secondary">重置</button>
+        <button id="clearBtn" class="secondary">清空输入框</button>
       </div>
 
       <div class="grid2">
@@ -280,9 +254,7 @@
       </div>
 
       <div id="status" class="status">
-        请输入完整链接。默认支持：
-        <code>https://www.bilibili.com/video/BV...?...p=数字</code>，
-        或带 <code>bvid=BV...</code> 参数的 <code>list</code> 链接。
+        请输入 B 站链接或 BV 号。
       </div>
 
       <div class="meta">
@@ -299,12 +271,6 @@
           <div class="v" id="modeText">-</div>
         </div>
       </div>
-
-      <div class="tips">
-        提示：如果是 <code>list/...</code> 链接，本页不会去抓取该列表的“最新视频”，只会尝试使用链接里已经出现的
-        <code>bvid</code> 或路径中的 <code>BV...</code>。<br>
-        如需精确多 P，最稳妥的输入仍然是最终视频页链接，例如 <code>/video/BV.../?p=40</code>。
-      </div>
     </section>
 
     <section class="card player-card">
@@ -318,11 +284,6 @@
         </iframe>
       </div>
     </section>
-
-    <div class="footer">
-      说明：播放器宽度自动占满容器，高度通过 <code>aspect-ratio: 16 / 9</code> 自适应；
-      因此即使本 HTML 再被别人放进 iframe，只要外层容器宽度变化，播放器也会同步缩放。
-    </div>
   </main>
 
 <script>
@@ -330,8 +291,7 @@
   const pInput = document.getElementById('pInput');
   const dmSelect = document.getElementById('dmSelect');
   const loadBtn = document.getElementById('loadBtn');
-  const copyBtn = document.getElementById('copyBtn');
-  const resetBtn = document.getElementById('resetBtn');
+  const clearBtn = document.getElementById('clearBtn');
   const prevBtn = document.getElementById('prevBtn');
   const nextBtn = document.getElementById('nextBtn');
   const player = document.getElementById('player');
@@ -365,21 +325,34 @@
   }
 
   function parseBiliInput(raw) {
-    const input = normalizeUrl(raw);
-    if (!input) {
-      return { ok: false, reason: '请输入链接。' };
+    const original = String(raw || '').trim();
+    if (!original) {
+      return { ok: false, reason: '请输入链接或 BV 号。' };
     }
+
+    // 1) 直接支持纯 BV 号
+    const directBvid = normalizeBvid(original);
+    if (directBvid && /^BV[0-9A-Za-z]{10}$/i.test(original)) {
+      return {
+        ok: true,
+        bvid: directBvid,
+        p: 1,
+        mode: '直接输入 BV 号'
+      };
+    }
+
+    const input = normalizeUrl(original);
 
     let url;
     try {
       url = new URL(input);
     } catch (e) {
-      return { ok: false, reason: '链接格式无法识别。' };
+      return { ok: false, reason: '输入内容格式无法识别。' };
     }
 
     const host = url.hostname.replace(/^www\./i, '').toLowerCase();
     if (!host.endsWith('bilibili.com')) {
-      return { ok: false, reason: '目前只支持 bilibili.com 链接。' };
+      return { ok: false, reason: '目前只支持 bilibili.com 链接或纯 BV 号。' };
     }
 
     let bvid = '';
@@ -417,7 +390,7 @@
     if (!bvid) {
       return {
         ok: false,
-        reason: '没有在链接中找到 BV 号。请输入 /video/BV... 链接，或带 bvid=... 的 list 链接。'
+        reason: '没有找到 BV 号。请输入 /video/BV... 链接、带 bvid=... 的链接，或直接输入 BV 号。'
       };
     }
 
@@ -482,7 +455,7 @@
   pInput.addEventListener('change', () => {
     const bv = normalizeBvid(bvText.textContent);
     if (!bv) {
-      setStatus('请先输入一个可识别的 B 站视频链接。', 'err');
+      setStatus('请先输入一个可识别的 B 站视频链接或 BV 号。', 'err');
       return;
     }
     applyState({
@@ -512,26 +485,10 @@
     pInput.dispatchEvent(new Event('change'));
   });
 
-  copyBtn.addEventListener('click', async () => {
-    const bv = normalizeBvid(bvText.textContent);
-    if (!bv) {
-      setStatus('当前没有可复制的播放链接。', 'err');
-      return;
-    }
-    const link = buildPlayerUrl(bv, Math.max(1, Number(pInput.value) || 1), dmSelect.value);
-    try {
-      await navigator.clipboard.writeText(link);
-      setStatus('已复制官方外链播放器地址。', 'ok');
-    } catch (e) {
-      setStatus('复制失败，请手动复制播放器地址。', 'err');
-    }
-  });
-
-  resetBtn.addEventListener('click', () => {
-    urlInput.value = DEFAULT_URL;
-    pInput.value = 40;
-    dmSelect.value = '1';
-    loadFromInput();
+  clearBtn.addEventListener('click', () => {
+    urlInput.value = '';
+    urlInput.focus();
+    setStatus('已清空输入框。当前视频保持不变。', 'ok');
   });
 
   (function init() {
