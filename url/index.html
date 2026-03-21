@@ -71,6 +71,27 @@
       background: #0056b3;
     }
 
+    .quick-links {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-top: 10px;
+    }
+
+    .quick-links button {
+      width: 100%;
+      text-align: left;
+      background: #fff;
+      color: #222;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      box-shadow: none;
+    }
+
+    .quick-links button:hover {
+      background: #fff;
+    }
+
     .message {
       margin-top: 10px;
       font-size: 14px;
@@ -94,8 +115,12 @@
   <div class="panel" id="panel">
     <h3>输入需要嵌入的链接</h3>
     <div class="row">
-      <input type="text" id="urlInput" value="https://" placeholder="输入链接地址">
+      <input type="text" id="urlInput" placeholder="输入链接地址">
       <button id="loadBtn">确认</button>
+    </div>
+    <div class="quick-links">
+      <button type="button" id="fillHuzhonghe">https://huzhonghe2011.github.io/</button>
+      <button type="button" id="fillBilibili">https://www.bilibili.com/</button>
     </div>
     <div class="message" id="message"></div>
   </div>
@@ -108,6 +133,8 @@
     const message = document.getElementById("message");
     const panel = document.getElementById("panel");
     const loadBtn = document.getElementById("loadBtn");
+    const fillHuzhonghe = document.getElementById("fillHuzhonghe");
+    const fillBilibili = document.getElementById("fillBilibili");
 
     const urlParams = new URLSearchParams(window.location.search);
     const urlFromParams = urlParams.get("url");
@@ -122,10 +149,17 @@
       message.style.display = "none";
     }
 
+    function normalizeURL(url) {
+      const trimmed = url.trim();
+      if (!trimmed) return "";
+      if (trimmed.startsWith("https://")) return trimmed;
+      return "https://" + trimmed;
+    }
+
     function isValidURL(url) {
       try {
         const u = new URL(url);
-        return u.protocol === "http:" || u.protocol === "https:";
+        return u.protocol === "https:";
       } catch {
         return false;
       }
@@ -139,14 +173,15 @@
     }
 
     function loadURL() {
-      const userURL = urlInput.value.trim();
-      if (!isValidURL(userURL)) {
-        showMessage("请输入有效的 http:// 或 https:// 地址");
+      const normalizedURL = normalizeURL(urlInput.value);
+      if (!isValidURL(normalizedURL)) {
+        showMessage("请输入有效地址");
         return;
       }
-      const newUrl = window.location.pathname + "?url=" + encodeURIComponent(userURL);
+      urlInput.value = normalizedURL;
+      const newUrl = window.location.pathname + "?url=" + encodeURIComponent(normalizedURL);
       history.replaceState(null, "", newUrl);
-      openInIframe(userURL);
+      openInIframe(normalizedURL);
     }
 
     loadBtn.addEventListener("click", loadURL);
@@ -154,30 +189,36 @@
       if (e.key === "Enter") loadURL();
     });
 
+    fillHuzhonghe.addEventListener("click", function () {
+      urlInput.value = "https://huzhonghe2011.github.io/";
+    });
+
+    fillBilibili.addEventListener("click", function () {
+      urlInput.value = "https://www.bilibili.com/";
+    });
+
     if (urlFromParams) {
-      if (isValidURL(urlFromParams)) {
-        urlInput.value = urlFromParams;
-        openInIframe(urlFromParams);
+      const normalizedParamURL = normalizeURL(urlFromParams);
+      if (isValidURL(normalizedParamURL)) {
+        urlInput.value = normalizedParamURL;
+        openInIframe(normalizedParamURL);
       } else {
         showMessage("无效的 URL 参数");
       }
     }
 
-    // 同源情况下，尽量把 iframe 内的弹窗和新窗口跳转都改成留在 iframe 中
     iframe.addEventListener("load", () => {
       try {
         const doc = iframe.contentDocument || iframe.contentWindow.document;
         const win = iframe.contentWindow;
 
-        // 拦截 window.open
         win.open = function(url) {
           if (url) {
-            iframe.src = url;
+            iframe.src = normalizeURL(url);
           }
           return null;
         };
 
-        // 重写所有 a[target=_blank]
         doc.querySelectorAll("a").forEach(a => {
           a.setAttribute("target", "_self");
           a.addEventListener("click", function () {
@@ -186,26 +227,27 @@
           });
         });
 
-        // 重写 form target
         doc.querySelectorAll("form").forEach(form => {
           form.setAttribute("target", "_self");
         });
 
       } catch (err) {
-        // 跨域会进入这里，前端无法继续干预 iframe 内部行为
         showMessage("当前页面已嵌入，但这是跨域网站，无法强制接管其弹窗、新窗口或内部跳转行为。若要完全控制，必须通过服务端代理重写页面。");
       }
     });
 
-    // 如果 iframe 内页面通过 postMessage 请求外层跳转，可在这里统一改成 iframe 内加载
     window.addEventListener("message", (event) => {
       const data = event.data;
       if (!data || typeof data !== "object") return;
 
-      if (data.type === "open-url" && data.url && isValidURL(data.url)) {
-        iframe.src = data.url;
+      if (data.type === "open-url" && data.url) {
+        const normalizedURL = normalizeURL(data.url);
+        if (isValidURL(normalizedURL)) {
+          iframe.src = normalizedURL;
+        }
       }
     });
   </script>
+<script defer src="https://static.cloudflareinsights.com/beacon.min.js/v8c78df7c7c0f484497ecbca7046644da1771523124516" integrity="sha512-8DS7rgIrAmghBFwoOTujcf6D9rXvH8xm8JQ1Ja01h9QX8EzXldiszufYa4IFfKdLUKTTrnSFXLDkUEOTrZQ8Qg==" data-cf-beacon='{"version":"2024.11.0","token":"df358ff767b04bcd8e3e7d3b1f6f5c6e","r":1,"server_timing":{"name":{"cfCacheStatus":true,"cfEdge":true,"cfExtPri":true,"cfL4":true,"cfOrigin":true,"cfSpeedBrain":true},"location_startswith":null}}' crossorigin="anonymous"></script>
 </body>
 </html>
