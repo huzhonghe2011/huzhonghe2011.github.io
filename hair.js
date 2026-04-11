@@ -1,7 +1,7 @@
 (function () {
 
   /* ===== 可调参数 ===== */
-  const DROP_PROBABILITY = 0.5; // 概率（改这里）
+  const DROP_PROBABILITY = 0.2; // 概率
   const MOBILE_BREAKPOINT = 600;
 
   /* ===== 是否掉落 ===== */
