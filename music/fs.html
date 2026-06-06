@@ -1,0 +1,1423 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>范式读谱四面4K练习</title>
+    <style>
+        * { box-sizing: border-box; user-select: none; }
+        :root {
+            --bg: #0b0e14;
+            --panel: #11161f;
+            --panel-2: #0f151c;
+            --border: #2a3440;
+            --border-strong: #3a4a5e;
+            --text: #e7eef8;
+            --muted: #8ca1bf;
+            --muted-2: #b7c9e2;
+            --primary: #5b8cff;
+            --primary-2: #3f6ef0;
+            --danger: #f28b82;
+            --perfect: #ffd966;
+            --good: #6ea8fe;
+            --miss: #f28b82;
+            --shadow: rgba(7, 12, 20, 0.38);
+        }
+        body {
+            margin: 0;
+            min-height: 100vh;
+            background: var(--bg);
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            font-family: 'Segoe UI', 'Inter', system-ui, -apple-system, sans-serif;
+            padding: 16px;
+            color: var(--text);
+        }
+        .game-container {
+            max-width: 1200px;
+            width: 100%;
+            padding: 16px 20px 20px;
+        }
+        .settings-panel {
+            display: grid;
+            grid-template-columns: repeat(12, minmax(0, 1fr));
+            gap: 14px;
+            margin-bottom: 20px;
+            background: linear-gradient(180deg, rgba(19,25,36,0.95), rgba(14,19,28,0.98));
+            padding: 16px;
+            border-radius: 28px;
+            border: 1px solid var(--border);
+            box-shadow: 0 16px 36px var(--shadow);
+        }
+        .param-group {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            min-width: 0;
+            padding: 14px;
+            background: linear-gradient(180deg, rgba(255,255,255,0.025), rgba(255,255,255,0.01));
+            border: 1px solid rgba(110, 140, 190, 0.18);
+            border-radius: 20px;
+            min-height: 100%;
+        }
+        .param-group.span-2 { grid-column: span 2; }
+        .param-group.span-3 { grid-column: span 3; }
+        .param-group.span-4 { grid-column: span 4; }
+        .param-group.span-5 { grid-column: span 5; }
+        .param-group.span-6 { grid-column: span 6; }
+        .param-group.span-12 { grid-column: 1 / -1; }
+        .param-group.compact { justify-content: center; }
+        .param-group.actions { justify-content: flex-end; }
+        .param-label-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        .param-group label {
+            color: var(--muted-2);
+            font-size: 0.76rem;
+            font-weight: 700;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+        }
+        .param-meta {
+            color: var(--muted);
+            font-size: 0.78rem;
+            font-weight: 600;
+        }
+        .param-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            min-width: 0;
+            flex-wrap: wrap;
+        }
+        .param-row input[type="range"] {
+            flex: 1 1 180px;
+            min-width: 120px;
+            height: 6px;
+            margin: 0;
+            border-radius: 999px;
+            background: linear-gradient(90deg, rgba(91,140,255,0.28), rgba(91,140,255,0.10));
+            -webkit-appearance: none;
+            appearance: none;
+        }
+        .param-row input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: #dfe9ff;
+            border: 3px solid var(--primary);
+            cursor: pointer;
+        }
+        .param-row input[type="range"]::-moz-range-thumb {
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: #dfe9ff;
+            border: 3px solid var(--primary);
+            cursor: pointer;
+        }
+        .param-row input[type="number"],
+        select,
+        .custom-input {
+            background: var(--panel-2);
+            border: 1px solid var(--border-strong);
+            color: var(--text);
+            border-radius: 14px;
+            padding: 9px 12px;
+            font-weight: 600;
+            font-size: 0.94rem;
+        }
+        .param-row input[type="number"] {
+            width: 88px;
+            text-align: center;
+        }
+        .readonly-box {
+            display: inline-flex;
+            align-items: center;
+            min-height: 42px;
+            background: var(--panel-2);
+            border: 1px solid var(--border-strong);
+            border-radius: 14px;
+            padding: 8px 14px;
+            color: #b0d0ff;
+            font-weight: 700;
+            font-size: 1rem;
+        }
+        .steppers,
+        .speed-steps {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            flex-wrap: wrap;
+        }
+        .step-btn {
+            min-width: 40px;
+            height: 36px;
+            padding: 0 10px;
+            border-radius: 12px;
+            border: 1px solid #4a627a;
+            background: #243141;
+            color: white;
+            font-weight: 700;
+            cursor: pointer;
+        }
+        .speed-steps .step-btn {
+            min-width: 56px;
+            height: 34px;
+            padding: 0 8px;
+            font-size: 0.84rem;
+            border-radius: 10px;
+        }
+        .btn {
+            background: #29384a;
+            border: none;
+            color: white;
+            font-weight: bold;
+            padding: 10px 22px;
+            border-radius: 40px;
+            font-size: 1rem;
+            cursor: pointer;
+            border: 1px solid #5f7f9f;
+            box-shadow: 0 4px 0 #0f151c;
+            transition: transform 0.12s ease;
+        }
+        .btn:active { transform: translateY(2px); box-shadow: 0 2px 0 #0f151c; }
+        .btn-primary { background: var(--primary-2); border-color: #8aadff; box-shadow: 0 4px 0 #1e3a9e; }
+        .btn-warning { background: #4e3a5e; border-color: #b392d6; }
+        .btn-danger { background: #c0392b; border-color: #ff9a8a; box-shadow: 0 4px 0 #7a1f17; }
+        .btn:disabled,
+        .step-btn:disabled,
+        select:disabled,
+        input:disabled {
+            opacity: 0.45;
+            box-shadow: none;
+            pointer-events: none;
+            filter: grayscale(0.5);
+        }
+        .field-stack {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        .pattern-section {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 15px;
+            background: #11161f;
+            padding: 12px 20px;
+            border-radius: 22px;
+            border: 1px solid #2a3440;
+            margin: 10px 0;
+        }
+        .custom-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+        .error-message {
+            color: var(--danger);
+            font-size: 0.8rem;
+            margin-left: 8px;
+        }
+        .syntax-hint {
+            color: #7f95b5;
+            font-size: 0.75rem;
+            margin-left: 10px;
+            line-height: 1.5;
+        }
+        .syntax-line { display: block; }
+        .space-hint {
+            text-align: center;
+            color: #7f95b5;
+            font-size: 0.9rem;
+            margin-bottom: 8px;
+        }
+        .start-row { display: flex; justify-content: center; margin: 0 0 8px; }
+        .btn-start-large { padding: 12px 60px; font-size: 1.4rem; min-width: 240px; border-radius: 60px; }
+        .stats-area {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin: 8px 10px 12px;
+            gap: 12px;
+        }
+        .counters {
+            display: flex;
+            gap: 24px;
+            font-size: 1.2rem;
+            font-weight: 600;
+            flex-wrap: wrap;
+        }
+        .counter-item { display: flex; gap: 6px; }
+        .counter-perfect { color: var(--perfect); }
+        .counter-good { color: var(--good); }
+        .counter-miss { color: var(--miss); }
+        .canvas-wrapper {
+            position: relative;
+            width: 100%;
+            border-radius: 24px;
+            overflow: hidden;
+            border: 2px solid #2e405b;
+            touch-action: none;
+            box-shadow: 0 20px 42px rgba(0,0,0,0.28);
+            background: #0c0f15;
+        }
+        #gameCanvas { display: block; width: 100%; height: auto; background: #0c0f15; touch-action: none; }
+        .countdown-overlay {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            display: flex; align-items: center; justify-content: center; pointer-events: none;
+            font-size: 8rem; font-weight: 900; color: rgba(255,255,255,0.92);
+            z-index: 10;
+        }
+        .acc-display {
+            position: absolute;
+            top: 12px;
+            right: 16px;
+            color: #fff;
+            font-size: 1rem;
+            font-weight: 600;
+            z-index: 5;
+            background: rgba(0,0,0,0.45);
+            padding: 3px 12px;
+            border-radius: 30px;
+            pointer-events: none;
+        }
+        @media (max-width: 1080px) {
+            .param-group.span-2,
+            .param-group.span-3,
+            .param-group.span-4,
+            .param-group.span-5,
+            .param-group.span-6 {
+                grid-column: span 6;
+            }
+            .param-group.actions { grid-column: 1 / -1; }
+        }
+        @media (max-width: 720px) {
+            body { padding: 10px; }
+            .game-container { padding: 10px 0 18px; }
+            .settings-panel { grid-template-columns: 1fr; padding: 12px; gap: 12px; border-radius: 22px; }
+            .param-group,
+            .param-group.span-2,
+            .param-group.span-3,
+            .param-group.span-4,
+            .param-group.span-5,
+            .param-group.span-6,
+            .param-group.span-12 {
+                grid-column: 1 / -1;
+            }
+            .param-row input[type="number"] { width: 100%; }
+            .param-row input[type="range"] { flex-basis: 100%; }
+            .speed-steps { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); width: 100%; }
+            .speed-steps .step-btn { width: 100%; min-width: 0; }
+            .pattern-section { padding: 12px; border-radius: 18px; }
+            .btn-start-large { padding: 12px 30px; font-size: 1.2rem; }
+            .counters { gap: 16px; font-size: 1rem; }
+            .stats-area { align-items: flex-start; }
+            .countdown-overlay { font-size: 5rem; }
+        }
+    </style>
+</head>
+<body>
+<div class="game-container">
+    <div class="settings-panel" id="settingsPanel">
+        <div class="param-group span-3">
+            <div class="param-label-row"><label>BPM</label></div>
+            <div class="param-row">
+                <input type="range" id="bpmSlider" min="30" max="600" value="90">
+                <input type="number" id="bpmInput" min="30" max="600" value="90">
+                <div class="steppers">
+                    <button class="step-btn" id="bpmDec">−</button>
+                    <button class="step-btn" id="bpmInc">+</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="param-group span-2 compact">
+            <div class="param-label-row"><label>节奏</label></div>
+            <select id="rhythmSelect">
+                <option value="4" selected>四分</option>
+                <option value="8">八分</option>
+                <option value="12">十二分</option>
+                <option value="16">十六分</option>
+            </select>
+        </div>
+
+        <div class="param-group span-5">
+            <div class="param-label-row">
+                <label>流速</label>
+                <span class="param-meta" id="speedMsDisplay">到达判定边时间：10000 ms</span>
+            </div>
+            <div class="field-stack">
+                <div class="param-row">
+                    <input type="range" id="speedSlider" min="1" max="10" step="0.01" value="6.00">
+                    <input type="number" id="speedInput" min="1" max="10" step="0.01" value="6.00">
+                </div>
+                <div class="speed-steps">
+                    <button class="step-btn" data-step="-0.01">-0.01</button>
+                    <button class="step-btn" data-step="-0.1">-0.1</button>
+                    <button class="step-btn" data-step="-1">-1</button>
+                    <button class="step-btn" data-step="1">+1</button>
+                    <button class="step-btn" data-step="0.1">+0.1</button>
+                    <button class="step-btn" data-step="0.01">+0.01</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="param-group span-2 compact">
+            <div class="param-label-row"><label>模式</label></div>
+            <div class="param-row"><span class="readonly-box">四面 × 4K</span></div>
+        </div>
+
+        <div class="param-group span-3">
+            <div class="param-label-row"><label>Perfect判定范围 ±ms</label></div>
+            <div class="param-row">
+                <input type="range" id="perfectSlider" min="10" max="200" value="80">
+                <input type="number" id="perfectInput" min="10" max="200" value="80">
+                <div class="steppers">
+                    <button class="step-btn" id="perfectDec">−</button>
+                    <button class="step-btn" id="perfectInc">+</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="param-group span-2 compact">
+            <div class="param-label-row"><label>Good判定范围 ±ms</label></div>
+            <div class="param-row"><span class="readonly-box" id="goodDisplay">160</span></div>
+        </div>
+
+        <div class="param-group span-5">
+            <div class="param-label-row">
+                <label>判定区厚度 / 音符大小</label>
+                <span class="param-meta">影响边框可点区域和音符粗细</span>
+            </div>
+            <div class="param-row">
+                <input type="range" id="noteSizeSlider" min="24" max="96" value="52">
+                <input type="number" id="noteSizeInput" min="24" max="96" value="52">
+                <div class="steppers">
+                    <button class="step-btn" id="noteSizeDec">−</button>
+                    <button class="step-btn" id="noteSizeInc">+</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="param-group span-2 actions compact">
+            <div class="param-label-row"><label>操作</label></div>
+            <div class="param-row"><button class="btn btn-warning" id="resetBtn">重置</button></div>
+        </div>
+    </div>
+
+    <div class="pattern-section">
+        <label style="color:#b7c9e2; font-weight:600;">键型</label>
+        <select id="patternCategory" style="min-width:130px;"></select>
+        <select id="patternSub" style="min-width:210px;"></select>
+        <div class="custom-row" id="customRow" style="display:none;">
+            <input type="text" id="customPatternInput" placeholder="例如：11121322" style="width:240px;" class="custom-input">
+            <span id="patternError" class="error-message"></span>
+        </div>
+        <div id="syntaxHintBox" class="syntax-hint">
+            <span class="syntax-line"><strong>自定义语法：</strong>每个音符用两个数字表示</span>
+            <span class="syntax-line">第1位 = 方向：1上 / 2右 / 3下 / 4左</span>
+            <span class="syntax-line">第2位 = 轨道：1-4；例如 11121322 = 上1、上2、上3、右2</span>
+            <span class="syntax-line">可用空格、逗号、斜杠分隔；不支持长条和空键</span>
+        </div>
+    </div>
+
+    <div class="space-hint">点击/触摸四周判定区域击打；已移除键盘段逻辑，避免四面输入混乱</div>
+    <div class="start-row"><button class="btn btn-primary btn-start-large" id="startStopBtn">开始</button></div>
+
+    <div class="stats-area">
+        <div class="counters">
+            <div class="counter-item"><span style="color:#b7c9e2;">Perfect:</span> <span class="counter-perfect" id="perfectCount">0</span></div>
+            <div class="counter-item"><span style="color:#b7c9e2;">Good:</span> <span class="counter-good" id="goodCount">0</span></div>
+            <div class="counter-item"><span style="color:#b7c9e2;">Miss:</span> <span class="counter-miss" id="missCount">0</span></div>
+        </div>
+        <div></div>
+    </div>
+
+    <div class="canvas-wrapper">
+        <canvas id="gameCanvas"></canvas>
+        <div id="countdownDisplay" class="countdown-overlay" style="display:none;"></div>
+        <div id="accDisplay" class="acc-display">Acc: 100.00%</div>
+    </div>
+</div>
+
+<script>
+(function(){
+    "use strict";
+
+    const canvas = document.getElementById('gameCanvas');
+    const ctx = canvas.getContext('2d', { alpha: false });
+
+    const perfectSpan = document.getElementById('perfectCount');
+    const goodSpan = document.getElementById('goodCount');
+    const missSpan = document.getElementById('missCount');
+    const countdownDiv = document.getElementById('countdownDisplay');
+    const accDisplay = document.getElementById('accDisplay');
+
+    const bpmSlider = document.getElementById('bpmSlider');
+    const bpmInput = document.getElementById('bpmInput');
+    const bpmDec = document.getElementById('bpmDec');
+    const bpmInc = document.getElementById('bpmInc');
+    const rhythmSelect = document.getElementById('rhythmSelect');
+
+    const speedSlider = document.getElementById('speedSlider');
+    const speedInput = document.getElementById('speedInput');
+    const speedMsDisplay = document.getElementById('speedMsDisplay');
+    const speedStepBtns = Array.from(document.querySelectorAll('.speed-steps .step-btn'));
+
+    const perfectSlider = document.getElementById('perfectSlider');
+    const perfectInput = document.getElementById('perfectInput');
+    const perfectDec = document.getElementById('perfectDec');
+    const perfectInc = document.getElementById('perfectInc');
+    const goodDisplay = document.getElementById('goodDisplay');
+
+    const noteSizeSlider = document.getElementById('noteSizeSlider');
+    const noteSizeInput = document.getElementById('noteSizeInput');
+    const noteSizeDec = document.getElementById('noteSizeDec');
+    const noteSizeInc = document.getElementById('noteSizeInc');
+
+    const resetBtn = document.getElementById('resetBtn');
+    const startStopBtn = document.getElementById('startStopBtn');
+
+    const patternCategory = document.getElementById('patternCategory');
+    const patternSub = document.getElementById('patternSub');
+    const customPatternInput = document.getElementById('customPatternInput');
+    const patternError = document.getElementById('patternError');
+    const customRow = document.getElementById('customRow');
+
+    const STORAGE_KEY = 'paradigm_four_sides_practice_v1';
+    const LANES_PER_SIDE = 4;
+    const DIRECTIONS = [
+        { id: 1, name: '上', short: 'U' },
+        { id: 2, name: '右', short: 'R' },
+        { id: 3, name: '下', short: 'D' },
+        { id: 4, name: '左', short: 'L' }
+    ];
+
+    const SPEED_MIN_U = 1;
+    const SPEED_MAX_U = 10;
+    const SPEED_DEFAULT_U = 6;
+    const EFFECT_DURATION = 190;
+    const DOUBLE_CHANCE_RANDOM = 0.20;
+
+    let allControls = [];
+
+    let gameActive = false;
+    let acceptingInput = false;
+    let animFrame = null;
+
+    let notes = [];
+    let effects = [];
+    let perfectCount = 0;
+    let goodCount = 0;
+    let missCount = 0;
+
+    let nextNoteTime = 0;
+    let noteIntervalMs = 0;
+    let countdownBeatMs = 500;
+    let countdownState = { active:false };
+
+    let currentPattern = null;
+    let customValid = true;
+    let resetConfirmActive = false;
+    let resetConfirmTimer = null;
+
+    let canvasCssWidth = 0;
+    let canvasCssHeight = 0;
+    let dpr = 1;
+    let layout = null;
+
+    const builtinPatterns = {
+        '单面4K': [
+            { name:'上面楼梯 11121314...', seq:[[1,1],[1,2],[1,3],[1,4]] },
+            { name:'右面楼梯 21222324...', seq:[[2,1],[2,2],[2,3],[2,4]] },
+            { name:'下面楼梯 31323334...', seq:[[3,1],[3,2],[3,3],[3,4]] },
+            { name:'左面楼梯 41424344...', seq:[[4,1],[4,2],[4,3],[4,4]] }
+        ],
+        '四面切换': [
+            { name:'同轨轮转 11213141...', seq:[[1,1],[2,1],[3,1],[4,1]] },
+            { name:'二轨轮转 12223242...', seq:[[1,2],[2,2],[3,2],[4,2]] },
+            { name:'四面楼梯 11223344...', seq:[[1,1],[2,2],[3,3],[4,4]] },
+            { name:'反向楼梯 14243341...', seq:[[1,4],[2,3],[3,3],[4,1]] }
+        ],
+        '对边训练': [
+            { name:'上下同轨 11311232...', seq:[[1,1],[3,1],[1,2],[3,2],[1,3],[3,3],[1,4],[3,4]] },
+            { name:'左右同轨 21412242...', seq:[[2,1],[4,1],[2,2],[4,2],[2,3],[4,3],[2,4],[4,4]] },
+            { name:'上右/下左交错', seq:[[1,1],[2,1],[3,4],[4,4],[1,2],[2,2],[3,3],[4,3]] }
+        ],
+        '散点': [
+            { name:'随机；20%概率双押', random:true }
+        ]
+    };
+
+    function clamp(value, min, max) {
+        return Math.min(max, Math.max(min, value));
+    }
+
+    function roundToStep(value, step, decimals) {
+        const rounded = Math.round(value / step) * step;
+        return Number(rounded.toFixed(decimals));
+    }
+
+    function uToMs(u) {
+        return 10000 * Math.exp(-0.5117 * (u - 1));
+    }
+
+    function normalizeSpeedU(v) {
+        return roundToStep(clamp(Number(v) || SPEED_DEFAULT_U, SPEED_MIN_U, SPEED_MAX_U), 0.01, 2);
+    }
+
+    function getSpeedMs() {
+        return uToMs(Number(speedSlider.value));
+    }
+
+    function updateSpeedDisplay() {
+        const u = normalizeSpeedU(speedSlider.value);
+        speedSlider.value = u.toFixed(2);
+        speedInput.value = u.toFixed(2);
+        speedMsDisplay.textContent = `到达判定边时间：${Math.round(uToMs(u))} ms`;
+    }
+
+    function setSpeedU(value, skipSave) {
+        const u = normalizeSpeedU(value);
+        speedSlider.value = u.toFixed(2);
+        speedInput.value = u.toFixed(2);
+        updateSpeedDisplay();
+        if(!skipSave) saveSettings();
+    }
+
+    function adjustSpeedU(delta) {
+        setSpeedU(Number(speedSlider.value) + delta);
+    }
+
+    function updateGoodDisplay() {
+        goodDisplay.textContent = Number(perfectSlider.value) * 2;
+    }
+
+    function updateNoteInterval() {
+        const bpm = Number(bpmSlider.value);
+        const beatMs = 60000 / bpm;
+        const div = {4:1, 8:2, 12:3, 16:4}[rhythmSelect.value] || 1;
+        noteIntervalMs = beatMs / div;
+        countdownBeatMs = beatMs;
+    }
+
+    function bindNumberControl(slider, input, dec, inc, onChange) {
+        const min = () => Number(slider.min);
+        const max = () => Number(slider.max);
+        const step = () => Number(slider.step || 1);
+
+        function syncFromSlider() {
+            const value = clamp(Number(slider.value), min(), max());
+            slider.value = value;
+            input.value = value;
+            if(onChange) onChange(value);
+            updateGoodDisplay();
+            saveSettings();
+            requestStaticDraw();
+        }
+
+        slider.addEventListener('input', syncFromSlider);
+        input.addEventListener('change', () => {
+            let value = Number(input.value);
+            if(Number.isNaN(value)) value = min();
+            value = clamp(value, min(), max());
+            slider.value = value;
+            input.value = value;
+            if(onChange) onChange(value);
+            updateGoodDisplay();
+            saveSettings();
+            requestStaticDraw();
+        });
+        dec.addEventListener('click', () => {
+            const value = clamp(Number(slider.value) - step(), min(), max());
+            slider.value = value;
+            input.value = value;
+            if(onChange) onChange(value);
+            updateGoodDisplay();
+            saveSettings();
+            requestStaticDraw();
+        });
+        inc.addEventListener('click', () => {
+            const value = clamp(Number(slider.value) + step(), min(), max());
+            slider.value = value;
+            input.value = value;
+            if(onChange) onChange(value);
+            updateGoodDisplay();
+            saveSettings();
+            requestStaticDraw();
+        });
+    }
+
+    function saveSettings() {
+        const settings = {
+            bpm: bpmSlider.value,
+            rhythm: rhythmSelect.value,
+            speedU: Number(speedSlider.value).toFixed(2),
+            perfectWindow: perfectSlider.value,
+            noteSize: noteSizeSlider.value,
+            patternCategory: patternCategory.value,
+            patternSub: patternSub.value,
+            customPattern: customPatternInput.value
+        };
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(settings));
+    }
+
+    function loadSettings() {
+        const saved = localStorage.getItem(STORAGE_KEY);
+        let savedSettings = null;
+
+        if(saved) {
+            try {
+                const s = JSON.parse(saved);
+                savedSettings = s;
+                bpmSlider.value = s.bpm || 90;
+                bpmInput.value = s.bpm || 90;
+                rhythmSelect.value = s.rhythm || '4';
+                setSpeedU(s.speedU !== undefined ? s.speedU : SPEED_DEFAULT_U, true);
+                perfectSlider.value = s.perfectWindow || 80;
+                perfectInput.value = s.perfectWindow || 80;
+                noteSizeSlider.value = s.noteSize || 52;
+                noteSizeInput.value = s.noteSize || 52;
+                customPatternInput.value = s.customPattern || '';
+            } catch(e) {
+                savedSettings = null;
+            }
+        } else {
+            setSpeedU(SPEED_DEFAULT_U, true);
+        }
+
+        rebuildPatternUI();
+        restorePatternSelection(savedSettings);
+        updateGoodDisplay();
+        updateNoteInterval();
+        updateSpeedDisplay();
+    }
+
+    function resetToDefaults() {
+        bpmSlider.value = 90;
+        bpmInput.value = 90;
+        rhythmSelect.value = '4';
+        setSpeedU(SPEED_DEFAULT_U, true);
+        perfectSlider.value = 80;
+        perfectInput.value = 80;
+        noteSizeSlider.value = 52;
+        noteSizeInput.value = 52;
+        customPatternInput.value = '';
+        rebuildPatternUI();
+        patternCategory.value = '散点';
+        updateSubOptions(0, true);
+        updateGoodDisplay();
+        updateNoteInterval();
+        saveSettings();
+    }
+
+    function clearResetConfirmState() {
+        resetConfirmActive = false;
+        if(resetConfirmTimer) {
+            clearTimeout(resetConfirmTimer);
+            resetConfirmTimer = null;
+        }
+        resetBtn.textContent = '重置';
+        resetBtn.classList.remove('btn-danger');
+    }
+
+    function enterResetConfirmState() {
+        resetConfirmActive = true;
+        resetBtn.textContent = '确认重置';
+        resetBtn.classList.add('btn-danger');
+        if(resetConfirmTimer) clearTimeout(resetConfirmTimer);
+        resetConfirmTimer = setTimeout(clearResetConfirmState, 5000);
+    }
+
+    function rebuildPatternUI() {
+        patternCategory.innerHTML = '';
+        Object.keys(builtinPatterns).forEach(cat => {
+            const opt = document.createElement('option');
+            opt.value = cat;
+            opt.textContent = cat;
+            patternCategory.appendChild(opt);
+        });
+        const customOpt = document.createElement('option');
+        customOpt.value = '__custom__';
+        customOpt.textContent = '自定义';
+        patternCategory.appendChild(customOpt);
+        updateSubOptions(0, true);
+    }
+
+    function updateSubOptions(preferredSubIdx = 0, skipSave = true) {
+        const cat = patternCategory.value;
+        if(cat === '__custom__') {
+            patternSub.style.display = 'none';
+            customRow.style.display = 'flex';
+            customPatternInput.disabled = false;
+            parseAndApplyCustom(skipSave);
+            return;
+        }
+
+        patternSub.style.display = 'inline-block';
+        customRow.style.display = 'none';
+        customPatternInput.disabled = true;
+        patternSub.innerHTML = '';
+
+        const subs = builtinPatterns[cat] || [];
+        subs.forEach((item, idx) => {
+            const opt = document.createElement('option');
+            opt.value = idx;
+            opt.textContent = item.name;
+            patternSub.appendChild(opt);
+        });
+
+        if(subs.length) {
+            const subIdx = clamp(Number(preferredSubIdx) || 0, 0, subs.length - 1);
+            patternSub.value = String(subIdx);
+            applyBuiltinPattern(cat, subIdx);
+        }
+        if(!skipSave) saveSettings();
+    }
+
+    function applyBuiltinPattern(cat, subIdx) {
+        const item = builtinPatterns[cat]?.[subIdx];
+        if(!item) return;
+        if(item.random) {
+            currentPattern = { type:'random' };
+        } else {
+            currentPattern = {
+                type:'builtin',
+                sequence: item.seq.map(([direction, lane]) => ({ direction, lane })),
+                index: 0
+            };
+        }
+        patternError.textContent = '';
+        customValid = true;
+    }
+
+    function optionExists(select, value) {
+        return Array.from(select.options).some(opt => opt.value === value);
+    }
+
+    function restorePatternSelection(savedSettings) {
+        if(!savedSettings || !savedSettings.patternCategory || !optionExists(patternCategory, savedSettings.patternCategory)) {
+            patternCategory.value = '散点';
+            updateSubOptions(0, true);
+            return;
+        }
+
+        patternCategory.value = savedSettings.patternCategory;
+        if(patternCategory.value === '__custom__') {
+            updateSubOptions(0, true);
+        } else {
+            updateSubOptions(savedSettings.patternSub ?? 0, true);
+        }
+    }
+
+    function parseCustomPattern(str) {
+        const raw = str.trim();
+        if(!raw) return { error:'输入为空' };
+
+        const cleaned = raw.replace(/[\s,，/|;；]+/g, '');
+        if(cleaned.length % 2 !== 0) return { error:'必须每两个数字组成一个音符' };
+        if(!/^[1-4]+$/.test(cleaned)) return { error:'只能使用 1-4 的数字' };
+
+        const sequence = [];
+        for(let i = 0; i < cleaned.length; i += 2) {
+            const direction = Number(cleaned[i]);
+            const lane = Number(cleaned[i + 1]);
+            if(direction < 1 || direction > 4) return { error:`方向 ${direction} 超出 1-4` };
+            if(lane < 1 || lane > 4) return { error:`轨道 ${lane} 超出 1-4` };
+            sequence.push({ direction, lane });
+        }
+        return { sequence };
+    }
+
+    function parseAndApplyCustom(skipSave = false) {
+        const parsed = parseCustomPattern(customPatternInput.value);
+        if(parsed.error) {
+            patternError.textContent = parsed.error;
+            customValid = false;
+            return false;
+        }
+        patternError.textContent = '';
+        customValid = true;
+        currentPattern = {
+            type:'custom',
+            sequence: parsed.sequence,
+            index: 0
+        };
+        if(!skipSave) saveSettings();
+        return true;
+    }
+
+    function cellKey(cell) {
+        return `${cell.direction}-${cell.lane}`;
+    }
+
+    function getRandomCell(excludeKeys = new Set()) {
+        const candidates = [];
+        for(let direction = 1; direction <= 4; direction++) {
+            for(let lane = 1; lane <= 4; lane++) {
+                const cell = { direction, lane };
+                if(!excludeKeys.has(cellKey(cell))) candidates.push(cell);
+            }
+        }
+        return candidates[Math.floor(Math.random() * candidates.length)];
+    }
+
+    function getNextCells() {
+        if(!currentPattern) return [getRandomCell()];
+
+        if(currentPattern.type === 'random') {
+            const first = getRandomCell();
+            const cells = [first];
+            if(Math.random() < DOUBLE_CHANCE_RANDOM) {
+                const exclude = new Set([cellKey(first)]);
+                cells.push(getRandomCell(exclude));
+            }
+            return cells;
+        }
+
+        if(patternCategory.value === '__custom__' && !customValid) {
+            return [getRandomCell()];
+        }
+
+        const seq = currentPattern.sequence;
+        if(!seq || !seq.length) return [getRandomCell()];
+        const raw = seq[currentPattern.index % seq.length];
+        currentPattern.index = (currentPattern.index + 1) % seq.length;
+        return [{ direction: raw.direction, lane: raw.lane }];
+    }
+
+    function resetPatternIndex() {
+        if(currentPattern && typeof currentPattern.index === 'number') currentPattern.index = 0;
+    }
+
+    function updateAccDisplay() {
+        const total = perfectCount + goodCount + missCount;
+        let accValue = 100.00;
+        if(total > 0) accValue = (perfectCount + goodCount * 0.7) / total * 100;
+        accDisplay.textContent = `Acc: ${accValue.toFixed(2)}%`;
+    }
+
+    function resizeCanvas() {
+        const wrapper = canvas.parentElement;
+        canvasCssWidth = wrapper.clientWidth;
+        canvasCssHeight = Math.max(window.innerHeight * 0.72, 460);
+        dpr = Math.max(1, Math.min(2, window.devicePixelRatio || 1));
+
+        canvas.style.width = `${canvasCssWidth}px`;
+        canvas.style.height = `${canvasCssHeight}px`;
+        canvas.width = Math.round(canvasCssWidth * dpr);
+        canvas.height = Math.round(canvasCssHeight * dpr);
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+        updateLayout();
+    }
+
+    function updateLayout() {
+        const margin = Number(noteSizeSlider.value) * 1.35 + 18;
+        const maxFieldW = Math.max(220, canvasCssWidth - margin * 2);
+        const maxFieldH = Math.max(220, canvasCssHeight - margin * 2);
+        const fieldSize = Math.max(220, Math.min(maxFieldW, maxFieldH, 620));
+        const cx = canvasCssWidth / 2;
+        const cy = canvasCssHeight / 2;
+        const half = fieldSize / 2;
+        const laneLength = fieldSize / LANES_PER_SIDE;
+        const hitThickness = Number(noteSizeSlider.value);
+        const noteThickness = Math.max(12, hitThickness * 0.32);
+
+        layout = {
+            cx, cy,
+            fieldSize,
+            half,
+            left: cx - half,
+            right: cx + half,
+            top: cy - half,
+            bottom: cy + half,
+            laneLength,
+            hitThickness,
+            noteThickness
+        };
+    }
+
+    function getTargetPosition(direction, lane) {
+        const l = layout;
+        const i = lane - 1;
+        const laneCenter = (i + 0.5) * l.laneLength;
+
+        if(direction === 1) return { x: l.left + laneCenter, y: l.top };
+        if(direction === 2) return { x: l.right, y: l.top + laneCenter };
+        if(direction === 3) return { x: l.left + laneCenter, y: l.bottom };
+        return { x: l.left, y: l.top + laneCenter };
+    }
+
+    function getZoneFromPoint(x, y) {
+        if(!layout) return null;
+        const l = layout;
+        const ht = l.hitThickness / 2;
+        const candidates = [];
+
+        if(x >= l.left && x <= l.right && Math.abs(y - l.top) <= ht) {
+            candidates.push({ direction:1, lane:clamp(Math.floor((x - l.left) / l.laneLength), 0, 3) + 1, dist:Math.abs(y - l.top) });
+        }
+        if(y >= l.top && y <= l.bottom && Math.abs(x - l.right) <= ht) {
+            candidates.push({ direction:2, lane:clamp(Math.floor((y - l.top) / l.laneLength), 0, 3) + 1, dist:Math.abs(x - l.right) });
+        }
+        if(x >= l.left && x <= l.right && Math.abs(y - l.bottom) <= ht) {
+            candidates.push({ direction:3, lane:clamp(Math.floor((x - l.left) / l.laneLength), 0, 3) + 1, dist:Math.abs(y - l.bottom) });
+        }
+        if(y >= l.top && y <= l.bottom && Math.abs(x - l.left) <= ht) {
+            candidates.push({ direction:4, lane:clamp(Math.floor((y - l.top) / l.laneLength), 0, 3) + 1, dist:Math.abs(x - l.left) });
+        }
+
+        if(!candidates.length) return null;
+        candidates.sort((a, b) => a.dist - b.dist);
+        return { direction:candidates[0].direction, lane:candidates[0].lane };
+    }
+
+    function bindEvents() {
+        bindNumberControl(bpmSlider, bpmInput, bpmDec, bpmInc, updateNoteInterval);
+        bindNumberControl(perfectSlider, perfectInput, perfectDec, perfectInc, updateGoodDisplay);
+        bindNumberControl(noteSizeSlider, noteSizeInput, noteSizeDec, noteSizeInc, () => {
+            updateLayout();
+        });
+
+        speedSlider.addEventListener('input', () => setSpeedU(speedSlider.value));
+        speedInput.addEventListener('change', () => setSpeedU(speedInput.value));
+        speedStepBtns.forEach(btn => {
+            btn.addEventListener('click', () => adjustSpeedU(Number(btn.dataset.step)));
+        });
+
+        rhythmSelect.addEventListener('change', () => {
+            updateNoteInterval();
+            saveSettings();
+        });
+
+        resetBtn.addEventListener('click', () => {
+            if(gameActive) return;
+            if(!resetConfirmActive) {
+                enterResetConfirmState();
+                return;
+            }
+            clearResetConfirmState();
+            resetToDefaults();
+            requestStaticDraw();
+        });
+
+        startStopBtn.addEventListener('click', () => gameActive ? stopGame() : startGame());
+
+        patternCategory.addEventListener('change', () => {
+            updateSubOptions(0, false);
+            saveSettings();
+        });
+
+        patternSub.addEventListener('change', () => {
+            if(patternCategory.value !== '__custom__') {
+                applyBuiltinPattern(patternCategory.value, Number(patternSub.value));
+                saveSettings();
+            }
+        });
+
+        customPatternInput.addEventListener('input', () => {
+            if(patternCategory.value === '__custom__') parseAndApplyCustom();
+        });
+
+        canvas.addEventListener('pointerdown', e => {
+            e.preventDefault();
+            if(!gameActive || !acceptingInput) return;
+            const rect = canvas.getBoundingClientRect();
+            const x = (e.clientX - rect.left) * (canvasCssWidth / rect.width);
+            const y = (e.clientY - rect.top) * (canvasCssHeight / rect.height);
+            const zone = getZoneFromPoint(x, y);
+            if(zone) handleHit(zone.direction, zone.lane);
+        }, { passive:false });
+
+        canvas.addEventListener('pointermove', e => e.preventDefault(), { passive:false });
+
+        window.addEventListener('resize', () => {
+            resizeCanvas();
+            requestStaticDraw();
+        });
+    }
+
+    function resetGameStats() {
+        perfectCount = 0;
+        goodCount = 0;
+        missCount = 0;
+        perfectSpan.textContent = '0';
+        goodSpan.textContent = '0';
+        missSpan.textContent = '0';
+        updateAccDisplay();
+        notes = [];
+        effects = [];
+        resetPatternIndex();
+    }
+
+    function startCountdown() {
+        const now = performance.now();
+        countdownState = {
+            active:true,
+            phase:'ready',
+            nextBeatTime:now + 850,
+            beatsLeft:3
+        };
+        countdownDiv.style.display = 'flex';
+        countdownDiv.textContent = '准备';
+        acceptingInput = false;
+        gameActive = true;
+    }
+
+    function updateCountdown(now) {
+        if(!countdownState.active) return;
+        const s = countdownState;
+
+        if(s.phase === 'ready' && now >= s.nextBeatTime) {
+            s.phase = 'countdown';
+            s.nextBeatTime = now + countdownBeatMs;
+            countdownDiv.textContent = '3';
+        } else if(s.phase === 'countdown' && now >= s.nextBeatTime) {
+            s.beatsLeft--;
+            if(s.beatsLeft > 0) {
+                countdownDiv.textContent = String(s.beatsLeft);
+                s.nextBeatTime += countdownBeatMs;
+            } else {
+                countdownState.active = false;
+                countdownDiv.style.display = 'none';
+                acceptingInput = true;
+                nextNoteTime = now;
+            }
+        }
+    }
+
+    function startGame() {
+        if(gameActive) return;
+        clearResetConfirmState();
+
+        if(patternCategory.value === '__custom__' && !parseAndApplyCustom(true)) return;
+
+        allControls.forEach(c => c.disabled = true);
+        resetGameStats();
+        updateNoteInterval();
+        resizeCanvas();
+        startStopBtn.textContent = '停止';
+        startCountdown();
+
+        animFrame = requestAnimationFrame(function loop(ts) {
+            if(!gameActive) return;
+            updateAndDraw(ts);
+            animFrame = requestAnimationFrame(loop);
+        });
+    }
+
+    function stopGame() {
+        if(!gameActive) return;
+        gameActive = false;
+        acceptingInput = false;
+        startStopBtn.textContent = '开始';
+        allControls.forEach(c => c.disabled = false);
+        if(animFrame) {
+            cancelAnimationFrame(animFrame);
+            animFrame = null;
+        }
+        notes = [];
+        effects = [];
+        countdownState.active = false;
+        countdownDiv.style.display = 'none';
+        requestStaticDraw();
+    }
+
+    function generateNotes(now) {
+        if(!gameActive || !acceptingInput) return;
+
+        let generated = 0;
+        while(nextNoteTime <= now && generated < 40) {
+            const cells = getNextCells();
+            const used = new Set();
+
+            for(const cell of cells) {
+                const key = cellKey(cell);
+                if(used.has(key)) continue; // 双押去重，防止同一落点重合。
+                used.add(key);
+                notes.push({
+                    direction: cell.direction,
+                    lane: cell.lane,
+                    birthTime: nextNoteTime,
+                    hitTime: nextNoteTime + getSpeedMs(),
+                    judged: false
+                });
+            }
+
+            nextNoteTime += noteIntervalMs;
+            generated++;
+        }
+    }
+
+    function handleHit(direction, lane) {
+        if(!gameActive || !acceptingInput) return;
+
+        const now = performance.now();
+        const pw = Number(perfectSlider.value);
+        const gw = pw * 2;
+
+        let bestIndex = -1;
+        let bestAbs = Infinity;
+
+        for(let i = 0; i < notes.length; i++) {
+            const n = notes[i];
+            if(n.judged || n.direction !== direction || n.lane !== lane) continue;
+            const abs = Math.abs(now - n.hitTime);
+            if(abs <= gw && abs < bestAbs) {
+                bestAbs = abs;
+                bestIndex = i;
+            }
+        }
+
+        if(bestIndex === -1) return;
+
+        const n = notes[bestIndex];
+        const target = getTargetPosition(n.direction, n.lane);
+        n.judged = true;
+        notes.splice(bestIndex, 1);
+
+        if(bestAbs <= pw) {
+            perfectCount++;
+            perfectSpan.textContent = perfectCount;
+            effects.push({ x:target.x, y:target.y, type:'perfect', startTime:now });
+        } else {
+            goodCount++;
+            goodSpan.textContent = goodCount;
+            effects.push({ x:target.x, y:target.y, type:'good', startTime:now });
+        }
+        updateAccDisplay();
+    }
+
+    function updateAndDraw(ts) {
+        if(countdownState.active) updateCountdown(ts);
+        generateNotes(ts);
+
+        const gw = Number(perfectSlider.value) * 2;
+        for(let i = notes.length - 1; i >= 0; i--) {
+            const n = notes[i];
+            if(!n.judged && ts > n.hitTime + gw) {
+                notes.splice(i, 1);
+                missCount++;
+                missSpan.textContent = missCount;
+                updateAccDisplay();
+            }
+        }
+
+        drawCanvas(ts);
+    }
+
+    function requestStaticDraw() {
+        if(!gameActive) {
+            resizeCanvas();
+            drawCanvas(performance.now());
+        }
+    }
+
+    function fillRoundRect(x, y, w, h, r) {
+        const radius = Math.min(r, Math.abs(w) / 2, Math.abs(h) / 2);
+        ctx.beginPath();
+        ctx.moveTo(x + radius, y);
+        ctx.lineTo(x + w - radius, y);
+        ctx.quadraticCurveTo(x + w, y, x + w, y + radius);
+        ctx.lineTo(x + w, y + h - radius);
+        ctx.quadraticCurveTo(x + w, y + h, x + w - radius, y + h);
+        ctx.lineTo(x + radius, y + h);
+        ctx.quadraticCurveTo(x, y + h, x, y + h - radius);
+        ctx.lineTo(x, y + radius);
+        ctx.quadraticCurveTo(x, y, x + radius, y);
+        ctx.closePath();
+        ctx.fill();
+    }
+
+    function drawBackground() {
+        ctx.fillStyle = '#0c0f15';
+        ctx.fillRect(0, 0, canvasCssWidth, canvasCssHeight);
+    }
+
+    function drawLaneZones() {
+        const l = layout;
+        const ht = l.hitThickness;
+        const half = ht / 2;
+
+        ctx.lineWidth = 1;
+        ctx.strokeStyle = '#2e405b';
+        ctx.fillStyle = 'rgba(63,110,240,0.08)';
+
+        // Top and bottom 4K zones.
+        for(let i = 0; i < LANES_PER_SIDE; i++) {
+            const x = l.left + i * l.laneLength;
+            ctx.fillRect(x, l.top - half, l.laneLength, ht);
+            ctx.strokeRect(x, l.top - half, l.laneLength, ht);
+            ctx.fillRect(x, l.bottom - half, l.laneLength, ht);
+            ctx.strokeRect(x, l.bottom - half, l.laneLength, ht);
+        }
+
+        // Left and right 4K zones.
+        for(let i = 0; i < LANES_PER_SIDE; i++) {
+            const y = l.top + i * l.laneLength;
+            ctx.fillRect(l.left - half, y, ht, l.laneLength);
+            ctx.strokeRect(l.left - half, y, ht, l.laneLength);
+            ctx.fillRect(l.right - half, y, ht, l.laneLength);
+            ctx.strokeRect(l.right - half, y, ht, l.laneLength);
+        }
+
+        ctx.lineWidth = 2.5;
+        ctx.strokeStyle = '#dce9ff';
+        ctx.strokeRect(l.left, l.top, l.fieldSize, l.fieldSize);
+
+        ctx.strokeStyle = '#40556f';
+        ctx.lineWidth = 1.2;
+        for(let i = 1; i < LANES_PER_SIDE; i++) {
+            const x = l.left + i * l.laneLength;
+            const y = l.top + i * l.laneLength;
+            ctx.beginPath();
+            ctx.moveTo(x, l.top);
+            ctx.lineTo(x, l.bottom);
+            ctx.stroke();
+            ctx.beginPath();
+            ctx.moveTo(l.left, y);
+            ctx.lineTo(l.right, y);
+            ctx.stroke();
+        }
+    }
+
+    function drawDirectionLabels() {
+        const l = layout;
+        ctx.font = '700 14px "Segoe UI", system-ui, sans-serif';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillStyle = '#b7c9e2';
+        ctx.fillText('1 上', l.cx, l.top - l.hitThickness * 0.82);
+        ctx.fillText('3 下', l.cx, l.bottom + l.hitThickness * 0.82);
+
+        ctx.save();
+        ctx.translate(l.right + l.hitThickness * 0.82, l.cy);
+        ctx.rotate(Math.PI / 2);
+        ctx.fillText('2 右', 0, 0);
+        ctx.restore();
+
+        ctx.save();
+        ctx.translate(l.left - l.hitThickness * 0.82, l.cy);
+        ctx.rotate(-Math.PI / 2);
+        ctx.fillText('4 左', 0, 0);
+        ctx.restore();
+
+        ctx.font = '600 12px "Segoe UI", system-ui, sans-serif';
+        ctx.fillStyle = '#7f95b5';
+
+        for(let i = 0; i < LANES_PER_SIDE; i++) {
+            const p = (i + 0.5) * l.laneLength;
+            const lane = i + 1;
+            ctx.fillText(String(lane), l.left + p, l.top + 13);
+            ctx.fillText(String(lane), l.left + p, l.bottom - 13);
+            ctx.fillText(String(lane), l.right - 13, l.top + p);
+            ctx.fillText(String(lane), l.left + 13, l.top + p);
+        }
+    }
+
+    function drawCenterGuides() {
+        const l = layout;
+        ctx.strokeStyle = '#263448';
+        ctx.lineWidth = 1;
+        const guideLen = Math.min(90, l.fieldSize * 0.18);
+        ctx.beginPath();
+        ctx.moveTo(l.cx - guideLen, l.cy);
+        ctx.lineTo(l.cx + guideLen, l.cy);
+        ctx.moveTo(l.cx, l.cy - guideLen);
+        ctx.lineTo(l.cx, l.cy + guideLen);
+        ctx.stroke();
+
+        ctx.fillStyle = '#162033';
+        fillRoundRect(l.cx - 18, l.cy - 18, 36, 36, 8);
+    }
+
+    function drawNote(note, now) {
+        const l = layout;
+        const target = getTargetPosition(note.direction, note.lane);
+        const progress = clamp((now - note.birthTime) / getSpeedMs(), 0, 1.12);
+        const x = l.cx + (target.x - l.cx) * progress;
+        const y = l.cy + (target.y - l.cy) * progress;
+        const length = Math.max(28, l.laneLength * 0.70);
+        const thick = l.noteThickness;
+
+        ctx.fillStyle = '#3f8cff';
+        if(note.direction === 1 || note.direction === 3) {
+            fillRoundRect(x - length / 2, y - thick / 2, length, thick, thick / 2);
+        } else {
+            fillRoundRect(x - thick / 2, y - length / 2, thick, length, thick / 2);
+        }
+
+        // 到线前的短方向线，帮助训练“从中心飞向哪条边”。
+        ctx.strokeStyle = 'rgba(120,160,220,0.20)';
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.moveTo(l.cx, l.cy);
+        ctx.lineTo(x, y);
+        ctx.stroke();
+    }
+
+    function drawEffects(now) {
+        effects = effects.filter(effect => {
+            const age = now - effect.startTime;
+            if(age > EFFECT_DURATION) return false;
+
+            const p = age / EFFECT_DURATION;
+            ctx.globalAlpha = 1 - p;
+            ctx.strokeStyle = effect.type === 'perfect' ? '#ffd966' : '#6ea8fe';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.arc(effect.x, effect.y, 8 + 16 * p, 0, Math.PI * 2);
+            ctx.stroke();
+            ctx.globalAlpha = 1;
+            return true;
+        });
+    }
+
+    function drawCanvas(now) {
+        if(!layout) updateLayout();
+
+        drawBackground();
+        drawLaneZones();
+        drawCenterGuides();
+
+        notes.forEach(note => {
+            if(!note.judged) drawNote(note, now);
+        });
+
+        drawEffects(now);
+        drawDirectionLabels();
+    }
+
+    function init() {
+        resizeCanvas();
+        loadSettings();
+        bindEvents();
+        allControls = [
+            bpmSlider, bpmInput, bpmDec, bpmInc,
+            rhythmSelect,
+            speedSlider, speedInput, ...speedStepBtns,
+            perfectSlider, perfectInput, perfectDec, perfectInc,
+            noteSizeSlider, noteSizeInput, noteSizeDec, noteSizeInc,
+            resetBtn,
+            patternCategory, patternSub, customPatternInput
+        ];
+        resizeCanvas();
+        drawCanvas(performance.now());
+        updateAccDisplay();
+    }
+
+    init();
+})();
+</script>
+</body>
+</html>
