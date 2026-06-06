@@ -395,8 +395,8 @@
 
         <div class="param-group span-5">
             <div class="param-label-row">
-                <label>判定区厚度 / 音符大小</label>
-                <span class="param-meta">影响边框可点区域和音符粗细</span>
+                <label>放射判定深度 / 音符最大大小</label>
+                <span class="param-meta">判定区沿中心连线向内延伸，避免四角重合</span>
             </div>
             <div class="param-row">
                 <input type="range" id="noteSizeSlider" min="24" max="96" value="52">
@@ -430,7 +430,7 @@
         </div>
     </div>
 
-    <div class="space-hint">点击/触摸四周判定区域击打；已移除键盘段逻辑，避免四面输入混乱</div>
+    <div class="space-hint">点击/触摸四周放射判定区击打；判定按“中心→边框”的扇区划分，四角不会上下左右重合</div>
     <div class="start-row"><button class="btn btn-primary btn-start-large" id="startStopBtn">开始</button></div>
 
     <div class="stats-area">
@@ -958,28 +958,57 @@
         return { x: l.left, y: l.top + laneCenter };
     }
 
+    function getJudgementDepthRatio() {
+        if(!layout) return 0.18;
+        // noteSizeSlider 不再表示单纯的水平/垂直边框厚度，而是表示沿“中心→边框”方向向内延伸的深度。
+        return clamp(layout.hitThickness / layout.half, 0.10, 0.42);
+    }
+
+    function getEdgePointForRay(x, y) {
+        const l = layout;
+        const dx = x - l.cx;
+        const dy = y - l.cy;
+        const maxAbs = Math.max(Math.abs(dx), Math.abs(dy));
+        if(maxAbs < 0.001) return null;
+
+        const scale = l.half / maxAbs;
+        const edgeX = l.cx + dx * scale;
+        const edgeY = l.cy + dy * scale;
+        let direction;
+
+        if(Math.abs(dx) > Math.abs(dy)) {
+            direction = dx > 0 ? 2 : 4;
+        } else {
+            direction = dy > 0 ? 3 : 1;
+        }
+
+        return { x:edgeX, y:edgeY, direction, maxAbs };
+    }
+
+    function laneFromEdgePoint(edge) {
+        const l = layout;
+        if(edge.direction === 1 || edge.direction === 3) {
+            return clamp(Math.floor((edge.x - l.left) / l.laneLength), 0, 3) + 1;
+        }
+        return clamp(Math.floor((edge.y - l.top) / l.laneLength), 0, 3) + 1;
+    }
+
     function getZoneFromPoint(x, y) {
         if(!layout) return null;
         const l = layout;
-        const ht = l.hitThickness / 2;
-        const candidates = [];
+        const edge = getEdgePointForRay(x, y);
+        if(!edge) return null;
 
-        if(x >= l.left && x <= l.right && Math.abs(y - l.top) <= ht) {
-            candidates.push({ direction:1, lane:clamp(Math.floor((x - l.left) / l.laneLength), 0, 3) + 1, dist:Math.abs(y - l.top) });
-        }
-        if(y >= l.top && y <= l.bottom && Math.abs(x - l.right) <= ht) {
-            candidates.push({ direction:2, lane:clamp(Math.floor((y - l.top) / l.laneLength), 0, 3) + 1, dist:Math.abs(x - l.right) });
-        }
-        if(x >= l.left && x <= l.right && Math.abs(y - l.bottom) <= ht) {
-            candidates.push({ direction:3, lane:clamp(Math.floor((x - l.left) / l.laneLength), 0, 3) + 1, dist:Math.abs(y - l.bottom) });
-        }
-        if(y >= l.top && y <= l.bottom && Math.abs(x - l.left) <= ht) {
-            candidates.push({ direction:4, lane:clamp(Math.floor((y - l.top) / l.laneLength), 0, 3) + 1, dist:Math.abs(x - l.left) });
-        }
+        // 以从中心射向外框的射线划分方向和轨道，判定区是每个扇区靠近边框的一段。
+        // 这样上/下/左/右不会在四角互相抢判定。
+        const depthRatio = getJudgementDepthRatio();
+        const outerAllowanceRatio = clamp((l.hitThickness * 0.55) / l.half, 0.04, 0.16);
+        const radialRatio = edge.maxAbs / l.half;
 
-        if(!candidates.length) return null;
-        candidates.sort((a, b) => a.dist - b.dist);
-        return { direction:candidates[0].direction, lane:candidates[0].lane };
+        if(radialRatio < 1 - depthRatio || radialRatio > 1 + outerAllowanceRatio) return null;
+
+        const lane = laneFromEdgePoint(edge);
+        return { direction:edge.direction, lane };
     }
 
     function bindEvents() {
@@ -1244,50 +1273,78 @@
         ctx.fillRect(0, 0, canvasCssWidth, canvasCssHeight);
     }
 
+    function interpFromCenter(point, ratioFromCenter) {
+        const l = layout;
+        return {
+            x: l.cx + (point.x - l.cx) * ratioFromCenter,
+            y: l.cy + (point.y - l.cy) * ratioFromCenter
+        };
+    }
+
+    function drawPolygon(points, fillStyle, strokeStyle) {
+        ctx.beginPath();
+        ctx.moveTo(points[0].x, points[0].y);
+        for(let i = 1; i < points.length; i++) ctx.lineTo(points[i].x, points[i].y);
+        ctx.closePath();
+        if(fillStyle) {
+            ctx.fillStyle = fillStyle;
+            ctx.fill();
+        }
+        if(strokeStyle) {
+            ctx.strokeStyle = strokeStyle;
+            ctx.stroke();
+        }
+    }
+
+    function getLaneOuterSegment(direction, lane) {
+        const l = layout;
+        const a = (lane - 1) * l.laneLength;
+        const b = lane * l.laneLength;
+
+        if(direction === 1) return [{ x:l.left + a, y:l.top }, { x:l.left + b, y:l.top }];
+        if(direction === 2) return [{ x:l.right, y:l.top + a }, { x:l.right, y:l.top + b }];
+        if(direction === 3) return [{ x:l.left + a, y:l.bottom }, { x:l.left + b, y:l.bottom }];
+        return [{ x:l.left, y:l.top + a }, { x:l.left, y:l.top + b }];
+    }
+
+    function getLaneJudgePolygon(direction, lane) {
+        const outer = getLaneOuterSegment(direction, lane);
+        const innerRatio = 1 - getJudgementDepthRatio();
+        const innerB = interpFromCenter(outer[1], innerRatio);
+        const innerA = interpFromCenter(outer[0], innerRatio);
+        return [outer[0], outer[1], innerB, innerA];
+    }
+
     function drawLaneZones() {
         const l = layout;
-        const ht = l.hitThickness;
-        const half = ht / 2;
 
         ctx.lineWidth = 1;
-        ctx.strokeStyle = '#2e405b';
-        ctx.fillStyle = 'rgba(63,110,240,0.08)';
-
-        // Top and bottom 4K zones.
-        for(let i = 0; i < LANES_PER_SIDE; i++) {
-            const x = l.left + i * l.laneLength;
-            ctx.fillRect(x, l.top - half, l.laneLength, ht);
-            ctx.strokeRect(x, l.top - half, l.laneLength, ht);
-            ctx.fillRect(x, l.bottom - half, l.laneLength, ht);
-            ctx.strokeRect(x, l.bottom - half, l.laneLength, ht);
-        }
-
-        // Left and right 4K zones.
-        for(let i = 0; i < LANES_PER_SIDE; i++) {
-            const y = l.top + i * l.laneLength;
-            ctx.fillRect(l.left - half, y, ht, l.laneLength);
-            ctx.strokeRect(l.left - half, y, ht, l.laneLength);
-            ctx.fillRect(l.right - half, y, ht, l.laneLength);
-            ctx.strokeRect(l.right - half, y, ht, l.laneLength);
+        for(let direction = 1; direction <= 4; direction++) {
+            for(let lane = 1; lane <= LANES_PER_SIDE; lane++) {
+                drawPolygon(
+                    getLaneJudgePolygon(direction, lane),
+                    'rgba(63,110,240,0.08)',
+                    '#2e405b'
+                );
+            }
         }
 
         ctx.lineWidth = 2.5;
         ctx.strokeStyle = '#dce9ff';
         ctx.strokeRect(l.left, l.top, l.fieldSize, l.fieldSize);
 
+        // 用从中心发散到边框分界点的线显示真实判定分区，替代水平/竖直切线。
         ctx.strokeStyle = '#40556f';
         ctx.lineWidth = 1.2;
-        for(let i = 1; i < LANES_PER_SIDE; i++) {
-            const x = l.left + i * l.laneLength;
-            const y = l.top + i * l.laneLength;
-            ctx.beginPath();
-            ctx.moveTo(x, l.top);
-            ctx.lineTo(x, l.bottom);
-            ctx.stroke();
-            ctx.beginPath();
-            ctx.moveTo(l.left, y);
-            ctx.lineTo(l.right, y);
-            ctx.stroke();
+        for(let direction = 1; direction <= 4; direction++) {
+            for(let i = 1; i < LANES_PER_SIDE; i++) {
+                const segment = getLaneOuterSegment(direction, i);
+                const boundary = segment[1];
+                ctx.beginPath();
+                ctx.moveTo(l.cx, l.cy);
+                ctx.lineTo(boundary.x, boundary.y);
+                ctx.stroke();
+            }
         }
     }
 
@@ -1341,14 +1398,25 @@
         fillRoundRect(l.cx - 18, l.cy - 18, 36, 36, 8);
     }
 
+    function smoothstep(t) {
+        t = clamp(t, 0, 1);
+        return t * t * (3 - 2 * t);
+    }
+
     function drawNote(note, now) {
         const l = layout;
         const target = getTargetPosition(note.direction, note.lane);
-        const progress = clamp((now - note.birthTime) / getSpeedMs(), 0, 1.12);
+        const rawProgress = (now - note.birthTime) / getSpeedMs();
+        const progress = clamp(rawProgress, 0, 1.12);
+        const visualProgress = clamp(rawProgress, 0, 1);
+
         const x = l.cx + (target.x - l.cx) * progress;
         const y = l.cy + (target.y - l.cy) * progress;
-        const length = Math.max(28, l.laneLength * 0.70);
-        const thick = l.noteThickness;
+
+        // 模拟空间3D：刚从中心出现时较小，越接近判定边越大。
+        const scale = 0.35 + smoothstep(visualProgress) * 0.65;
+        const length = Math.max(28, l.laneLength * 0.70) * scale;
+        const thick = l.noteThickness * scale;
 
         ctx.fillStyle = '#3f8cff';
         if(note.direction === 1 || note.direction === 3) {
@@ -1358,7 +1426,7 @@
         }
 
         // 到线前的短方向线，帮助训练“从中心飞向哪条边”。
-        ctx.strokeStyle = 'rgba(120,160,220,0.20)';
+        ctx.strokeStyle = 'rgba(120,160,220,0.18)';
         ctx.lineWidth = 1;
         ctx.beginPath();
         ctx.moveTo(l.cx, l.cy);
