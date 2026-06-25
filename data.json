@@ -73,18 +73,21 @@
           {
             "groupTitle": "游戏",
             "buttons": [
-              { "link": "https://ak-ioi.com/apps/oi-2048/", "line1": "2048 IOI 版", "line2": "里面还有其他版本" },
+              { "link": "https://ak-ioi.com/apps/oi-2048/", "line1": "2048 IOI 版", "line2": "2048" },
+              { "link": "https://2048game.com/", "line1": "2048原版", "line2": "2048" },
               { "link": "https://cheeaun.github.io/chengyu-wordle/", "line1": "猜成语", "line2": "中国的wordle" },
               { "link": "https://slay.one/", "line1": "slay.one", "line2": "联机2D枪战游戏" },
               { "link": "https://www.arealme.com/cn", "line1": "A Real Me测试", "line2": "一些测试" },
               { "link": "https://indienova.com/corp/adofai", "line1": "冰与火之舞", "line2": "在线免费试玩" },
               { "link": "https://h5mota.com/play/", "line1": "魔塔", "line2": "经典游戏，里面有很多二创" },
               { "link": "https://liferestart.syaro.io/public/index.html", "line1": "人生重开模拟器", "line2": "经典" },
-              { "link": "https://yorg.io/", "line1": "yorg.io", "line2": "一种塔防" },
-              { "link": "https://triep.io/", "line1": "坦克大战", "line2": "无聊专用" },
+              { "link": "https://s.u7u9.com/h5game/ylgy20221021/tHmVGQ_new.html?srcid=browserbox", "line1": "羊了个羊", "line2": "经典" },
+              { "link": "https://yorg.io/", "line1": "Yorg", "line2": "一种塔防" },
+              { "link": "https://triep.io/", "line1": "坦克大战", "line2": "坦克大战" },
               { "link": "https://enazo.cn/", "line1": "你画我猜", "line2": "很好，就是人少" },
-              { "link": "https://beta.sparebeat.com/", "line1": "sparebeat", "line2": "音游，无聊时玩" },
-              { "link": "https://s.u7u9.com/h5game/ylgy20221021/tHmVGQ_new.html?srcid=browserbox", "line1": "羊了个羊", "line2": "经典" }
+              { "link": "https://beta.sparebeat.com/", "line1": "SpareBeat", "line2": "音游" },
+              { "link": "https://webosumania.com/", "line1": "Web OSU", "line2": "mania模式" }
+
             ]
           },
           {
@@ -137,16 +140,15 @@
               { "link": "https://lab.magiconch.com/homo/", "line1": "数字114514化工具", "line2": "字面意思" },
               { "link": "https://www.luogu.com/paste/b5jil6dj", "line1": "洛谷工具箱", "line2": "一些链接失效/国内不可用" },
               { "link": "https://snapany.com/zh/bilibili", "line1": "B站视频解析下载", "line2": "告别不会下载" },
-              { "link": "https://www.jyshare.com/front-end/706/", "line1": "哈希算法", "line2": "挺方便的" },
+              { "link": "https://www.jyshare.com/front-end/706/", "line1": "哈希计算", "line2": "挺方便的" },
               { "link": "https://bdfy.azurewebsites.net/", "line1": "不会百度吗", "line2": "整蛊用" },
-              { "link": "https://www.swb.cc/", "line1": "免费域名", "line2": "挺好的，每人限3个" },
-              { "link": "https://luogu.codingoier.com/punch", "line1": "洛谷自动打卡", "line2": "不用每天打卡了" },
-              { "link": "https://s.u7u9.com/h5game/ylgy20221021/tHmVGQ_new.html?srcid=browserbox", "line1": "Phigros自制铺", "line2": "占个位置，链接没找到" },
+              { "link": "https://luogu.codingoier.com/punch", "line1": "洛谷自动打卡", "line2": "好像坏了" },
+              { "link": "https://lchzh3473.github.io/401-.html", "line1": "Phigros自制铺", "line2": "五个字母四个数字" },
               { "link": "https://www.eteste.com/", "line1": "字数统计", "line2": "在线" },
               { "link": "https://app.xunjieshipin.com/", "line1": "视频转换", "line2": "功能全" },
               { "link": "http://www.mytju.com/classcode/tools/messycoderecover.asp", "line1": "乱码恢复", "line2": "跟编码错乱说再见" },
               { "link": "https://beautifier.io/", "line1": "JavaScript美化", "line2": "可以做简单的反混淆" },
-              { "link": "https://www.virustotal.com/", "line1": "在线扫描文件", "line2": "有很多杀毒软件扫描" },
+              { "link": "https://www.virustotal.com/", "line1": "Virustotal", "line2": "扫描文件，支持哈希上传" },
               { "link": "https://bigjpg.com/", "line1": "图片修复、放大", "line2": "比较推荐" },
               { "link": "https://cn.piliapp.com/cool-text/upside-down/", "line1": "颠倒文字生成", "line2": "好玩" },
               { "link": "https://cli.im/", "line1": "二维码生成", "line2": "实用，还可以解码" }
