@@ -140,7 +140,7 @@
               { "link": "https://badges.toozhao.com/", "line1": "访问计数器", "line2": "统计一个页面的访问次数" },
               { "link": "https://lab.magiconch.com/homo/", "line1": "数字114514化工具", "line2": "字面意思" },
               { "link": "https://www.luogu.com/paste/b5jil6dj", "line1": "洛谷工具箱", "line2": "一些链接失效/国内不可用" },
-              { "link": "https://snapany.com/zh/bilibili", "line1": "B站视频解析下载", "line2": "告别不会下载" },
+              { "link": "https://snapany.com/zh/bilibili", "line1": "B站视频解析下载", "line2": "仅适合简单下载" },
               { "link": "https://www.jyshare.com/front-end/706/", "line1": "哈希计算", "line2": "挺方便的" },
               { "link": "https://bdfy.azurewebsites.net/", "line1": "不会百度吗", "line2": "整蛊用" },
               { "link": "https://luogu.codingoier.com/punch", "line1": "洛谷自动打卡", "line2": "好像坏了" },
@@ -152,7 +152,9 @@
               { "link": "https://www.virustotal.com/", "line1": "Virustotal", "line2": "扫描文件，支持哈希上传" },
               { "link": "https://bigjpg.com/", "line1": "图片修复、放大", "line2": "比较推荐" },
               { "link": "https://cn.piliapp.com/cool-text/upside-down/", "line1": "颠倒文字生成", "line2": "好玩" },
-              { "link": "https://cli.im/", "line1": "二维码生成", "line2": "实用，还可以解码" }
+              { "link": "https://cli.im/", "line1": "二维码生成", "line2": "实用，还可以解码" },
+              { "link": "https://unicode-explorer.com/", "line1": "Unicode查询", "line2": "实用" },
+              { "link": "https://gh-proxy.com/", "line1": "GitHub文件加速下载", "line2": "打开不稳定，但能用" }
             ]
           },
           {
@@ -163,7 +165,9 @@
               { "link": "https://florrio.fandom.com/zh/wiki/Florr.io_%E4%B8%AD%E6%96%87%E7%BB%B4%E5%9F%BA", "line1": "Florr.io", "line2": "中文Fandom" },
               { "link": "https://official-florrio.fandom.com/wiki/Official_Florr.io_Wiki", "line1": "Florr.io", "line2": "英文Fandom" },
               { "link": "https://scp-wiki-cn.wikidot.com/", "line1": "SCP基金会", "line2": "Wiki" },
-              { "link": "https://zh.minecraft.wiki/", "line1": "我的世界", "line2": "中文Wiki" }
+              { "link": "https://zh.minecraft.wiki/", "line1": "我的世界", "line2": "中文Wiki" },
+              { "link": "https://wikiwiki.jp/chunithmwiki/", "line1": "中二节奏", "line2": "日文Wiki" },
+              { "link": "https://chunithm.fandom.com/zh/wiki/CHUNITHM_Wiki?variant=zh-hans", "line1": "中二节奏", "line2": "中文Wiki" }
             ]
           },
           {
