@@ -87,7 +87,10 @@
               { "link": "https://enazo.cn/", "line1": "你画我猜", "line2": "很好，就是人少" },
               { "link": "https://beta.sparebeat.com/", "line1": "SpareBeat", "line2": "音游" },
               { "link": "https://webosumania.com/", "line1": "Web OSU", "line2": "mania模式" },
-              { "link": "https://frontwars.io/", "line1": "前线战争", "line2": "战争类游戏，好上手" }
+              { "link": "https://frontwars.io/", "line1": "前线战争", "line2": "战争类游戏，好上手" },
+              { "link": "https://www.anyanygame.com/turing-test", "line1": "图灵测试", "line2": "对方是人还是AI？" },
+              { "link": "https://dealornodeal-by.manus.space/zh", "line1": "一掷千金", "line2": "选择箱子，博弈银行家报价" },
+              { "link": "https://www.azureflame.cloud/", "line1": "霧雨魔法店", "line2": "有游戏也有测试" }
 
             ]
           },
@@ -154,7 +157,8 @@
               { "link": "https://cn.piliapp.com/cool-text/upside-down/", "line1": "颠倒文字生成", "line2": "好玩" },
               { "link": "https://cli.im/", "line1": "二维码生成", "line2": "实用，还可以解码" },
               { "link": "https://unicode-explorer.com/", "line1": "Unicode查询", "line2": "实用" },
-              { "link": "https://gh-proxy.com/", "line1": "GitHub文件加速下载", "line2": "打开不稳定，但能用" }
+              { "link": "https://gh-proxy.com/", "line1": "GitHub文件加速下载", "line2": "打开不稳定，但能用" },
+              { "link": "https://www.bilibili.com/toy/zhouli/", "line1": "合乎周礼", "line2": "让普通的话合乎周礼" }
             ]
           },
           {
@@ -180,10 +184,12 @@
             ]
           },
           {
-            "groupTitle": "florr.io相关",
-            "buttons": [
-              { "link": "/tool/florr-craft.html", "line1": "合卡计算器", "line2": "自制" },
-              { "link": "https://betterflorr.top/", "line1": "betterflorr", "line2": "更好的florr" }
+           "groupTitle": "国内镜像/中转网站",
+           "buttons": [
+              { "link": "https://pixiviz.xyz/", "line1": "Pixiviz", "line2": "Pixiv镜像" },
+              { "link": "https://pixivic.net/", "line1": "Pixivic", "line2": "Pixiv镜像" },
+              { "link": "https://pixiv.pictures/", "line1": "Pixiv Viewer", "line2": "Pixiv镜像" },
+              { "link": "https://www.tryallai.com/", "line1": "TryAllAI", "line2": "ChatGPT中转" }
             ]
           }
         ]
