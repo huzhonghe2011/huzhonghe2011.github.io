@@ -153,7 +153,8 @@
               { "link": "http://www.mytju.com/classcode/tools/messycoderecover.asp", "line1": "乱码恢复", "line2": "跟编码错乱说再见" },
               { "link": "https://beautifier.io/", "line1": "JavaScript美化", "line2": "可以做简单的反混淆" },
               { "link": "https://www.virustotal.com/", "line1": "Virustotal", "line2": "扫描文件，支持哈希上传" },
-              { "link": "https://bigjpg.com/", "line1": "图片修复、放大", "line2": "比较推荐" },
+              { "link": "https://bigjpg.com/", "line1": "Bigjpg", "line2": "图片放大和去噪" },
+              { "link": "https://unlimited.waifu2x.net/", "line1": "图片放大和去噪", "line2": "免费，本地计算，需要良好配置" },
               { "link": "https://cn.piliapp.com/cool-text/upside-down/", "line1": "颠倒文字生成", "line2": "好玩" },
               { "link": "https://cli.im/", "line1": "二维码生成", "line2": "实用，还可以解码" },
               { "link": "https://unicode-explorer.com/", "line1": "Unicode查询", "line2": "实用" },
@@ -189,6 +190,7 @@
               { "link": "https://pixiviz.xyz/", "line1": "Pixiviz", "line2": "Pixiv镜像" },
               { "link": "https://pixivic.net/", "line1": "Pixivic", "line2": "Pixiv镜像" },
               { "link": "https://pixiv.pictures/", "line1": "Pixiv Viewer", "line2": "Pixiv镜像" },
+              { "link": "https://bobopic.com/", "line1": "BoBoPic", "line2": "Pixiv镜像" },
               { "link": "https://www.tryallai.com/", "line1": "TryAllAI", "line2": "ChatGPT中转" }
             ]
           }
